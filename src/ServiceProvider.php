@@ -9,6 +9,7 @@ class ServiceProvider extends BaseProvider
 {
     protected $commands = [
         Commands\MigrateFieldset::class,
+        Commands\MigrateSite::class,
     ];
 
     public function boot()
