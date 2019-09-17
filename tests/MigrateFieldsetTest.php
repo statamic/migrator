@@ -3,7 +3,7 @@
 namespace Tests;
 
 use Tests\TestCase;
-use Statamic\API\YAML;
+use Statamic\Facades\YAML;
 use Illuminate\Filesystem\Filesystem;
 use Facades\Statamic\Console\Processes\Composer;
 use Tests\Console\Foundation\InteractsWithConsole;
