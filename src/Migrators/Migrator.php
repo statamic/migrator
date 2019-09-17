@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Migrators;
 
 use Exception;
+use Statamic\Facades\YAML;
 use Illuminate\Filesystem\Filesystem;
 
 abstract class Migrator
@@ -39,6 +40,28 @@ abstract class Migrator
     abstract function migrate($handle);
 
     /**
+     * Get yaml contents.
+     *
+     * @param string $handle
+     * @return array
+     */
+    protected function getSourceYaml($handle)
+    {
+        return YAML::parse($this->getSourceContents($handle));
+    }
+
+    /**
+     * Save migrated file contents to yaml.
+     *
+     * @param string $path
+     * @param array $migrated
+     */
+    protected function saveMigratedToYaml($path, $migrated)
+    {
+        $this->saveMigratedContents($path, YAML::dump($migrated));
+    }
+
+    /**
      * Get file contents.
      *
      * @param string $handle
@@ -55,6 +78,23 @@ abstract class Migrator
         }
 
         return $this->files->get($path);
+    }
+
+    /**
+     * Save migrated file contents.
+     *
+     * @param string $path
+     * @param string $migrated
+     */
+    public function saveMigratedContents($path, $migrated)
+    {
+        $folder = preg_replace('/(.*)\/[^\/]*/', '$1', $path);
+
+        if (! $this->files->exists($folder)) {
+            $this->files->makeDirectory($folder);
+        }
+
+        $this->files->put($path, $migrated);
     }
 
     /**

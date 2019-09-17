@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Migrators;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Facades\YAML;
 
 class FieldsetMigrator extends Migrator
 {
@@ -15,10 +14,10 @@ class FieldsetMigrator extends Migrator
      */
     public function migrate($handle)
     {
-        $fieldset = $this->getSourceContents($handle);
+        $fieldset = $this->getSourceYaml($handle);
         $blueprint = $this->migrateFieldsetToBlueprint($fieldset);
 
-        $this->files->put(resource_path("blueprints/{$handle}.yaml"), $blueprint);
+        $this->saveMigratedToYaml(resource_path("blueprints/{$handle}.yaml"), $blueprint);
     }
 
     /**
@@ -29,17 +28,17 @@ class FieldsetMigrator extends Migrator
      */
     protected function migrateFieldsetToBlueprint($fieldset)
     {
-        $content = YAML::parse($fieldset);
+        $migrated = $fieldset;
 
-        if (isset($content['fields'])) {
-            $content['fields'] = $this->migrateFields($content['fields']);
+        if (isset($migrated['fields'])) {
+            $migrated['fields'] = $this->migrateFields($migrated['fields']);
         }
 
-        if (isset($content['sections'])) {
-            $content['sections'] = $this->migrateSections($content['sections']);
+        if (isset($migrated['sections'])) {
+            $migrated['sections'] = $this->migrateSections($migrated['sections']);
         }
 
-        return YAML::dump($content);
+        return $migrated;
     }
 
     /**
