@@ -51,10 +51,18 @@ class MigrateSite extends Command
     {
         $migrator = FieldsetMigrator::sourcePath($path = base_path('site/settings/fieldsets'));
 
-        foreach ($this->getHandlesFromPath($path) as $handle) {
-            $migrator->migrate($handle);
-            $this->line("<info>Fieldset Migrated:</info> {$handle}");
-        }
+        $this
+            ->getHandlesFromPath($path)
+            ->reject(function ($handle) {
+                if ($this->files->exists(resource_path("blueprints/{$handle}.yaml"))) {
+                    $this->line("<comment>Blueprint Already Exists</comment>: {$handle}");
+                    return true;
+                }
+            })
+            ->each(function ($handle) use ($migrator) {
+                $migrator->migrate($handle);
+                $this->line("<info>Fieldset Migrated:</info> {$handle}");
+            });
 
         return $this;
     }
