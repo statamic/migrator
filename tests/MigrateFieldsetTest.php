@@ -4,30 +4,23 @@ namespace Tests;
 
 use Tests\TestCase;
 use Statamic\Facades\YAML;
-use Illuminate\Filesystem\Filesystem;
-use Facades\Statamic\Console\Processes\Composer;
+use Statamic\Migrator\Migrators\FieldsetMigrator;
 use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateFieldsetTest extends TestCase
 {
-    public function setUp(): void
+    protected function path()
     {
-        parent::setUp();
-
-        $this->files = app(Filesystem::class);
-
-        if (! $this->files->exists($this->path = base_path('resources/blueprints'))) {
-            $this->files->makeDirectory($this->path);
-        }
+        return resource_path('blueprints/post.yaml');
     }
 
-    public function tearDown(): void
+    private function migrateFieldsetToBlueprint($fieldsetConfig)
     {
-        if ($this->files->exists($this->path)) {
-            $this->files->deleteDirectory($this->path);
-        }
+        $this->files->put($this->path(), YAML::dump($fieldsetConfig));
 
-        parent::tearDown();
+        $this->artisan('statamic:migrate:fieldset', ['handle' => 'post']);
+
+        return YAML::parse($this->files->get($this->path()));
     }
 
     /** @test */
@@ -280,16 +273,5 @@ class MigrateFieldsetTest extends TestCase
                 ]
             ]
         ]);
-    }
-
-    private function migrateFieldsetToBlueprint($fieldsetConfig)
-    {
-        $path = base_path('resources/blueprints/post.yaml');
-
-        $this->files->put($path, YAML::dump($fieldsetConfig));
-
-        $this->artisan('statamic:migrate:fieldset', ['handle' => 'post']);
-
-        return YAML::parse($this->files->get($path));
     }
 }

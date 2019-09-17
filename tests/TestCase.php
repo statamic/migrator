@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Illuminate\Filesystem\Filesystem;
+
 class TestCase extends \Orchestra\Testbench\TestCase
 {
     protected function setUp(): void
@@ -9,6 +11,21 @@ class TestCase extends \Orchestra\Testbench\TestCase
         require_once(__DIR__.'/ExceptionHandler.php');
 
         parent::setUp();
+
+        $this->files = app(Filesystem::class);
+
+        if ($this->path()) {
+            $this->prepareFolder($this->path());
+        }
+    }
+
+    public function tearDown(): void
+    {
+        if ($this->path()) {
+            $this->deleteFolder($this->path());
+        }
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app)
@@ -22,5 +39,28 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageAliases($app)
     {
         return ['Statamic' => 'Statamic\Statamic'];
+    }
+
+    protected function prepareFolder($path)
+    {
+        $folder = $this->getFolderFromPath($path);
+
+        if (! $this->files->exists($folder)) {
+            $this->files->makeDirectory($folder);
+        }
+    }
+
+    protected function deleteFolder($path)
+    {
+        $folder = $this->getFolderFromPath($path);
+
+        if ($this->files->exists($folder)) {
+            $this->files->deleteDirectory($folder);
+        }
+    }
+
+    protected function getFolderFromPath($path)
+    {
+        return preg_replace('/(.*)\/[^\/]*/', '$1', $path);
     }
 }
