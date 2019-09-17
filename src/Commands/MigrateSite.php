@@ -2,14 +2,10 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Migrator\Migrators\FieldsetMigrator;
-use Statamic\Support\Arr;
-use Statamic\Support\Str;
-use Statamic\Facades\YAML;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Illuminate\Filesystem\Filesystem;
-use Symfony\Component\Console\Input\InputArgument;
+use Statamic\Migrator\Migrators\FieldsetMigrator;
 
 class MigrateSite extends Command
 {
