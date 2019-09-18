@@ -13,8 +13,9 @@ class UserMigrator extends Migrator
      * Migrate file.
      *
      * @param string $handle
+     * @param bool $overwrite
      */
-    public function migrate($handle)
+    public function migrate($handle, $overwrite = false)
     {
         $user = $this->getSourceYaml($handle);
 
@@ -26,7 +27,7 @@ class UserMigrator extends Migrator
 
         $newPath = base_path("users/{$newHandle}.yaml");
 
-        if ($this->files->exists($newPath)) {
+        if (! $overwrite && $this->files->exists($newPath)) {
             throw new AlreadyExistsException;
         }
 

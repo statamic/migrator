@@ -12,12 +12,13 @@ class FieldsetMigrator extends Migrator
      * Migrate file.
      *
      * @param string $handle
+     * @param bool $overwrite
      */
-    public function migrate($handle)
+    public function migrate($handle, $overwrite = false)
     {
         $newPath = resource_path("blueprints/{$handle}.yaml");
 
-        if ($this->files->exists($newPath)) {
+        if (! $overwrite && $this->files->exists($newPath)) {
             throw new AlreadyExistsException;
         }
 
