@@ -7,6 +7,7 @@ use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Migrators\UserMigrator;
+use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Migrators\FieldsetMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
@@ -59,7 +60,7 @@ class MigrateSite extends Command
 
         $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->migrate($handle);
+                $migrator->migrate($handle, $this->option('force'));
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
             }
@@ -76,7 +77,7 @@ class MigrateSite extends Command
 
         $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->migrate($handle);
+                $migrator->migrate($handle, $this->option('force'));
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>User already exists:</comment> {$handle}");
             } catch (EmailRequiredException $exception) {
@@ -98,5 +99,17 @@ class MigrateSite extends Command
         return collect($this->files->files($path))
             ->map
             ->getFilenameWithoutExtension();
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return [
+            ['force', null, InputOption::VALUE_NONE, 'Force migration (file will be overwritten if already exists)'],
+        ];
     }
 }
