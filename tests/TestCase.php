@@ -6,28 +6,6 @@ use Illuminate\Filesystem\Filesystem;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
-    protected function setUp(): void
-    {
-        require_once(__DIR__.'/ExceptionHandler.php');
-
-        parent::setUp();
-
-        $this->files = app(Filesystem::class);
-
-        if ($this->path()) {
-            $this->prepareFolder($this->path());
-        }
-    }
-
-    public function tearDown(): void
-    {
-        if ($this->path()) {
-            $this->deleteFolder($this->path());
-        }
-
-        parent::tearDown();
-    }
-
     protected function getPackageProviders($app)
     {
         return [
@@ -39,6 +17,28 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getPackageAliases($app)
     {
         return ['Statamic' => 'Statamic\Statamic'];
+    }
+
+    protected function setUp(): void
+    {
+        require_once(__DIR__.'/ExceptionHandler.php');
+
+        parent::setUp();
+
+        $this->files = app(Filesystem::class);
+
+        if (method_exists($this, 'path')) {
+            $this->prepareFolder($this->path());
+        }
+    }
+
+    public function tearDown(): void
+    {
+        if (method_exists($this, 'path')) {
+            $this->deleteFolder($this->path());
+        }
+
+        parent::tearDown();
     }
 
     protected function prepareFolder($path)
