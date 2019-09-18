@@ -6,7 +6,6 @@ use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\Migrators\FieldsetMigrator;
 use Symfony\Component\Console\Input\InputArgument;
-use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class MigrateFieldset extends Command
 {
@@ -33,11 +32,7 @@ class MigrateFieldset extends Command
     {
         $handle = $this->argument('handle');
 
-        try {
-            FieldsetMigrator::sourcePath(resource_path('blueprints'))->migrate($handle);
-        } catch (AlreadyExistsException $exception) {
-            return $this->error("Blueprint [$handle] already exists.");
-        }
+        FieldsetMigrator::sourcePath(resource_path('blueprints'))->migrate($handle, true);
 
         $this->info("Fieldset [{$handle}.yaml] has been successfully migrated to a blueprint.");
     }
