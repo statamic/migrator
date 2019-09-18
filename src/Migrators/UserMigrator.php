@@ -34,5 +34,9 @@ class UserMigrator extends Migrator
         unset($user['email']);
 
         $this->saveMigratedToYaml($newPath, $user);
+
+        if ($this->files->exists($oldFileInNewPath = base_path("users/{$handle}.yaml"))) {
+            $this->files->delete($oldFileInNewPath);
+        }
     }
 }
