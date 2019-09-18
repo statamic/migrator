@@ -36,8 +36,9 @@ abstract class Migrator
      * Migrate file.
      *
      * @param string $handle
+     * @param bool $overwrite
      */
-    abstract function migrate($handle);
+    abstract function migrate($handle, $overwrite = false);
 
     /**
      * Get yaml contents.
