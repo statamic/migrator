@@ -2,9 +2,9 @@
 
 namespace Statamic\Migrator\Migrators;
 
-use Exception;
 use Statamic\Facades\YAML;
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Migrator\Exceptions\NotFoundException;
 
 abstract class Migrator
 {
@@ -67,7 +67,7 @@ abstract class Migrator
      *
      * @param string $handle
      * @return string
-     * @throws Exception
+     * @throws NotFoundException
      */
     protected function getSourceContents($handle)
     {
@@ -75,7 +75,7 @@ abstract class Migrator
         $relativePath = str_replace(base_path() . '/', '', $path);
 
         if (! $this->files->exists($path)) {
-            throw new Exception("Cannot find file [{$relativePath}].");
+            throw new NotFoundException("Cannot find file [{$relativePath}].");
         }
 
         return $this->files->get($path);

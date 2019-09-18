@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\Migrators\FieldsetMigrator;
 use Symfony\Component\Console\Input\InputArgument;
+use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateFieldset extends Command
 {
@@ -32,9 +33,13 @@ class MigrateFieldset extends Command
     {
         $handle = $this->argument('handle');
 
-        FieldsetMigrator::sourcePath(resource_path('blueprints'))->migrate($handle, true);
+        try {
+            FieldsetMigrator::sourcePath(resource_path('blueprints'))->migrate($handle, true);
+        } catch (NotFoundException $exception) {
+            return $this->error("Fieldset [{$handle}] could not be found.");
+        }
 
-        $this->info("Fieldset [{$handle}.yaml] has been successfully migrated to a blueprint.");
+        $this->info("Fieldset [{$handle}] has been successfully migrated to a blueprint.");
     }
 
     /**
