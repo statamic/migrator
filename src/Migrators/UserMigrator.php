@@ -4,6 +4,8 @@ namespace Statamic\Migrator\Migrators;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class UserMigrator extends Migrator
 {
@@ -16,10 +18,20 @@ class UserMigrator extends Migrator
     {
         $user = $this->getSourceYaml($handle);
 
-        $newHandle = $user['email'];
+        $newHandle = $user['email'] ?? null;
+
+        if (! $newHandle) {
+            throw new EmailRequiredException;
+        }
+
+        $newPath = base_path("users/{$newHandle}.yaml");
+
+        if ($this->files->exists($newPath)) {
+            throw new AlreadyExistsException;
+        }
 
         unset($user['email']);
 
-        $this->saveMigratedToYaml(base_path("users/{$newHandle}.yaml"), $user);
+        $this->saveMigratedToYaml($newPath, $user);
     }
 }

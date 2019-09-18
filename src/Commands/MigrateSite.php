@@ -8,6 +8,8 @@ use Statamic\Console\RunsInPlease;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Migrators\UserMigrator;
 use Statamic\Migrator\Migrators\FieldsetMigrator;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class MigrateSite extends Command
 {
@@ -55,18 +57,15 @@ class MigrateSite extends Command
     {
         $migrator = FieldsetMigrator::sourcePath($path = base_path('site/settings/fieldsets'));
 
-        $this
-            ->getHandlesFromPath($path)
-            ->reject(function ($handle) {
-                if ($this->files->exists(resource_path("blueprints/{$handle}.yaml"))) {
-                    $this->line("<comment>Blueprint Already Exists</comment>: {$handle}");
-                    return true;
-                }
-            })
-            ->each(function ($handle) use ($migrator) {
+        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+            try {
                 $migrator->migrate($handle);
-                $this->line("<info>Fieldset Migrated:</info> {$handle}");
-            });
+            } catch (AlreadyExistsException $exception) {
+                return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
+            }
+
+            $this->line("<info>Fieldset migrated:</info> {$handle}");
+        });
 
         return $this;
     }
@@ -75,27 +74,17 @@ class MigrateSite extends Command
     {
         $migrator = UserMigrator::sourcePath($path = base_path('site/users'));
 
-        $this
-            ->getHandlesFromPath($path)
-            ->map(function ($handle) use ($path) {
-                return [
-                    'old' => $handle,
-                    'new' => YAML::parse($this->files->get("{$path}/{$handle}.yaml"))['email'] ?? null,
-                ];
-            })
-            ->reject(function ($handle) {
-                if (! $handle['new']) {
-                    $this->line("<error>Email Field Required To Migrate User:</error> {$handle['old']}");
-                    return true;
-                } elseif ($this->files->exists(base_path("users/{$handle['new']}.yaml"))) {
-                    $this->line("<comment>User Already Exists</comment>: {$handle['new']}");
-                    return true;
-                }
-            })
-            ->each(function ($handle) use ($migrator) {
-                $migrator->migrate($handle['old']);
-                $this->line("<info>User Migrated:</info> {$handle['new']}");
-            });
+        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+            try {
+                $migrator->migrate($handle);
+            } catch (AlreadyExistsException $exception) {
+                return $this->line("<comment>User already exists:</comment> {$handle}");
+            } catch (EmailRequiredException $exception) {
+                return $this->line("<error>Email field required to migrate user:</error> {$handle}");
+            }
+
+            $this->line("<info>User migrated:</info> {$handle}");
+        });
 
         return $this;
     }

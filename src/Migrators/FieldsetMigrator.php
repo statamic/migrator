@@ -4,6 +4,7 @@ namespace Statamic\Migrator\Migrators;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class FieldsetMigrator extends Migrator
 {
@@ -14,10 +15,16 @@ class FieldsetMigrator extends Migrator
      */
     public function migrate($handle)
     {
+        $newPath = resource_path("blueprints/{$handle}.yaml");
+
+        if ($this->files->exists($newPath)) {
+            throw new AlreadyExistsException;
+        }
+
         $fieldset = $this->getSourceYaml($handle);
         $blueprint = $this->migrateFieldsetToBlueprint($fieldset);
 
-        $this->saveMigratedToYaml(resource_path("blueprints/{$handle}.yaml"), $blueprint);
+        $this->saveMigratedToYaml($newPath, $blueprint);
     }
 
     /**
