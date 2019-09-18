@@ -27,18 +27,30 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->files = app(Filesystem::class);
 
-        if (method_exists($this, 'path')) {
-            $this->prepareFolder($this->path());
-        }
+        $this->getPaths()->each(function ($path) {
+            $this->deleteFolder($path);
+            $this->prepareFolder($path);
+        });
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
-        if (method_exists($this, 'path')) {
-            $this->deleteFolder($this->path());
-        }
+        $this->getPaths()->each(function ($path) {
+            $this->deleteFolder($path);
+        });
 
         parent::tearDown();
+    }
+
+    protected function getPaths()
+    {
+        if (method_exists($this, 'path')) {
+            $paths = collect($this->path());
+        } elseif (method_exists($this, 'paths')) {
+            $paths = collect($this->paths());
+        }
+
+        return $paths ?? collect();
     }
 
     protected function prepareFolder($path)
@@ -61,6 +73,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
     protected function getFolderFromPath($path)
     {
-        return preg_replace('/(.*)\/[^\/]*/', '$1', $path);
+        return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', $path);
     }
 }
