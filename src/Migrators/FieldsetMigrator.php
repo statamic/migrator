@@ -8,11 +8,14 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class FieldsetMigrator extends Migrator
 {
+    use Concerns\MigratesSingleYamlFile;
+
     /**
      * Migrate file.
      *
      * @param string $handle
      * @param bool $overwrite
+     * @throws AlreadyExistsException
      */
     public function migrate($handle, $overwrite = false)
     {

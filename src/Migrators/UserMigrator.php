@@ -9,6 +9,8 @@ use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class UserMigrator extends Migrator
 {
+    use Concerns\MigratesSingleYamlFile;
+
     protected $user;
     protected $newPath;
 
@@ -34,6 +36,7 @@ class UserMigrator extends Migrator
     /**
      * Validate email is present on user to be used as new handle.
      *
+     * @throws EmailRequiredException
      * @return $this
      */
     protected function validateEmail()
@@ -63,6 +66,7 @@ class UserMigrator extends Migrator
      * Validate unique.
      *
      * @param bool $overwrite
+     * @throws AlreadyExistsException
      * @return $this
      */
     protected function validateUnique($overwrite)
