@@ -4,51 +4,46 @@ namespace Statamic\Migrator\Migrators;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class FieldsetMigrator extends Migrator
 {
     use Concerns\MigratesSingleYamlFile;
 
+    protected $blueprint;
+
     /**
      * Migrate file.
      *
      * @param string $handle
-     * @throws AlreadyExistsException
      */
     public function migrate($handle)
     {
         $this->newPath = resource_path("blueprints/{$handle}.yaml");
 
-        if (! $this->overwrite && $this->files->exists($this->newPath)) {
-            throw new AlreadyExistsException;
-        }
+        $this->blueprint = $this->getSourceYaml($handle);
 
-        $fieldset = $this->getSourceYaml($handle);
-        $blueprint = $this->migrateFieldsetToBlueprint($fieldset);
-
-        $this->saveMigratedToYaml($blueprint);
+        $this
+            ->validateUnique()
+            ->migrateToBlueprintSchema()
+            ->saveMigratedToYaml($this->blueprint);
     }
 
     /**
-     * Migrate fieldset contents to blueprint.
+     * Migrate v2 fieldset schema to v3 blueprint schema.
      *
-     * @param string $fieldset
-     * @return string
+     * @return $this
      */
-    protected function migrateFieldsetToBlueprint($fieldset)
+    protected function migrateToBlueprintSchema()
     {
-        $migrated = $fieldset;
-
-        if (isset($migrated['fields'])) {
-            $migrated['fields'] = $this->migrateFields($migrated['fields']);
+        if (isset($this->blueprint['fields'])) {
+            $this->blueprint['fields'] = $this->migrateFields($this->blueprint['fields']);
         }
 
-        if (isset($migrated['sections'])) {
-            $migrated['sections'] = $this->migrateSections($migrated['sections']);
+        if (isset($this->blueprint['sections'])) {
+            $this->blueprint['sections'] = $this->migrateSections($this->blueprint['sections']);
         }
 
-        return $migrated;
+        return $this;
     }
 
     /**
