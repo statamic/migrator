@@ -35,7 +35,7 @@ class MigrateUser extends Command
         $handle = $this->argument('handle');
 
         try {
-            UserMigrator::sourcePath(base_path('users'))->migrate($handle, true);
+            UserMigrator::sourcePath(base_path('users'))->overwrite(true)->migrate($handle);
         } catch (NotFoundException $exception) {
             return $this->error("User [{$handle}] could not be found.");
         } catch (EmailRequiredException $exception) {

@@ -14,21 +14,20 @@ class FieldsetMigrator extends Migrator
      * Migrate file.
      *
      * @param string $handle
-     * @param bool $overwrite
      * @throws AlreadyExistsException
      */
-    public function migrate($handle, $overwrite = false)
+    public function migrate($handle)
     {
-        $newPath = resource_path("blueprints/{$handle}.yaml");
+        $this->newPath = resource_path("blueprints/{$handle}.yaml");
 
-        if (! $overwrite && $this->files->exists($newPath)) {
+        if (! $this->overwrite && $this->files->exists($this->newPath)) {
             throw new AlreadyExistsException;
         }
 
         $fieldset = $this->getSourceYaml($handle);
         $blueprint = $this->migrateFieldsetToBlueprint($fieldset);
 
-        $this->saveMigratedToYaml($newPath, $blueprint);
+        $this->saveMigratedToYaml($blueprint);
     }
 
     /**

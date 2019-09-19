@@ -12,25 +12,23 @@ class UserMigrator extends Migrator
     use Concerns\MigratesSingleYamlFile;
 
     protected $user;
-    protected $newPath;
 
     /**
      * Migrate file.
      *
      * @param string $handle
-     * @param bool $overwrite
      */
-    public function migrate($handle, $overwrite = false)
+    public function migrate($handle)
     {
         $this->user = $this->getSourceYaml($handle);
 
         $this
             ->validateEmail()
             ->setNewPath()
-            ->validateUnique($overwrite)
+            ->validateUnique()
             ->migrateUserSchema()
             ->removeOldUser($handle)
-            ->saveMigratedToYaml($this->newPath, $this->user);
+            ->saveMigratedToYaml($this->user);
     }
 
     /**
@@ -65,13 +63,12 @@ class UserMigrator extends Migrator
     /**
      * Validate unique.
      *
-     * @param bool $overwrite
      * @throws AlreadyExistsException
      * @return $this
      */
-    protected function validateUnique($overwrite)
+    protected function validateUnique()
     {
-        if (! $overwrite && $this->files->exists($this->newPath)) {
+        if (! $this->overwrite && $this->files->exists($this->newPath)) {
             throw new AlreadyExistsException;
         }
 

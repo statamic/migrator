@@ -60,7 +60,7 @@ class MigrateSite extends Command
 
         $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->migrate($handle, $this->option('force'));
+                $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
             }
@@ -77,7 +77,7 @@ class MigrateSite extends Command
 
         $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->migrate($handle, $this->option('force'));
+                $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>User already exists:</comment> {$handle}");
             } catch (EmailRequiredException $exception) {

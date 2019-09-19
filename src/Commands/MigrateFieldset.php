@@ -34,7 +34,7 @@ class MigrateFieldset extends Command
         $handle = $this->argument('handle');
 
         try {
-            FieldsetMigrator::sourcePath(resource_path('blueprints'))->migrate($handle, true);
+            FieldsetMigrator::sourcePath(resource_path('blueprints'))->overwrite(true)->migrate($handle);
         } catch (NotFoundException $exception) {
             return $this->error("Fieldset [{$handle}] could not be found.");
         }

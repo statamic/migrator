@@ -23,9 +23,9 @@ trait MigratesSingleYamlFile
      * @param string $path
      * @param array $migrated
      */
-    protected function saveMigratedToYaml($path, $migrated)
+    protected function saveMigratedToYaml($migrated)
     {
-        $this->saveMigratedContents($path, YAML::dump($migrated));
+        $this->saveMigratedContents(YAML::dump($migrated));
     }
 
     /**
@@ -53,15 +53,15 @@ trait MigratesSingleYamlFile
      * @param string $path
      * @param string $migrated
      */
-    public function saveMigratedContents($path, $migrated)
+    public function saveMigratedContents($migrated)
     {
-        $folder = preg_replace('/(.*)\/[^\/]*/', '$1', $path);
+        $folder = preg_replace('/(.*)\/[^\/]*/', '$1', $this->newPath);
 
         if (! $this->files->exists($folder)) {
             $this->files->makeDirectory($folder);
         }
 
-        $this->files->put($path, $migrated);
+        $this->files->put($this->newPath, $migrated);
     }
 
     /**

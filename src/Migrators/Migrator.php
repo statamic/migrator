@@ -8,6 +8,8 @@ use Statamic\Migrator\Exceptions\NotFoundException;
 abstract class Migrator
 {
     protected $sourcePath;
+    protected $newPath;
+    protected $overwrite = false;
 
     /**
      * Instantiate migrator.
@@ -32,10 +34,33 @@ abstract class Migrator
     }
 
     /**
+     * Get new path.
+     *
+     * @param string|null $append
+     * @return string
+     */
+    public function newPath($append = null)
+    {
+        return collect([$this->newPath, $append])->filter()->implode('/');
+    }
+
+    /**
+     * Set whether files should be overwritten.
+     *
+     * @param bool $overwrite
+     * @return $this
+     */
+    public function overwrite($overwrite)
+    {
+        $this->overwrite = $overwrite;
+
+        return $this;
+    }
+
+    /**
      * Migrate file.
      *
      * @param string $handle
-     * @param bool $overwrite
      */
-    abstract function migrate($handle, $overwrite = false);
+    abstract function migrate($handle);
 }
