@@ -58,7 +58,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $folder = $this->getFolderFromPath($path);
 
         if (! $this->files->exists($folder)) {
-            $this->files->makeDirectory($folder);
+            $this->files->makeDirectory($folder, 0755, true);
         }
     }
 
