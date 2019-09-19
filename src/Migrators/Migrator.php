@@ -4,6 +4,7 @@ namespace Statamic\Migrator\Migrators;
 
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 abstract class Migrator
 {
@@ -53,6 +54,21 @@ abstract class Migrator
     public function overwrite($overwrite)
     {
         $this->overwrite = $overwrite;
+
+        return $this;
+    }
+
+    /**
+     * Validate unique.
+     *
+     * @throws AlreadyExistsException
+     * @return $this
+     */
+    protected function validateUnique()
+    {
+        if (! $this->overwrite && $this->files->exists($this->newPath)) {
+            throw new AlreadyExistsException;
+        }
 
         return $this;
     }

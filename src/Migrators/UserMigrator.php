@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Migrators;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class UserMigrator extends Migrator
@@ -56,21 +55,6 @@ class UserMigrator extends Migrator
         $email = $this->user['email'];
 
         $this->newPath = base_path("users/{$email}.yaml");
-
-        return $this;
-    }
-
-    /**
-     * Validate unique.
-     *
-     * @throws AlreadyExistsException
-     * @return $this
-     */
-    protected function validateUnique()
-    {
-        if (! $this->overwrite && $this->files->exists($this->newPath)) {
-            throw new AlreadyExistsException;
-        }
 
         return $this;
     }
