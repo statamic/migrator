@@ -4,7 +4,6 @@ namespace Tests;
 
 use Tests\TestCase;
 use Statamic\Facades\YAML;
-use Statamic\Migrator\FieldsetMigrator;
 use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateFieldsetTest extends TestCase
