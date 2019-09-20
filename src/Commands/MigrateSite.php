@@ -5,10 +5,10 @@ namespace Statamic\Migrator\Commands;
 use Statamic\Facades\YAML;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
+use Statamic\Migrator\UserMigrator;
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\Migrators\UserMigrator;
+use Statamic\Migrator\FieldsetMigrator;
 use Symfony\Component\Console\Input\InputOption;
-use Statamic\Migrator\Migrators\FieldsetMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
 

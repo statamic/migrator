@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\Migrator\Migrators;
+namespace Statamic\Migrator;
 
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Exceptions\NotFoundException;

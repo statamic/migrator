@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\Migrator\Migrators;
+namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;

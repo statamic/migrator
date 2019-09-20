@@ -1,6 +1,6 @@
 <?php
 
-namespace Statamic\Migrator\Migrators;
+namespace Statamic\Migrator;
 
 use Statamic\Facades\YAML;
 

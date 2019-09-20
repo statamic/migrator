@@ -4,9 +4,9 @@ namespace Statamic\Migrator\Commands;
 
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
+use Statamic\Migrator\CollectionMigrator;
 use Symfony\Component\Console\Input\InputArgument;
 use Statamic\Migrator\Exceptions\NotFoundException;
-use Statamic\Migrator\Migrators\CollectionMigrator;
 
 class MigrateCollection extends Command
 {
