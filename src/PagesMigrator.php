@@ -79,7 +79,7 @@ class PagesMigrator extends Migrator
             'title' => 'Pages',
             'expects_root' => true,
             'root' => $this->root,
-            'tree' => $this->structure['tree'],
+            'tree' => array_values($this->structure),
         ];
 
         $this->files->put($this->newPath('../../structures/pages.yaml'), YAML::dump($config));
