@@ -120,7 +120,7 @@ class PagesMigrator extends Migrator
                 return $this->migrateFieldsetToBlueprint($entry);
             })
             ->map(function ($entry) {
-                $this->files->put($this->newPath(Str::slug($entry['title'])), $this->dumpEntryToMarkdown($entry));
+                $this->files->put($this->newPath(Str::slug($entry['title'])).'.md', $this->dumpEntryToMarkdown($entry));
             });
 
         return $this;
