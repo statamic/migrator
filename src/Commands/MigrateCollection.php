@@ -36,7 +36,7 @@ class MigrateCollection extends Command
         try {
             CollectionMigrator::sourcePath(base_path('content/collections'))->overwrite(true)->migrate($handle);
         } catch (NotFoundException $exception) {
-            return $this->error("Collection [{$handle}] could not be found.");
+            return $this->error("Collection folder [{$handle}] could not be found.");
         }
 
         $this->info("Collection [{$handle}] has been successfully migrated.");
