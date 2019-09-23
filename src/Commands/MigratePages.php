@@ -32,7 +32,7 @@ class MigratePages extends Command
     public function handle()
     {
         try {
-            PagesMigrator::sourcePath(base_path('content/collections'))->overwrite(true)->migrate('pages');
+            PagesMigrator::sourcePath(base_path('content/collections/pages'))->overwrite(true)->migrate('pages');
         } catch (NotFoundException $exception) {
             return $this->error("Pages collection folder could not be found.");
         }

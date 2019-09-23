@@ -22,10 +22,27 @@ class PagesMigrator extends Migrator
         $this->newPath = base_path("content/collections/pages");
 
         $this
+            ->copySourceFiles()
             ->parseTree()
             ->createStructure()
             ->createYamlConfig()
             ->migratePagesToEntries();
+    }
+
+    /**
+     * Copy source files.
+     *
+     * return $this
+     */
+    protected function copySourceFiles()
+    {
+        if ($this->sourcePath === $this->newPath) {
+            return $this;
+        }
+
+        $this->files->copyDirectory($this->sourcePath, $this->newPath);
+
+        return $this;
     }
 
     /**

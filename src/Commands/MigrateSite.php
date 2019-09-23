@@ -6,6 +6,7 @@ use Statamic\Facades\YAML;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\UserMigrator;
+use Statamic\Migrator\PagesMigrator;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
 use Symfony\Component\Console\Input\InputOption;
@@ -49,6 +50,7 @@ class MigrateSite extends Command
     {
         $this
             ->migrateFieldsets()
+            ->migratePages()
             ->migrateUsers();
 
         $this->info("Site successfully migrated!");
@@ -66,6 +68,23 @@ class MigrateSite extends Command
             }
 
             $this->line("<info>Fieldset migrated:</info> {$handle}");
+        });
+
+        return $this;
+    }
+
+    protected function migratePages()
+    {
+        $migrator = PagesMigrator::sourcePath($path = base_path('site/content/pages'));
+
+        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+            try {
+                $migrator->overwrite($this->option('force'))->migrate($handle);
+            } catch (AlreadyExistsException $exception) {
+                return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
+            }
+
+            $this->line("<info>Pages migrated:</info> {$handle}");
         });
 
         return $this;
