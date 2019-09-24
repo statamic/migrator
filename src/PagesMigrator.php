@@ -10,7 +10,7 @@ class PagesMigrator extends Migrator
     protected $root;
     protected $structure = [];
     protected $entries = [];
-    protected $blueprints = ['page'];
+    protected $blueprints = [];
 
     /**
      * Migrate file.
@@ -22,6 +22,7 @@ class PagesMigrator extends Migrator
         $this->newPath = base_path("content/collections/pages");
 
         $this
+            ->validateUnique()
             ->copySourceFiles()
             ->parseTree()
             ->createStructure()
