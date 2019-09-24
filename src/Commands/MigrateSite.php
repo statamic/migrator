@@ -9,6 +9,8 @@ use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\TaxonomyMigrator;
+use Statamic\Migrator\CollectionMigrator;
 use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
@@ -50,17 +52,24 @@ class MigrateSite extends Command
     {
         $this
             ->migrateFieldsets()
+            // ->migrateCollections()
             ->migratePages()
+            // ->migrateTaxonomies()
             ->migrateUsers();
 
         $this->info("Site successfully migrated!");
     }
 
+    /**
+     * Migrate fieldsets.
+     *
+     * @return $this
+     */
     protected function migrateFieldsets()
     {
         $migrator = FieldsetMigrator::sourcePath($path = base_path('site/settings/fieldsets'));
 
-        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
                 $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
@@ -73,28 +82,86 @@ class MigrateSite extends Command
         return $this;
     }
 
-    protected function migratePages()
+    /**
+     * Migrate collections.
+     *
+     * @return $this
+     */
+    protected function migrateCollections()
     {
-        $migrator = PagesMigrator::sourcePath($path = base_path('site/content/pages'));
+        $migrator = CollectionMigrator::sourcePath($path = base_path('site/content/collections'));
 
-        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFolderHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
                 $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
             }
 
-            $this->line("<info>Pages migrated:</info> {$handle}");
+            $this->line("<info>Collection migrated:</info> {$handle}");
         });
 
         return $this;
     }
 
+    /**
+     * Migrate pages.
+     *
+     * @return $this
+     */
+    protected function migratePages()
+    {
+        $migrator = PagesMigrator::sourcePath($path = base_path('site/content/pages'));
+
+        try {
+            $migrator->overwrite($this->option('force'))->migrate($handle = 'pages');
+        } catch (AlreadyExistsException $exception) {
+            $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
+        }
+
+        if (! isset($exception)) {
+            $this->line("<info>Pages collection/structure migrated:</info> {$handle}");
+        }
+
+        return $this;
+    }
+
+    /**
+     * Migrate taxonomies.
+     *
+     * @return $this
+     */
+    protected function migrateTaxonomies()
+    {
+        $migrator = TaxonomyMigrator::sourcePath($path = base_path('site/content/taxonomies'));
+
+        // $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        //     try {
+        //         $migrator->overwrite($this->option('force'))->migrate($handle);
+        //     } catch (AlreadyExistsException $exception) {
+        //         return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
+        //     }
+
+        //     $this->line("<info>Pages migrated:</info> {$handle}");
+        // });
+
+        $this->getFileHandlesFromPath($path)->each(function ($handle) {
+            $this->line("<info>Taxonomy migrated:</info> {$handle}");
+        });
+
+        return $this;
+    }
+
+    /**
+     * Migrate users.
+     *
+     * @return $this
+     */
     protected function migrateUsers()
     {
         $migrator = UserMigrator::sourcePath($path = base_path('site/users'));
 
-        $this->getHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
                 $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
@@ -109,7 +176,13 @@ class MigrateSite extends Command
         return $this;
     }
 
-    protected function getHandlesFromPath($path)
+    /**
+     * Get file handles from path.
+     *
+     * @param string $path
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getFileHandlesFromPath($path)
     {
         if (! $this->files->exists($path)) {
             return collect();
@@ -118,6 +191,23 @@ class MigrateSite extends Command
         return collect($this->files->files($path))
             ->map
             ->getFilenameWithoutExtension();
+    }
+
+    /**
+     * Get folder handles from path.
+     *
+     * @param string $path
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getFolderHandlesFromPath($path)
+    {
+        if (! $this->files->exists($path)) {
+            return collect();
+        }
+
+        return collect($this->files->directories($path))->map(function ($path) {
+            return preg_replace('/.*\/([^\/]+)/', '$1', $path);
+        });
     }
 
     /**
