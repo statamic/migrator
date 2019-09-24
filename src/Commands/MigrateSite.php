@@ -67,11 +67,13 @@ class MigrateSite extends Command
      */
     protected function migrateFieldsets()
     {
-        $migrator = FieldsetMigrator::sourcePath($path = base_path('site/settings/fieldsets'));
+        $path = base_path('site/settings/fieldsets');
+
+        $migrator = FieldsetMigrator::sourcePath($path)->overwrite($this->option('force'));
 
         $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->overwrite($this->option('force'))->migrate($handle);
+                $migrator->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
             }
@@ -89,11 +91,13 @@ class MigrateSite extends Command
      */
     protected function migrateCollections()
     {
-        $migrator = CollectionMigrator::sourcePath($path = base_path('site/content/collections'));
+        $path = base_path('site/content/collections');
+
+        $migrator = CollectionMigrator::sourcePath($path)->overwrite($this->option('force'));
 
         $this->getFolderHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
-                $migrator->overwrite($this->option('force'))->migrate($handle);
+                $migrator->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Collection already exists:</comment> {$handle}");
             }
@@ -111,10 +115,12 @@ class MigrateSite extends Command
      */
     protected function migratePages()
     {
-        $migrator = PagesMigrator::sourcePath($path = base_path('site/content/pages'));
+        $path = base_path('site/content/pages');
+
+        $migrator = PagesMigrator::sourcePath($path)->overwrite($this->option('force'));
 
         try {
-            $migrator->overwrite($this->option('force'))->migrate($handle = 'pages');
+            $migrator->migrate($handle = 'pages');
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
         }
@@ -133,11 +139,13 @@ class MigrateSite extends Command
      */
     protected function migrateTaxonomies()
     {
-        $migrator = TaxonomyMigrator::sourcePath($path = base_path('site/content/taxonomies'));
+        $path = base_path('site/content/taxonomies');
+
+        $migrator = TaxonomyMigrator::sourcePath($path)->overwrite($this->option('force'));
 
         // $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
         //     try {
-        //         $migrator->overwrite($this->option('force'))->migrate($handle);
+        //         $migrator->migrate($handle);
         //     } catch (AlreadyExistsException $exception) {
         //         return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
         //     }
@@ -159,7 +167,9 @@ class MigrateSite extends Command
      */
     protected function migrateUsers()
     {
-        $migrator = UserMigrator::sourcePath($path = base_path('site/users'));
+        $path = base_path('site/users');
+
+        $migrator = UserMigrator::sourcePath($path)->overwrite($this->option('force'));
 
         $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
             try {
