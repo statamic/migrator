@@ -9,15 +9,18 @@ trait MigratesFolder
     /**
      * Copy source files.
      *
-     * return $this
+     * @param string|null $handle
+     * @return $this
      */
-    protected function copySourceFiles()
+    protected function copySourceFiles($handle = null)
     {
-        if ($this->sourcePath === $this->newPath) {
+        $sourcePath = collect([$this->sourcePath, $handle])->filter()->implode('/');
+
+        if ($sourcePath === $this->newPath) {
             return $this;
         }
 
-        $this->files->copyDirectory($this->sourcePath, $this->newPath);
+        $this->files->copyDirectory($sourcePath, $this->newPath);
 
         return $this;
     }

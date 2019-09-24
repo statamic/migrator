@@ -6,6 +6,10 @@ use Statamic\Facades\YAML;
 
 class CollectionMigrator extends Migrator
 {
+    use Concerns\MigratesFolder;
+
+    protected $handle;
+
     /**
      * Migrate file.
      *
@@ -13,11 +17,11 @@ class CollectionMigrator extends Migrator
      */
     public function migrate($handle)
     {
-        $this->handle = $handle;
         $this->newPath = base_path("content/collections/{$handle}");
 
         $this
             ->validateUnique()
+            ->copySourceFiles($handle)
             ->migrateYamlConfig();
     }
 

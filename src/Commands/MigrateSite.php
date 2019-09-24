@@ -52,7 +52,7 @@ class MigrateSite extends Command
     {
         $this
             ->migrateFieldsets()
-            // ->migrateCollections()
+            ->migrateCollections()
             ->migratePages()
             // ->migrateTaxonomies()
             ->migrateUsers();
@@ -95,7 +95,7 @@ class MigrateSite extends Command
             try {
                 $migrator->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
-                return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
+                return $this->line("<comment>Collection already exists:</comment> {$handle}");
             }
 
             $this->line("<info>Collection migrated:</info> {$handle}");
