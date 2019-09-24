@@ -7,6 +7,8 @@ use Statamic\Support\Str;
 
 class PagesMigrator extends Migrator
 {
+    use Concerns\MigratesFolder;
+
     protected $root;
     protected $structure = [];
     protected $entries = [];
@@ -28,22 +30,6 @@ class PagesMigrator extends Migrator
             ->createStructure()
             ->createYamlConfig()
             ->migratePagesToEntries();
-    }
-
-    /**
-     * Copy source files.
-     *
-     * return $this
-     */
-    protected function copySourceFiles()
-    {
-        if ($this->sourcePath === $this->newPath) {
-            return $this;
-        }
-
-        $this->files->copyDirectory($this->sourcePath, $this->newPath);
-
-        return $this;
     }
 
     /**
