@@ -10,9 +10,8 @@ class PagesMigrator extends Migrator
 {
     use Concerns\MigratesFolder;
 
-    protected $root;
-    protected $structure = [];
     protected $entries = [];
+    protected $structure = [];
     protected $blueprints = [];
 
     /**
@@ -80,9 +79,11 @@ class PagesMigrator extends Migrator
      * @param string $key
      * @return array
      */
-    protected function parsePageFolder($folder, $key = 'tree')
+    protected function parsePageFolder($folder, $key = 'root')
     {
         $this->entries[] = $page = YAML::parse($this->files->get("{$folder}/index.md"));
+
+        $this->blueprints[] = $page['fieldset'] ?? null;
 
         $entry = $page['id'];
 
@@ -106,13 +107,11 @@ class PagesMigrator extends Migrator
      */
     protected function createStructure()
     {
-        $tree = $this->structure['tree'];
-
         $config = [
             'title' => 'Pages',
             'expects_root' => true,
-            'root' => $this->root,
-            'tree' => array_values($this->structure),
+            'root' => $this->structure['root']['entry'],
+            'tree' => $this->structure['root']['children'],
         ];
 
         $this->files->put($this->newPath('../../structures/pages.yaml'), YAML::dump($config));
@@ -130,7 +129,7 @@ class PagesMigrator extends Migrator
         $config = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
-            'blueprints' => $this->blueprints,
+            'blueprints' => collect($this->blueprints)->filter()->unique()->values()->all(),
             'structure' => 'pages',
         ];
 
