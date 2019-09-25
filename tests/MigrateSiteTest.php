@@ -14,6 +14,10 @@ class MigrateSiteTest extends TestCase
             'site' => base_path('site'),
             'users' => base_path('users'),
             'blueprints' => resource_path('blueprints'),
+            'blog' => base_path('content/collections/blog'),
+            'blogCollectionConfig' => base_path('content/collections/blog.yaml'),
+            'things' => base_path('content/collections/things'),
+            'thingsCollectionConfig' => base_path('content/collections/things.yaml'),
             'pages' => base_path('content/collections/pages'),
             'pagesCollectionConfig' => base_path('content/collections/pages.yaml'),
             'pagesStructureConfig' => base_path('content/structures/pages.yaml'),
@@ -40,17 +44,33 @@ class MigrateSiteTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_pages_to_a_collection_with_structure()
+    function it_migrates_collections()
     {
-        $this->assertFileNotExists($this->paths('pages'));
-        $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
-        $this->assertFileNotExists($this->paths('pagesStructureConfig'));
+        $this->assertFileNotExists($this->paths('blog'));
+        $this->assertFileNotExists($this->paths('blogCollectionConfig'));
+        $this->assertFileNotExists($this->paths('things'));
+        $this->assertFileNotExists($this->paths('thingsCollectionConfig'));
 
         $this->artisan('statamic:migrate:site');
 
-        $this->assertCount(9, $this->files->files($this->paths('pages')));
-        $this->assertFileExists($this->paths('pagesStructureConfig'));
+        $this->assertFileExists($this->paths('blogCollectionConfig'));
+        $this->assertCount(5, $this->files->files($this->paths('blog')));
+        $this->assertFileExists($this->paths('thingsCollectionConfig'));
+        $this->assertCount(9, $this->files->files($this->paths('things')));
+    }
+
+    /** @test */
+    function it_migrates_pages_to_a_collection_with_structure()
+    {
+        $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
+        $this->assertFileNotExists($this->paths('pagesStructureConfig'));
+        $this->assertFileNotExists($this->paths('pages'));
+
+        $this->artisan('statamic:migrate:site');
+
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
+        $this->assertFileExists($this->paths('pagesStructureConfig'));
+        $this->assertCount(9, $this->files->files($this->paths('pages')));
     }
 
     /** @test */
