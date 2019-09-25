@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\YAML;
 use Illuminate\Filesystem\Filesystem;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -74,5 +75,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getFolderFromPath($path)
     {
         return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', $path);
+    }
+
+    protected function assertParsedYamlEquals($expected, $path)
+    {
+        return $this->assertEquals($expected, YAML::parse($this->files->get($path)));
     }
 }
