@@ -2,8 +2,9 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Facades\YAML;
 use Statamic\Support\Str;
+use Statamic\Facades\YAML;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
@@ -30,6 +31,34 @@ class PagesMigrator extends Migrator
             ->createStructure()
             ->createYamlConfig()
             ->migratePagesToEntries();
+    }
+
+    /**
+     * Validate unique.
+     *
+     * @throws AlreadyExistsException
+     * @return $this
+     */
+    protected function validateUnique()
+    {
+        if ($this->overwrite) {
+            return $this;
+        }
+
+        $newPaths = [
+            $this->newPath('../pages.yaml'),
+            $this->newPath('../../structures/pages.yaml'),
+        ];
+
+        collect($newPaths)
+            ->filter(function ($path) {
+                return $this->files->exists($path);
+            })
+            ->each(function ($path) {
+                throw new AlreadyExistsException;
+            });
+
+        return $this;
     }
 
     /**

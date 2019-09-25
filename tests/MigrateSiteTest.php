@@ -15,7 +15,8 @@ class MigrateSiteTest extends TestCase
             'users' => base_path('users'),
             'blueprints' => resource_path('blueprints'),
             'pages' => base_path('content/collections/pages'),
-            'pagesStructure' => base_path('content/structures/pages.yaml'),
+            'pagesCollectionConfig' => base_path('content/collections/pages.yaml'),
+            'pagesStructureConfig' => base_path('content/structures/pages.yaml'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -41,13 +42,15 @@ class MigrateSiteTest extends TestCase
     /** @test */
     function it_migrates_pages_to_a_collection_with_structure()
     {
-        $this->assertCount(0, $this->files->files($this->paths('pages')));
-        $this->assertFileNotExists($this->paths('pagesStructure'));
+        $this->assertFileNotExists($this->paths('pages'));
+        $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
+        $this->assertFileNotExists($this->paths('pagesStructureConfig'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(9, $this->files->files($this->paths('pages')));
-        $this->assertFileExists($this->paths('pagesStructure'));
+        $this->assertFileExists($this->paths('pagesStructureConfig'));
+        $this->assertFileExists($this->paths('pagesCollectionConfig'));
     }
 
     /** @test */
