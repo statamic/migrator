@@ -34,7 +34,7 @@ class YAML
     /**
      * Detect parser (symfony or spyc).
      *
-     * @return bool
+     * @return bool|null
      */
     public static function detect()
     {
