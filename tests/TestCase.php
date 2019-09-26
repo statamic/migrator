@@ -2,7 +2,7 @@
 
 namespace Tests;
 
-use Statamic\Facades\YAML;
+use Statamic\Migrator\YAML;
 use Illuminate\Filesystem\Filesystem;
 
 class TestCase extends \Orchestra\Testbench\TestCase

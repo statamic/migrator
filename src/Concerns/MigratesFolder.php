@@ -2,7 +2,7 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Facades\YAML;
+use Statamic\Migrator\YAML;
 
 trait MigratesFolder
 {

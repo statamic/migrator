@@ -2,7 +2,7 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Facades\YAML;
+use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {

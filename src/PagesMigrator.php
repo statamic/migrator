@@ -3,7 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Support\Str;
-use Statamic\Facades\YAML;
+use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator

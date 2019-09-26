@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Facades\YAML;
 use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\UserMigrator;
