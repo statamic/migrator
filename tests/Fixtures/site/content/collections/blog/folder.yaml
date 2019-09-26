@@ -1,3 +1,5 @@
 order: date
 fieldset: post
 template: blog/post
+seo:
+  description: @seo:content
