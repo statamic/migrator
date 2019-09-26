@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Spyc;
+use Exception;
 use Statamic\Facades\File;
 use Statamic\Facades\Pattern;
 use Statamic\Facades\YAML as StatamicYAML;
@@ -17,11 +18,17 @@ class YAML
      */
     public static function parse($str)
     {
-        if (static::detectParser() === 'spyc') {
-            return static::parseSpyc($str);
+        if ($parser = static::detect()) {
+            return static::{$parser}($str);
         }
 
-        return StatamicYAML::parse($str);
+        try {
+            $parsed = static::symfony($str);
+        } catch (Exception $exception) {
+            $parsed = static::spyc($str);
+        }
+
+        return $parsed;
     }
 
     /**
@@ -29,15 +36,26 @@ class YAML
      *
      * @return bool
      */
-    public static function detectParser()
+    public static function detect()
     {
         if (File::exists($path = base_path('site/settings/system.yaml'))) {
-            if (preg_match('/yaml_parser:\s*symfony\s*$/', File::get($path), $matches)) {
-                return 'symfony';
-            }
+            return preg_match('/yaml_parser:\s*symfony\s*$/', File::get($path), $matches)
+                ? 'symfony'
+                : 'spyc';
         }
 
-        return 'spyc';
+        return null;
+    }
+
+    /**
+     * Parse symfony yaml.
+     *
+     * @param array $str
+     * @return array
+     */
+    public static function symfony($str)
+    {
+        return StatamicYAML::parse($str);
     }
 
     /**
@@ -46,7 +64,7 @@ class YAML
      * @param string $str
      * @return array
      */
-    public static function parseSpyc($str)
+    public static function spyc($str)
     {
         if (empty($str)) {
             return [];

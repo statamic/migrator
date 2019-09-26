@@ -17,21 +17,13 @@ class YamlTest extends TestCase
     function it_detects_parser()
     {
         $this->assertFileNotExists($this->path());
-        $this->assertEquals('spyc', YAML::detectParser());
+        $this->assertEquals(null, YAML::detect());
 
         $this->files->put($this->path(), "yaml_parser: spyc\n");
-        $this->assertEquals('spyc', YAML::detectParser());
+        $this->assertEquals('spyc', YAML::detect());
 
         $this->files->put($this->path(), "yaml_parser: symfony\n");
-        $this->assertEquals('symfony', YAML::detectParser());
-    }
-
-    /** @test */
-    function it_defers_to_statamic_yaml_facade_when_dumping()
-    {
-        $data = ['description' => '@seo:pro'];
-
-        $this->assertEquals("description: '@seo:pro'\n", Yaml::dump($data));
+        $this->assertEquals('symfony', YAML::detect());
     }
 
     /** @test */
@@ -49,15 +41,13 @@ class YamlTest extends TestCase
     {
         $yaml = "description: @seo:pro\n";
 
-        $this->assertEquals(['description' => '@seo:pro'], Yaml::parse($yaml));
-
         $this->files->put($this->path(), "yaml_parser: spyc\n");
 
         $this->assertEquals(['description' => '@seo:pro'], Yaml::parse($yaml));
     }
 
     /** @test */
-    function it_cannot_parse_spicey_yaml_if_set_to_symfony()
+    function it_cannot_parse_spicey_yaml_if_site_settings_explicitly_set_to_symfony()
     {
         $yaml = "description: @seo:pro\n";
 
@@ -66,5 +56,20 @@ class YamlTest extends TestCase
         $this->expectException(Exception::class);
 
         YAML::parse($yaml);
+    }
+
+    /** @test */
+    function it_falls_back_to_spicey_parsing_if_necesary_when_it_cannot_detect_site_settings()
+    {
+        $this->assertEquals(['description' => '@seo:pro'], Yaml::parse("description: '@seo:pro'\n"));
+        $this->assertEquals(['description' => '@seo:pro'], Yaml::parse("description: @seo:pro\n"));
+    }
+
+    /** @test */
+    function it_defers_to_statamic_yaml_facade_when_dumping()
+    {
+        $data = ['description' => '@seo:pro'];
+
+        $this->assertEquals("description: '@seo:pro'\n", Yaml::dump($data));
     }
 }
