@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Tests\TestCase;
+use Statamic\Facades\Entry;
 use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigratePagesTest extends TestCase
@@ -34,7 +35,7 @@ class MigratePagesTest extends TestCase
 
         $this->assertFileExists($this->collectionsPath('../structures/pages.yaml'));
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
-        $this->assertCount(9, $this->files->files($this->collectionsPath('pages')));
+        $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
         $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
     }
 
@@ -74,7 +75,8 @@ class MigratePagesTest extends TestCase
                 [
                     'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
                     'children' => [
-                        ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6']
+                        ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                        ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
                     ]
                 ],
                 ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
@@ -95,5 +97,28 @@ class MigratePagesTest extends TestCase
         ];
 
         $this->assertParsedYamlEquals($expected, $this->collectionsPath('../structures/pages.yaml'));
+    }
+
+    /** @test */
+    function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
+    {
+        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $expected = [
+            'about-sub-page-2', // There are two pages with this v2 folder name, so we should expect an incremented slug.
+            'about-sub-page',
+            'about',
+            'blog',
+            'contact',
+            'gallery-sub-page',
+            'gallery-sub-sub-page',
+            'gallery',
+            'home',
+            'things',
+        ];
+
+        $this->assertEquals($expected, Entry::all()->map->slug()->all());
     }
 }

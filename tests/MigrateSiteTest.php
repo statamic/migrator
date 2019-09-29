@@ -70,7 +70,7 @@ class MigrateSiteTest extends TestCase
 
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
         $this->assertFileExists($this->paths('pagesStructureConfig'));
-        $this->assertCount(9, $this->files->files($this->paths('pages')));
+        $this->assertCount(10, $this->files->files($this->paths('pages')));
     }
 
     /** @test */

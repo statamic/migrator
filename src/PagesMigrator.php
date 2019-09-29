@@ -81,8 +81,13 @@ class PagesMigrator extends Migrator
      */
     protected function parsePageFolder($folder, $key = 'root')
     {
-        $this->entries[] = $page = YAML::parse($this->files->get("{$folder}/index.md"));
+        $page = YAML::parse($this->files->get("{$folder}/index.md"));
 
+        $page['slug'] = $key === 'root'
+            ? Str::slug($page['title'])
+            : preg_replace('/.*\/[0-9]*\.([^\/]*)$/', '$1', $folder);
+
+        $this->entries[] = $page;
         $this->blueprints[] = $page['fieldset'] ?? null;
 
         $entry = $page['id'];
@@ -152,12 +157,33 @@ class PagesMigrator extends Migrator
                 return $this->migrateFieldsetToBlueprint($entry);
             })
             ->map(function ($entry) {
-                $this->files->put($this->newPath(Str::slug($entry['title'])).'.md', $this->dumpEntryToMarkdown($entry));
+                $this->files->put($this->generateEntryPath($entry), $this->dumpEntryToMarkdown($entry));
             });
 
         return $this;
     }
 
+    /**
+     * Generate entry path.
+     *
+     * @param array $entry
+     * @param int $number
+     * @return string
+     */
+    protected function generateEntryPath($entry, $number = 1)
+    {
+        $appended = $number > 1
+            ? "-{$number}"
+            : null;
+
+        $path = $this->newPath("{$entry['slug']}{$appended}.md");
+
+        if ($this->files->exists($path)) {
+            return $this->generateEntryPath($entry, ++$number);
+        }
+
+        return $path;
+    }
 
     /**
      * Migrate fieldset to blueprint.
