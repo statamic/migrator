@@ -13,6 +13,7 @@ class MigratePagesTest extends TestCase
         return [
             base_path('content/collections'),
             base_path('content/structures'),
+            base_path('site'),
         ];
     }
 
@@ -52,6 +53,27 @@ class MigratePagesTest extends TestCase
             'blueprints' => [
                 'home',
                 'about',
+                'gallery',
+            ],
+            'structure' => 'pages',
+        ];
+
+        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
+    }
+
+    /** @test */
+    function it_migrates_all_non_hidden_fieldsets_from_site_folder_when_available()
+    {
+        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $expected = [
+            'title' => 'Pages',
+            'route' => '{{ parent_uri }}/{{ slug }}',
+            'blueprints' => [
+                'diary_entry',
                 'gallery',
             ],
             'structure' => 'pages',

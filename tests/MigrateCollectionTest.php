@@ -65,7 +65,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_route_from_settings_file_in_site()
+    function it_migrates_route_from_site_folder_when_available()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/collections/blog', $this->collectionsPath('blog'));
         $this->files->copy(__DIR__.'/Fixtures/site/settings/routes.yaml', $this->settingsPath('routes.yaml'));

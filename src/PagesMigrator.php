@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
@@ -12,7 +13,7 @@ class PagesMigrator extends Migrator
 
     protected $entries = [];
     protected $structure = [];
-    protected $blueprints = [];
+    protected $usedBlueprints = [];
 
     /**
      * Migrate file.
@@ -88,7 +89,7 @@ class PagesMigrator extends Migrator
             : preg_replace('/.*\/[0-9]*\.([^\/]*)$/', '$1', $folder);
 
         $this->entries[] = $page;
-        $this->blueprints[] = $page['fieldset'] ?? null;
+        $this->usedBlueprints[] = $page['fieldset'] ?? null;
 
         $entry = $page['id'];
 
@@ -134,13 +135,34 @@ class PagesMigrator extends Migrator
         $config = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
-            'blueprints' => collect($this->blueprints)->filter()->unique()->values()->all(),
+            'blueprints' => $this->migrateConfiguredBlueprints(),
             'structure' => 'pages',
         ];
 
         $this->files->put($this->newPath('../pages.yaml'), YAML::dump($config));
 
         return $this;
+    }
+
+    /**
+     * Migrate configured blueprints.
+     *
+     * @return array
+     */
+    protected function migrateConfiguredBlueprints()
+    {
+        $blueprints = collect($this->usedBlueprints)->filter()->unique();
+
+        if ($this->files->exists($path = base_path('site/settings/fieldsets'))) {
+            $blueprints = collect($this->files->files($path))
+                ->reject(function ($blueprint) {
+                    return Arr::get(YAML::parse($blueprint->getContents()), 'hide', false);
+                })
+                ->map
+                ->getFilenameWithoutExtension();
+        }
+
+        return collect($blueprints)->values()->all();
     }
 
     /**
