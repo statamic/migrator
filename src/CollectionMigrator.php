@@ -6,7 +6,8 @@ use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesFolder;
+    use Concerns\MigratesFolder,
+        Concerns\MigratesRoute;
 
     protected $handle;
 
@@ -38,7 +39,9 @@ class CollectionMigrator extends Migrator
         $config->put('blueprints', [$config->get('fieldset')]);
         $config->forget('fieldset');
 
-        $this->files->put($this->newPath("../{$this->handle}.yaml"), YAML::dump($config));
+        $config->put('route', $this->migrateRoute("collections.{$this->handle}", "/{$this->handle}/{slug}"));
+
+        $this->files->put($this->newPath("../{$this->handle}.yaml"), YAML::dump($config->all()));
         $this->files->delete($this->newPath('folder.yaml'));
 
         return $this;
