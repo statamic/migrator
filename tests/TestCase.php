@@ -81,4 +81,17 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return $this->assertEquals($expected, YAML::parse($this->files->get($path)));
     }
+
+    protected function assertParsedYamlContains($expected, $path)
+    {
+        $parsed = collect(YAML::parse($this->files->get($path)));
+
+        if (! is_array($expected)) {
+            return $this->assertContains($expected, $parsed->all());
+        }
+
+        $key = key($expected);
+
+        return $this->assertEquals($expected[$key], $parsed[$key]);
+    }
 }
