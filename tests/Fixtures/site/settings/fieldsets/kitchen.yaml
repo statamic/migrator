@@ -1,0 +1,203 @@
+title: 'Kitchen Sink'
+hide: true
+taxonomies: true
+sections:
+  main:
+    display: Main
+    fields:
+      story:
+        type: bard
+        display: 'The Bard'
+        sets:
+          quote:
+            fields:
+              text:
+                type: text
+              cite:
+                type: text
+          image:
+            fields:
+              image:
+                type: assets
+                container: main
+                folder: img
+                max_files: 1
+              alignment:
+                type: select
+                default: left
+                options:
+                  left: Left
+                  center: Center
+                  right: Right
+      text:
+        type: text
+        instructions: 'The most basic text entry available.'
+      textarea:
+        type: textarea
+        instructions: 'Multi-line text.'
+      integer:
+        type: integer
+        instructions: 'Like the text field, but only accepts integers.'
+      hidden:
+        type: hidden
+        instructions: |
+          You'd only see this if you're looking at the fieldset.
+          Setting a default value is a good way to have a value automatically added to the content.
+
+        default: 'This is hidden!'
+      toggle:
+        type: toggle
+        instructions: 'Saves `true` to the content if toggled on.'
+      select:
+        type: select
+        instructions: 'A single selection field.'
+        options:
+          one: First
+          two: Second
+      radio:
+        type: radio
+        instructions: 'Single selection field, useful for displaying all options at a glance.'
+        width: 66
+        options:
+          one: First
+          two: Second
+      radio_inline:
+        type: radio
+        display: 'Inline Radios'
+        instructions: 'Radios again, but displayed inline.'
+        inline: true
+        width: 33
+        options:
+          one: First
+          two: Second
+      checkboxes:
+        type: checkboxes
+        instructions: 'Multiple selection field.'
+        options:
+          one: First
+          two: Second
+      markdown:
+        type: markdown
+        cheatsheet: true
+        instructions: 'A Markdown authoring experience with keyboard shortcuts and syntax highlighting.'
+      redactor:
+        type: redactor
+        instructions: 'The standard WYSIWYG. Write how you want it to be displayed, but saves as HTML.'
+      yaml:
+        type: yaml
+        instructions: 'A nice syntax highlighted YAML input. Great for developers.'
+      array:
+        type: array
+        instructions: 'Create an on-the-fly array with control over both keys and values.'
+      array_keyed:
+        type: array
+        display: 'Array with pre-defined keys'
+        instructions: 'Keys can be pre-defined to restrict only value entry.'
+        keys:
+          one: one
+          two: two
+      list:
+        type: list
+        instructions: 'A basic reorderable list (array) field.'
+      taggable:
+        display: Tags
+        type: tags
+        instructions: 'A familiar tagging UI for creating a simple list of values.'
+      date:
+        type: date
+        instructions: 'Date selection with optional time.'
+        allow_blank: true
+      time:
+        type: time
+        instructions: 'Just time selection.'
+      table:
+        type: table
+        instructions: 'Create an on-the-fly table with variable amounts of rows and columns.'
+      assets:
+        type: assets
+        container: main
+        max_files: 5
+        instructions: 'Choose existing assets and upload new ones.'
+      video:
+        type: video
+      suggest:
+        type: suggest
+        instructions: 'Pre-defined selections that are refined as you type. Optionally allow new values to be entered.'
+        options:
+          one: First
+          two: Second
+      collection:
+        type: collection
+        instructions: 'A list of entries from one or more collections.'
+        collection:
+          - blog
+      taxonomy:
+        type: taxonomy
+        instructions: 'A list of terms from one or more taxonomies.'
+        taxonomy: tags
+      pages:
+        type: pages
+        instructions: 'A list of pages. A parent page may be specified to narrow down selections.'
+      users:
+        type: users
+        instructions: 'A list of users.'
+      collections:
+        type: collections
+        instructions: 'A list of collections.'
+      fieldset:
+        type: fieldset
+        instructions: 'A list of fieldsets.'
+      form:
+        type: form
+        instructions: 'A list of forms (formsets).'
+      template:
+        type: template
+        instructions: 'A list of theme templates.'
+      theme:
+        type: theme
+        instructions: 'A list of themes.'
+      grid:
+        type: grid
+        instructions: 'A repeatable and reorderable container of fields.'
+        fields:
+          actor:
+            type: text
+          character:
+            type: select
+            options:
+              'Luke Skywalker': 'Luke Skywalker'
+              'Han Solo': 'Han Solo'
+      replicator:
+        type: replicator
+        instructions: |
+          A repeatable and reorderable container of _multiple sets_ of fields. Perfect for long-form or art directed content.
+
+        sets:
+          text:
+            display: Text
+            fields:
+              markdown:
+                type: markdown
+                cheatsheet: true
+                instructions: 'A Markdown authoring experience with keyboard shortcuts and syntax highlighting.'
+          image:
+            display: Image
+            fields:
+              image:
+                type: assets
+                container: main
+                max_files: 1
+              caption:
+                type: text
+          quote:
+            display: 'Pull quote'
+            fields:
+              text:
+                type: text
+              cite:
+                type: text
+              pull:
+                type: radio
+                options:
+                  left: 'Left Align'
+                  right: 'Right Align'

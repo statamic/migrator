@@ -1,0 +1,17 @@
+title: Things
+create_title: Add New Thing
+hide: true
+fields:
+  title:
+    type: text
+    display: Title
+    width: 66
+  slug:
+    type: text
+    width: 33
+  amazon_id:
+    display: Amazon Product ID
+    type: text
+  photo:
+    display: Image URL
+    type: text

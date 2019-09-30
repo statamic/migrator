@@ -1,0 +1,38 @@
+title: Long Form Post
+hide: true
+fields:
+  title:
+    type: text
+  template:
+    type: hidden
+    default: blog/long_form
+  long_form:
+    type: bard
+    display: Long Form Content
+    sets:
+      image:
+        display: Image
+        fields:
+          photo:
+            display: Photo
+            type: assets
+            container: main
+            folder: img
+            max_files: 1
+          caption:
+            type: text
+          size:
+            type: radio
+            default: Normal
+            options:
+              - Normal
+              - Oversized
+      quote:
+        display: Pull Quote
+        fields:
+          quote:
+            display: The Quote
+            type: markdown
+          cite:
+            type: text
+            display: Cite
