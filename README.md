@@ -67,6 +67,8 @@ In v3, pages are now stored as a collection, with a separate _'structure'_ to ma
 2. Run `php please migrate:pages`.
 3. Manually test and address errors and warnings as you see fit.
 
+_**Note:** In v2, when creating a page, we displayed available fieldsets that weren't hidden via `hide: true`.  When running this migrator on your individual pages collection, we generate a new list of blueprints based on which were used throughout your various pages.  If you wish to preserve your configuration of available fieldsets, copy your old `site` folder into your v3 project root before running this migration._
+
 ### Taxonomy migrator
 
 In v3, taxonomies are mostly plug-and-play, apart from a few minor changes to config structure.  To migrate a taxonomy...
