@@ -25,6 +25,7 @@ class FieldsetMigrator extends Migrator
         $this
             ->validateUnique()
             ->migrateToBlueprintSchema()
+            ->removeOldFunctionality()
             ->saveMigratedToYaml($this->blueprint);
     }
 
@@ -162,6 +163,18 @@ class FieldsetMigrator extends Migrator
             ->forget('show_when')
             ->forget('hide_when')
             ->put($key, $conditions);
+    }
+
+    /**
+     * Remove old fieldset functionality that doesn't apply to blueprints.
+     *
+     * @return $this
+     */
+    protected function removeOldFunctionality()
+    {
+        unset($this->blueprint['hide']);
+
+        return $this;
     }
 
     /**
