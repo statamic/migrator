@@ -1,0 +1,8 @@
+title: 'Main Assets'
+path: assets
+url: /assets
+assets:
+  img/coffee-mug.jpg:
+    title: 'Coffee Mug'
+  img/stetson.jpg:
+    alt: 'Fancy hat!'

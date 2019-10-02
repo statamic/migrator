@@ -8,10 +8,11 @@ use Statamic\Extend\ServiceProvider as BaseProvider;
 class ServiceProvider extends BaseProvider
 {
     protected $commands = [
+        Commands\MigrateAssetContainer::class,
         Commands\MigrateCollection::class,
         Commands\MigrateFieldset::class,
-        Commands\MigrateSite::class,
         Commands\MigratePages::class,
+        Commands\MigrateSite::class,
         Commands\MigrateUser::class,
     ];
 
