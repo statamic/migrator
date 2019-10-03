@@ -53,7 +53,10 @@ trait MigratesFile
      */
     protected function saveMigratedYaml($migrated, $path = null)
     {
-        $this->saveMigratedContents(YAML::dump(collect($migrated)->all()), $path);
+        $content = collect($migrated)->get('content');
+        $migrated = collect($migrated)->except('content')->all();
+
+        $this->saveMigratedContents(YAML::dump($migrated, $content), $path);
     }
 
     /**
@@ -62,7 +65,7 @@ trait MigratesFile
      * @param string $migrated
      * @param string|null $path
      */
-    public function saveMigratedContents($migrated, $path = null)
+    protected function saveMigratedContents($migrated, $path = null)
     {
         $path = $this->normalizePath($path ?? $this->newPath);
 
@@ -73,5 +76,17 @@ trait MigratesFile
         }
 
         $this->files->put($path, $migrated);
+    }
+
+    /**
+     * Allow our YAML wrapper to migrate a yaml file, updating document content and Spyc formatting as necessary.
+     *
+     * @param string|null $path
+     */
+    public function updateYaml($path)
+    {
+        $path = $this->normalizePath($path ?? $this->newPath);
+
+        $this->saveMigratedYaml($this->getSourceYaml($path), $path);
     }
 }
