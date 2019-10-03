@@ -131,10 +131,10 @@ php please migrate:settings
 
 ### Template migrator
 
-In v3, [antlers templating](https://statamic.dev/antlers) has undergone a fair number of changes.  The most obviouis change is that antlers now uses the `.antlers.html` file extension.  However, you'll also notice a few changes in the available [tags](https://statamic.dev/tags), [modifiers](https://statamic.dev/modifiers), and how variables [cascade]().  We cannot guarantee a complete migration, but this migration attempts to update the most obvious stuff.  To migrate an antlers template:
+In v3, [antlers templating](https://statamic.dev/antlers) has undergone a fair number of changes.  The most obvious change is that antlers now uses the `.antlers.html` file extension.  However, you'll also notice a few changes in the available [tags](https://statamic.dev/tags), [modifiers](https://statamic.dev/modifiers), and how variables [cascade]().  We cannot guarantee a complete migration, but this migration attempts to update the most obvious stuff.  To migrate a template:
 
 ```
-please migrate:template redwood/templates/about.html
+php please migrate:template redwood/templates/about.html
 ```
 
 Be sure to pass a path relative to your `site/themes` folder.
