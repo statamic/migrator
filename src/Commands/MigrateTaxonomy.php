@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\TaxonomyMigrator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -40,17 +39,5 @@ class MigrateTaxonomy extends Command
         }
 
         $this->info("Taxonomy [{$handle}] has been successfully migrated.");
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['handle', InputArgument::REQUIRED, 'The taxonomy handle to be migrated'],
-        ];
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\AssetContainerMigrator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,23 +33,11 @@ class MigrateAssetContainer extends Command
         $handle = $this->argument('handle');
 
         try {
-            AssetContainerMigrator::sourcePath(base_path('content/assets'))->overwrite(true)->migrate($handle);
+            AssetContainerMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
         } catch (NotFoundException $exception) {
             return $this->error("Asset container folder [{$handle}] could not be found.");
         }
 
         $this->info("Asset container [{$handle}] has been successfully migrated.");
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['handle', InputArgument::REQUIRED, 'The asset container handle to be migrated'],
-        ];
     }
 }

@@ -8,26 +8,34 @@ use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class UserMigrator extends Migrator
 {
-    use Concerns\MigratesSingleYamlFile;
+    use Concerns\MigratesSingleFile;
 
     protected $user;
 
     /**
-     * Migrate file.
-     *
-     * @param string $handle
+     * Perform migration.
      */
-    public function migrate($handle)
+    public function migrate()
     {
-        $this->user = $this->getSourceYaml($handle);
-
         $this
+            ->parseUser()
             ->validateEmail()
-            ->setNewPath()
+            ->setNewPathWithEmailAsHandle()
             ->validateUnique()
             ->migrateUserSchema()
-            ->removeOldUser($handle)
-            ->saveMigratedToYaml($this->user);
+            ->saveMigratedYaml($this->user);
+    }
+
+    /**
+     * Parse user.
+     *
+     * @return $this
+     */
+    protected function parseUser()
+    {
+        $this->user = $this->getSourceYamlFromSite("users/{$this->handle}.yaml");
+
+        return $this;
     }
 
     /**
@@ -50,7 +58,7 @@ class UserMigrator extends Migrator
      *
      * @return $this
      */
-    protected function setNewPath()
+    protected function setNewPathWithEmailAsHandle()
     {
         $email = $this->user['email'];
 
@@ -73,21 +81,6 @@ class UserMigrator extends Migrator
         }
 
         $this->user = $user->except('first_name', 'last_name', 'email')->all();
-
-        return $this;
-    }
-
-    /**
-     * Remove old user file.
-     *
-     * @param string $handle
-     * @return $this
-     */
-    protected function removeOldUser($handle)
-    {
-        if ($this->files->exists($oldFileInNewPath = base_path("users/{$handle}.yaml"))) {
-            $this->files->delete($oldFileInNewPath);
-        }
 
         return $this;
     }

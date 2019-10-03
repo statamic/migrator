@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FieldsetMigrator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -34,23 +33,11 @@ class MigrateFieldset extends Command
         $handle = $this->argument('handle');
 
         try {
-            FieldsetMigrator::sourcePath(resource_path('blueprints'))->overwrite(true)->migrate($handle);
+            FieldsetMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
         } catch (NotFoundException $exception) {
             return $this->error("Fieldset [{$handle}] could not be found.");
         }
 
         $this->info("Fieldset [{$handle}] has been successfully migrated to a blueprint.");
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['handle', InputArgument::REQUIRED, 'The fieldset handle to be migrated'],
-        ];
     }
 }

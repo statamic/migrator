@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\PagesMigrator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,11 +31,21 @@ class MigratePages extends Command
     public function handle()
     {
         try {
-            PagesMigrator::sourcePath(base_path('content/collections/pages'))->overwrite(true)->migrate('pages');
+            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate('pages');
         } catch (NotFoundException $exception) {
             return $this->error("Pages collection folder could not be found.");
         }
 
         $this->info("Pages collection has been successfully migrated.");
+    }
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [];
     }
 }

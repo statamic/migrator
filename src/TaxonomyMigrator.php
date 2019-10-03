@@ -5,7 +5,7 @@ namespace Statamic\Migrator;
 class TaxonomyMigrator extends Migrator
 {
     /**
-     * Migrate file.
+     * Perform migration.
      *
      * @param string $handle
      */

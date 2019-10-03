@@ -16,7 +16,7 @@ trait MigratesRoute
      */
     protected function migrateRoute($key, $default = null)
     {
-        if ($this->files->exists($path = base_path('site/settings/routes.yaml'))) {
+        if ($this->files->exists($path = $this->sitePath('settings/routes.yaml'))) {
             $routes = YAML::parse($this->files->get($path));
         }
 

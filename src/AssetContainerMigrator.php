@@ -6,23 +6,17 @@ use Statamic\Migrator\YAML;
 
 class AssetContainerMigrator extends Migrator
 {
-    use Concerns\MigratesFolder;
-
-    protected $handle;
-
     /**
-     * Migrate file.
+     * Perform migration.
      *
      * @param string $handle
      */
-    public function migrate($handle)
+    public function migrate()
     {
-        $this->handle = $handle;
-        $this->newPath = base_path('content/assets');
-
         $this
-            ->validateUnique()
-            ->copySourceFiles($handle)
+            ->setNewPath(base_path($relativePath = 'content/assets'))
+            // ->validateUnique()
+            ->copyDirectoryFromSiteToNewPath($relativePath)
             ->migrateYamlConfig();
     }
 

@@ -6,24 +6,17 @@ use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesFolder,
-        Concerns\MigratesRoute;
-
-    protected $handle;
+    use Concerns\MigratesRoute;
 
     /**
-     * Migrate file.
-     *
-     * @param string $handle
+     * Perform migration.
      */
-    public function migrate($handle)
+    public function migrate()
     {
-        $this->handle = $handle;
-        $this->newPath = base_path("content/collections/{$handle}");
-
         $this
+            ->setNewPath(base_path($relativePath = "content/collections/{$this->handle}"))
             ->validateUnique()
-            ->copySourceFiles($handle)
+            ->copyDirectoryFromSiteToNewPath($relativePath)
             ->migrateYamlConfig();
     }
 

@@ -7,26 +7,36 @@ use Statamic\Support\Str;
 
 class FieldsetMigrator extends Migrator
 {
-    use Concerns\MigratesSingleYamlFile;
+    use Concerns\MigratesSingleFile;
 
     protected $blueprint;
 
     /**
-     * Migrate file.
+     * Perform migration.
      *
      * @param string $handle
      */
-    public function migrate($handle)
+    public function migrate()
     {
-        $this->newPath = resource_path("blueprints/{$handle}.yaml");
-
-        $this->blueprint = $this->getSourceYaml($handle);
-
         $this
+            ->parseBlueprint()
+            ->setNewPath(resource_path("blueprints/{$this->handle}.yaml"))
             ->validateUnique()
             ->migrateToBlueprintSchema()
             ->removeOldFunctionality()
-            ->saveMigratedToYaml($this->blueprint);
+            ->saveMigratedYaml($this->blueprint);
+    }
+
+    /**
+     * Parse blueprint.
+     *
+     * @return $this
+     */
+    protected function parseBlueprint()
+    {
+        $this->blueprint = $this->getSourceYamlFromSite("settings/fieldsets/{$this->handle}.yaml");
+
+        return $this;
     }
 
     /**

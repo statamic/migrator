@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\UserMigrator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -35,7 +34,7 @@ class MigrateUser extends Command
         $handle = $this->argument('handle');
 
         try {
-            UserMigrator::sourcePath(base_path('users'))->overwrite(true)->migrate($handle);
+            UserMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
         } catch (NotFoundException $exception) {
             return $this->error("User [{$handle}] could not be found.");
         } catch (EmailRequiredException $exception) {
@@ -43,17 +42,5 @@ class MigrateUser extends Command
         }
 
         $this->info("User [{$handle}] has been successfully migrated.");
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['handle', InputArgument::REQUIRED, 'The user handle to be migrated'],
-        ];
     }
 }

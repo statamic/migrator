@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
@@ -10,7 +9,6 @@ use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\CollectionMigrator;
-use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
 
@@ -66,13 +64,9 @@ class MigrateSite extends Command
      */
     protected function migrateFieldsets()
     {
-        $path = base_path('site/settings/fieldsets');
-
-        $migrator = FieldsetMigrator::sourcePath($path)->overwrite($this->option('force'));
-
-        $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFileHandlesFromPath(base_path('site/settings/fieldsets'))->each(function ($handle) {
             try {
-                $migrator->migrate($handle);
+                FieldsetMigrator::handle($handle)->overwrite($this->option('force'))->migrate($handle);
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
             }
@@ -90,13 +84,9 @@ class MigrateSite extends Command
      */
     protected function migrateCollections()
     {
-        $path = base_path('site/content/collections');
-
-        $migrator = CollectionMigrator::sourcePath($path)->overwrite($this->option('force'));
-
-        $this->getFolderHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFolderHandlesFromPath(base_path('site/content/collections'))->each(function ($handle) {
             try {
-                $migrator->migrate($handle);
+                CollectionMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>Collection already exists:</comment> {$handle}");
             }
@@ -114,18 +104,14 @@ class MigrateSite extends Command
      */
     protected function migratePages()
     {
-        $path = base_path('site/content/pages');
-
-        $migrator = PagesMigrator::sourcePath($path)->overwrite($this->option('force'));
-
         try {
-            $migrator->migrate($handle = 'pages');
+            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
         } catch (AlreadyExistsException $exception) {
-            $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
+            $this->line("<comment>Pages collection/structure already exists:</comment> pages");
         }
 
         if (! isset($exception)) {
-            $this->line("<info>Pages collection/structure migrated:</info> {$handle}");
+            $this->line("<info>Pages collection/structure migrated:</info> pages");
         }
 
         return $this;
@@ -166,13 +152,9 @@ class MigrateSite extends Command
      */
     protected function migrateUsers()
     {
-        $path = base_path('site/users');
-
-        $migrator = UserMigrator::sourcePath($path)->overwrite($this->option('force'));
-
-        $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
+        $this->getFileHandlesFromPath(base_path('site/users'))->each(function ($handle) {
             try {
-                $migrator->overwrite($this->option('force'))->migrate($handle);
+                UserMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
             } catch (AlreadyExistsException $exception) {
                 return $this->line("<comment>User already exists:</comment> {$handle}");
             } catch (EmailRequiredException $exception) {
@@ -220,14 +202,12 @@ class MigrateSite extends Command
     }
 
     /**
-     * Get the console command options.
+     * Get the console command arguments.
      *
      * @return array
      */
-    protected function getOptions()
+    protected function getArguments()
     {
-        return [
-            ['force', null, InputOption::VALUE_NONE, 'Force migration (file will be overwritten if already exists)'],
-        ];
+        return [];
     }
 }

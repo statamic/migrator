@@ -2,10 +2,8 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Illuminate\Console\Command;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\CollectionMigrator;
-use Symfony\Component\Console\Input\InputArgument;
 use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateCollection extends Command
@@ -34,23 +32,11 @@ class MigrateCollection extends Command
         $handle = $this->argument('handle');
 
         try {
-            CollectionMigrator::sourcePath(base_path('content/collections'))->overwrite(true)->migrate($handle);
+            CollectionMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
         } catch (NotFoundException $exception) {
             return $this->error("Collection folder [{$handle}] could not be found.");
         }
 
         $this->info("Collection [{$handle}] has been successfully migrated.");
-    }
-
-    /**
-     * Get the console command arguments.
-     *
-     * @return array
-     */
-    protected function getArguments()
-    {
-        return [
-            ['handle', InputArgument::REQUIRED, 'The collection handle to be migrated'],
-        ];
     }
 }

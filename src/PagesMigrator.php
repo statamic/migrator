@@ -9,24 +9,19 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
-    use Concerns\MigratesFolder;
-
     protected $entries = [];
     protected $structure = [];
     protected $usedBlueprints = [];
 
     /**
-     * Migrate file.
-     *
-     * @param string $handle
+     * Perform migration.
      */
-    public function migrate($handle)
+    public function migrate()
     {
-        $this->newPath = base_path("content/collections/pages");
-
         $this
+            ->setNewPath(base_path("content/collections/pages"))
             ->validateUnique()
-            ->copySourceFiles()
+            ->copyDirectoryFromSiteToNewPath("content/pages")
             ->parseTree()
             ->createStructure()
             ->createYamlConfig()
