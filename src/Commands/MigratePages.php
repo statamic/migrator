@@ -4,7 +4,7 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\PagesMigrator;
-use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Migrator\Exceptions\MigratorException;
 
 class MigratePages extends Command
 {
@@ -30,9 +30,9 @@ class MigratePages extends Command
     public function handle()
     {
         try {
-            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate('pages');
-        } catch (NotFoundException $exception) {
-            return $this->error("Pages collection folder could not be found.");
+            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
+        } catch (MigratorException $exception) {
+            return $this->error($exception->getMessage());
         }
 
         $this->info("Pages collection has been successfully migrated.");

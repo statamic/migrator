@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\AssetContainerMigrator;
-use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateAssetContainer extends Command
 {
@@ -25,18 +24,9 @@ class MigrateAssetContainer extends Command
     protected $description = 'Migrate v2 asset container';
 
     /**
-     * Execute the console command.
+     * Runs migrator.
+     *
+     * @var string
      */
-    public function handle()
-    {
-        $handle = $this->argument('handle');
-
-        try {
-            AssetContainerMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
-        } catch (NotFoundException $exception) {
-            return $this->error("Asset container folder [{$handle}] could not be found.");
-        }
-
-        $this->info("Asset container [{$handle}] has been successfully migrated.");
-    }
+    protected $migrator = AssetContainerMigrator::class;
 }

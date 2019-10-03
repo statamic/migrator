@@ -4,10 +4,31 @@ namespace Statamic\Migrator\Commands;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
+use Statamic\Migrator\Exceptions\MigratorException;
 use Illuminate\Console\Command as IlluminateCommand;
 
 class Command extends IlluminateCommand
 {
+    /**
+     * Execute the console command.
+     */
+    public function handle()
+    {
+        $handle = $this->argument('handle');
+
+        try {
+            $this->migrator::handle($handle)
+                ->overwrite($this->option('force'))
+                ->migrate();
+        } catch (MigratorException $exception) {
+            return $this->error($exception->getMessage());
+        }
+
+        $descriptor = $this->migrator::descriptor();
+
+        $this->info("{$descriptor} [{$handle}] has been successfully migrated.");
+    }
+
     /**
      * Get the console command arguments.
      *

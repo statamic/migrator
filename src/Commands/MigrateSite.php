@@ -9,8 +9,8 @@ use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\CollectionMigrator;
+use Statamic\Migrator\Exceptions\MigratorException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
-use Statamic\Migrator\Exceptions\EmailRequiredException;
 
 class MigrateSite extends Command
 {
@@ -29,6 +29,27 @@ class MigrateSite extends Command
      * @var string
      */
     protected $description = 'Migrate complete v2 site folder';
+
+    /**
+     * Success count.
+     *
+     * @var int
+     */
+    protected $successCount = 0;
+
+    /**
+     * Skipped count.
+     *
+     * @var int
+     */
+    protected $skippedCount = 0;
+
+    /**
+     * Error count.
+     *
+     * @var int
+     */
+    protected $errorCount = 0;
 
     /**
      * Create a new controller creator command instance.
@@ -54,7 +75,9 @@ class MigrateSite extends Command
             // ->migrateTaxonomies()
             ->migrateUsers();
 
-        $this->info("Site successfully migrated!");
+        $errorCountDescriptor = $this->errorCount == 1 ? 'error' : 'errors';
+
+        $this->line("<info>Site migration complete:</info> {$this->skippedCount} skipped, {$this->errorCount} {$errorCountDescriptor}, {$this->successCount} successful");
     }
 
     /**
@@ -65,13 +88,7 @@ class MigrateSite extends Command
     protected function migrateFieldsets()
     {
         $this->getFileHandlesFromPath(base_path('site/settings/fieldsets'))->each(function ($handle) {
-            try {
-                FieldsetMigrator::handle($handle)->overwrite($this->option('force'))->migrate($handle);
-            } catch (AlreadyExistsException $exception) {
-                return $this->line("<comment>Blueprint already exists:</comment> {$handle}");
-            }
-
-            $this->line("<info>Fieldset migrated:</info> {$handle}");
+            $this->runMigratorOnHandle(FieldsetMigrator::class, $handle);
         });
 
         return $this;
@@ -85,13 +102,7 @@ class MigrateSite extends Command
     protected function migrateCollections()
     {
         $this->getFolderHandlesFromPath(base_path('site/content/collections'))->each(function ($handle) {
-            try {
-                CollectionMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
-            } catch (AlreadyExistsException $exception) {
-                return $this->line("<comment>Collection already exists:</comment> {$handle}");
-            }
-
-            $this->line("<info>Collection migrated:</info> {$handle}");
+            $this->runMigratorOnHandle(CollectionMigrator::class, $handle);
         });
 
         return $this;
@@ -108,10 +119,16 @@ class MigrateSite extends Command
             PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>Pages collection/structure already exists:</comment> pages");
+            $this->skippedCount++;
+        } catch (MigratorException $exception) {
+            $this->line("<error>Pages collectin/structure could not be migrated:</error> pages");
+            $this->line($exception->getMessage());
+            $this->errorCount++;
         }
 
         if (! isset($exception)) {
-            $this->line("<info>Pages collection/structure migrated:</info> pages");
+            $this->line("<info>Pages collection/structure successfully migrated:</info> pages");
+            $this->successCount++;
         }
 
         return $this;
@@ -124,22 +141,8 @@ class MigrateSite extends Command
      */
     protected function migrateTaxonomies()
     {
-        $path = base_path('site/content/taxonomies');
-
-        $migrator = TaxonomyMigrator::sourcePath($path)->overwrite($this->option('force'));
-
-        // $this->getFileHandlesFromPath($path)->each(function ($handle) use ($migrator) {
-        //     try {
-        //         $migrator->migrate($handle);
-        //     } catch (AlreadyExistsException $exception) {
-        //         return $this->line("<comment>Pages collection/structure already exists:</comment> {$handle}");
-        //     }
-
-        //     $this->line("<info>Pages migrated:</info> {$handle}");
-        // });
-
-        $this->getFileHandlesFromPath($path)->each(function ($handle) {
-            $this->line("<info>Taxonomy migrated:</info> {$handle}");
+        $this->getFileHandlesFromPath(base_path('site/content/taxonomies'))->each(function ($handle) {
+            $this->runMigratorOnHandle(UserMigrator::class, $handle);
         });
 
         return $this;
@@ -153,15 +156,7 @@ class MigrateSite extends Command
     protected function migrateUsers()
     {
         $this->getFileHandlesFromPath(base_path('site/users'))->each(function ($handle) {
-            try {
-                UserMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
-            } catch (AlreadyExistsException $exception) {
-                return $this->line("<comment>User already exists:</comment> {$handle}");
-            } catch (EmailRequiredException $exception) {
-                return $this->line("<error>Email field required to migrate user:</error> {$handle}");
-            }
-
-            $this->line("<info>User migrated:</info> {$handle}");
+            $this->runMigratorOnHandle(UserMigrator::class, $handle);
         });
 
         return $this;
@@ -199,6 +194,33 @@ class MigrateSite extends Command
         return collect($this->files->directories($path))->map(function ($path) {
             return preg_replace('/.*\/([^\/]+)/', '$1', $path);
         });
+    }
+
+    /**
+     * Run migrator on handle.
+     *
+     * @param mixed $migrator
+     * @param mixed $handle
+     */
+    protected function runMigratorOnHandle($migrator, $handle)
+    {
+        $descriptor = $migrator::descriptor();
+
+        try {
+            $migrator::handle($handle)->overwrite($this->option('force'))->migrate();
+        } catch (AlreadyExistsException $exception) {
+            $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
+            $this->skippedCount++;
+        } catch (MigratorException $exception) {
+            $this->line("<error>{$descriptor} could not be migrated:</error> {$handle}");
+            $this->line($exception->getMessage());
+            $this->errorCount++;
+        }
+
+        if (! isset($exception)) {
+            $this->line("<info>{$descriptor} successfully migrated:</info> {$handle}");
+            $this->successCount++;
+        }
     }
 
     /**

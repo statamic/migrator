@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FieldsetMigrator;
-use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateFieldset extends Command
 {
@@ -25,18 +24,9 @@ class MigrateFieldset extends Command
     protected $description = 'Migrate v2 fieldset to blueprint';
 
     /**
-     * Execute the console command.
+     * Runs migrator.
+     *
+     * @var string
      */
-    public function handle()
-    {
-        $handle = $this->argument('handle');
-
-        try {
-            FieldsetMigrator::handle($handle)->overwrite($this->option('force'))->migrate();
-        } catch (NotFoundException $exception) {
-            return $this->error("Fieldset [{$handle}] could not be found.");
-        }
-
-        $this->info("Fieldset [{$handle}] has been successfully migrated to a blueprint.");
-    }
+    protected $migrator = FieldsetMigrator::class;
 }

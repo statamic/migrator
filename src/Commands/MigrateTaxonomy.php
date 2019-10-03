@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\TaxonomyMigrator;
-use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateTaxonomy extends Command
 {
@@ -25,18 +24,9 @@ class MigrateTaxonomy extends Command
     protected $description = 'Migrate v2 taxonomy';
 
     /**
-     * Execute the console command.
+     * Runs migrator.
+     *
+     * @var string
      */
-    public function handle()
-    {
-        $handle = $this->argument('handle');
-
-        try {
-            TaxonomyMigrator::sourcePath(base_path('content/taxonomies'))->overwrite(true)->migrate($handle);
-        } catch (NotFoundException $exception) {
-            return $this->error("Taxonomy folder [{$handle}] could not be found.");
-        }
-
-        $this->info("Taxonomy [{$handle}] has been successfully migrated.");
-    }
+    protected $migrator = TaxonomyMigrator::class;
 }
