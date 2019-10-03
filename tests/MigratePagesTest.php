@@ -13,7 +13,6 @@ class MigratePagesTest extends TestCase
         return [
             base_path('content/collections'),
             base_path('content/structures'),
-            base_path('site'),
         ];
     }
 
@@ -22,15 +21,16 @@ class MigratePagesTest extends TestCase
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
     }
 
+    protected function originalPath($append = null)
+    {
+        return collect([base_path('site/content/pages'), $append])->filter()->implode('/');
+    }
+
     /** @test */
     function it_migrates_correct_collection_and_structure_files()
     {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
-
-        $this->assertFileNotExists($this->collectionsPath('../structures/pages.yaml'));
-        $this->assertFileNotExists($this->collectionsPath('pages.yaml'));
-        $this->assertCount(1, $this->files->files($this->collectionsPath('pages')));
-        $this->assertCount(5, $this->files->directories($this->collectionsPath('pages')));
+        $this->assertCount(1, $this->files->files($this->originalPath()));
+        $this->assertCount(5, $this->files->directories($this->originalPath()));
 
         $this->artisan('statamic:migrate:pages');
 
@@ -43,7 +43,25 @@ class MigratePagesTest extends TestCase
     /** @test */
     function it_migrates_yaml_config()
     {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
+        $this->artisan('statamic:migrate:pages');
+
+        $expected = [
+            'title' => 'Pages',
+            'route' => '{{ parent_uri }}/{{ slug }}',
+            'blueprints' => [
+                'diary_entry',
+                'gallery',
+            ],
+            'structure' => 'pages',
+        ];
+
+        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
+    }
+
+    /** @test */
+    function it_migrates_used_fieldsets_if_cannot_find_fieldsets_in_site()
+    {
+        $this->files->deleteDirectory(base_path('site/settings/fieldsets'));
 
         $this->artisan('statamic:migrate:pages');
 
@@ -62,31 +80,8 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_all_non_hidden_fieldsets_from_site_folder_when_available()
-    {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
-
-        $this->artisan('statamic:migrate:pages');
-
-        $expected = [
-            'title' => 'Pages',
-            'route' => '{{ parent_uri }}/{{ slug }}',
-            'blueprints' => [
-                'diary_entry',
-                'gallery',
-            ],
-            'structure' => 'pages',
-        ];
-
-        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
-    }
-
-    /** @test */
     function it_migrates_structure()
     {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
-
         $this->artisan('statamic:migrate:pages');
 
         $expected = [
@@ -124,8 +119,6 @@ class MigratePagesTest extends TestCase
     /** @test */
     function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
     {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/pages', $this->collectionsPath('pages'));
-
         $this->artisan('statamic:migrate:pages');
 
         $expected = [

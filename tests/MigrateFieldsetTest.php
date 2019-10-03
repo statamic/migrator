@@ -13,9 +13,14 @@ class MigrateFieldsetTest extends TestCase
         return resource_path('blueprints/post.yaml');
     }
 
+    protected function originalPath()
+    {
+        return base_path('site/settings/fieldsets/post.yaml');
+    }
+
     private function migrateFieldsetToBlueprint($fieldsetConfig)
     {
-        $this->files->put($this->path(), YAML::dump($fieldsetConfig));
+        $this->files->put($this->originalPath(), YAML::dump($fieldsetConfig));
 
         $this->artisan('statamic:migrate:fieldset', ['handle' => 'post']);
 

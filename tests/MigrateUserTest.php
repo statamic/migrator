@@ -12,7 +12,7 @@ class MigrateUserTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
-            'old' => base_path('users/irmagobb.yaml'),
+            'old' => base_path('site/users/irmagobb.yaml'),
             'new' => base_path('users/irmagobb@example.com.yaml'),
         ];
 
@@ -23,12 +23,10 @@ class MigrateUserTest extends TestCase
     {
         $this->files->put($this->paths('old'), YAML::dump($userConfig));
 
-        $this->assertFileExists($this->paths('old'));
         $this->assertFileNotExists($this->paths('new'));
 
         $this->artisan('statamic:migrate:user', ['handle' => 'irmagobb']);
 
-        $this->assertFileNotExists($this->paths('old'));
         $this->assertFileExists($this->paths('new'));
 
         return YAML::parse($this->files->get($this->paths('new')));

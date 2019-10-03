@@ -32,6 +32,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $this->deleteFolder($path);
             $this->prepareFolder($path);
         });
+
+        $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
     }
 
     protected function tearDown(): void
@@ -49,9 +51,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $paths = collect($this->path());
         } elseif (method_exists($this, 'paths')) {
             $paths = collect($this->paths());
+        } else {
+            $paths = collect();
         }
 
-        return $paths ?? collect();
+        $paths->push(base_path('site'));
+
+        return $paths;
     }
 
     protected function prepareFolder($path)
@@ -93,5 +99,10 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $key = key($expected);
 
         return $this->assertEquals($expected[$key], $parsed[$key]);
+    }
+
+    protected function sitePath($append = null)
+    {
+        return collect([base_path('site'), $append])->filter()->implode('/');
     }
 }

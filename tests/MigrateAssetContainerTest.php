@@ -24,8 +24,6 @@ class MigrateAssetContainerTest extends TestCase
     /** @test */
     function it_migrates_yaml_config()
     {
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site/content/assets', $this->containerPath());
-
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
         $expected = [
