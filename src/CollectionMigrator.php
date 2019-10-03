@@ -6,7 +6,8 @@ use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesRoute;
+    use Concerns\MigratesFile,
+        Concerns\MigratesRoute;
 
     /**
      * Perform migration.
@@ -17,7 +18,8 @@ class CollectionMigrator extends Migrator
             ->setNewPath(base_path($relativePath = "content/collections/{$this->handle}"))
             ->validateUnique()
             ->copyDirectoryFromSiteToNewPath($relativePath)
-            ->migrateYamlConfig();
+            ->migrateYamlConfig()
+            ->deleteOldConfig();
     }
 
     /**
@@ -27,14 +29,29 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateYamlConfig()
     {
-        $config = collect(YAML::parse($this->files->get($this->newPath('folder.yaml'))));
+        $config = $this->getSourceYaml("content/collections/{$this->handle}/folder.yaml", true);
 
-        $config->put('blueprints', [$config->get('fieldset')]);
-        $config->forget('fieldset');
+        if ($fieldset = $config->get('fieldset')) {
+            $config->put('blueprints', [$fieldset]);
+            $config->forget('fieldset');
+        }
 
-        $config->put('route', $this->migrateRoute("collections.{$this->handle}", "/{$this->handle}/{slug}"));
+        if ($route = $this->migrateRoute("collections.{$this->handle}")) {
+            $config->put('route', $route);
+        }
 
-        $this->files->put($this->newPath("../{$this->handle}.yaml"), YAML::dump($config->all()));
+        $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
+
+        return $this;
+    }
+
+    /**
+     * Delete old folder.yaml config from copied folder.
+     *
+     * @return $this
+     */
+    protected function deleteOldConfig()
+    {
         $this->files->delete($this->newPath('folder.yaml'));
 
         return $this;

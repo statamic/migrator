@@ -7,7 +7,7 @@ use Statamic\Support\Str;
 
 class FieldsetMigrator extends Migrator
 {
-    use Concerns\MigratesSingleFile;
+    use Concerns\MigratesFile;
 
     protected $blueprint;
 
@@ -34,7 +34,7 @@ class FieldsetMigrator extends Migrator
      */
     protected function parseBlueprint()
     {
-        $this->blueprint = $this->getSourceYamlFromSite("settings/fieldsets/{$this->handle}.yaml");
+        $this->blueprint = $this->getSourceYaml("settings/fieldsets/{$this->handle}.yaml");
 
         return $this;
     }

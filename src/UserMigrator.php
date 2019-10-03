@@ -9,7 +9,7 @@ use Statamic\Migrator\Exceptions\InvalidEmailException;
 
 class UserMigrator extends Migrator
 {
-    use Concerns\MigratesSingleFile;
+    use Concerns\MigratesFile;
 
     protected $user;
 
@@ -34,7 +34,7 @@ class UserMigrator extends Migrator
      */
     protected function parseUser()
     {
-        $this->user = $this->getSourceYamlFromSite("users/{$this->handle}.yaml");
+        $this->user = $this->getSourceYaml("users/{$this->handle}.yaml");
 
         return $this;
     }
