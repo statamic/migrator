@@ -72,12 +72,10 @@ class MigrateSite extends Command
             ->migrateFieldsets()
             ->migrateCollections()
             ->migratePages()
-            // ->migrateTaxonomies()
+            ->migrateTaxonomies()
             ->migrateUsers();
 
-        $errorCountDescriptor = $this->errorCount == 1 ? 'error' : 'errors';
-
-        $this->line("<info>Site migration complete:</info> {$this->skippedCount} skipped, {$this->errorCount} {$errorCountDescriptor}, {$this->successCount} successful");
+        $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
     }
 
     /**
@@ -221,6 +219,20 @@ class MigrateSite extends Command
             $this->line("<info>{$descriptor} successfully migrated:</info> {$handle}");
             $this->successCount++;
         }
+    }
+
+    /**
+     * Get stats.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getStats()
+    {
+        return collect([
+            "{$this->skippedCount} skipped",
+            "{$this->errorCount} " . ($this->errorCount == 1 ? 'error' : 'errors'),
+            "{$this->successCount} successful",
+        ]);
     }
 
     /**
