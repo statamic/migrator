@@ -45,4 +45,14 @@ class MigrateCollectionTest extends TestCase
 
         $this->assertParsedYamlEquals($expected, $this->path('blog.yaml'));
     }
+
+    /** @test */
+    function it_migrates_without_a_route()
+    {
+        $this->files->delete($this->sitePath('settings/routes.yaml'));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlNotHasKey('route', $this->path('blog.yaml'));
+    }
 }
