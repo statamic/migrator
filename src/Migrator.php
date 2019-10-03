@@ -8,41 +8,40 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 abstract class Migrator
 {
-    protected $sourcePath;
+    protected $handle;
     protected $newPath;
     protected $overwrite = false;
 
     /**
      * Instantiate migrator.
      *
-     * @param string $path
+     * @param string $handle
      */
-    public function __construct($sourcePath)
+    public function __construct($handle)
     {
-        $this->sourcePath = $sourcePath;
+        $this->handle = $handle;
         $this->files = app(Filesystem::class);
     }
 
     /**
-     * Instantiate migrator.
+     * Instantiate migrator on handle.
      *
-     * @param string $path
+     * @param string $handle
      * @return static
      */
-    public static function sourcePath($sourcePath)
+    public static function handle($handle)
     {
-        return new static($sourcePath);
+        return new static($handle);
     }
 
     /**
-     * Get new path.
+     * Instantiate migrator without handle.
      *
-     * @param string|null $append
-     * @return string
+     * @return static
      */
-    public function newPath($append = null)
+    public static function withoutHandle()
     {
-        return collect([$this->newPath, $append])->filter()->implode('/');
+        return new static(null);
     }
 
     /**
@@ -56,6 +55,46 @@ abstract class Migrator
         $this->overwrite = $overwrite;
 
         return $this;
+    }
+
+    /**
+     * Perform migration.
+     */
+    abstract public function migrate();
+
+    /**
+     * Set new path.
+     *
+     * @param string $path
+     * @return $this
+     */
+    protected function setNewPath($path)
+    {
+        $this->newPath = $path;
+
+        return $this;
+    }
+
+    /**
+     * Get site path.
+     *
+     * @param string|null $append
+     * @return string
+     */
+    protected function sitePath($append = null)
+    {
+        return collect([base_path('site'), $append])->filter()->implode('/');
+    }
+
+    /**
+     * Get new path.
+     *
+     * @param string|null $append
+     * @return string
+     */
+    protected function newPath($append = null)
+    {
+        return collect([$this->newPath, $append])->filter()->implode('/');
     }
 
     /**
@@ -74,9 +113,30 @@ abstract class Migrator
     }
 
     /**
-     * Migrate file.
+     * Copy directory from site path to new path.
      *
-     * @param string $handle
+     * @param string $sitePath
+     * @param string|null $newPath
+     * @return $this
      */
-    abstract function migrate($handle);
+    protected function copyDirectoryFromSiteToNewPath($sitePath, $newPath = null)
+    {
+        $this->files->copyDirectory($this->sitePath($sitePath), $this->newPath($newPath));
+
+        return $this;
+    }
+
+    // /**
+    //  * Copy file from site path to new path.
+    //  *
+    //  * @param string $sitePath
+    //  * @param string|null $newPath
+    //  * @return $this
+    //  */
+    // protected function copyFileFromSiteToNewPath($sitePath, $newPath = null)
+    // {
+    //     $this->files->copy($this->sitePath($sitePath), $this->newPath($newPath));
+
+    //     return $this;
+    // }
 }
