@@ -45,6 +45,16 @@ abstract class Migrator
     }
 
     /**
+     * Get descriptor.
+     *
+     * @return string
+     */
+    public static function descriptor()
+    {
+        return preg_replace('/.*\\\(\w+)Migrator$/', '$1', get_called_class());
+    }
+
+    /**
      * Set whether files should be overwritten.
      *
      * @param bool $overwrite
@@ -105,8 +115,10 @@ abstract class Migrator
      */
     protected function validateUnique()
     {
+        $descriptor = static::descriptor();
+
         if (! $this->overwrite && $this->files->exists($this->newPath)) {
-            throw new AlreadyExistsException;
+            throw new AlreadyExistsException("{$descriptor} already exists at [path].", $this->newPath);
         }
 
         return $this;

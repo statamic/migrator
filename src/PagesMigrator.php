@@ -50,7 +50,7 @@ class PagesMigrator extends Migrator
                 return $this->files->exists($path);
             })
             ->each(function ($path) {
-                throw new AlreadyExistsException;
+                throw new AlreadyExistsException("Pages collection and/or structure already exists.");
             });
 
         return $this;

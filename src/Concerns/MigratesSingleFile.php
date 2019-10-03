@@ -38,11 +38,12 @@ trait MigratesSingleFile
      */
     protected function getSourceContentsFromSite($sitePath)
     {
+        $descriptor = static::descriptor();
+
         $path = $this->sitePath($sitePath);
-        $relativePath = str_replace(base_path() . '/', '', $path);
 
         if (! $this->files->exists($path)) {
-            throw new NotFoundException("Cannot find file [{$relativePath}].");
+            throw new NotFoundException("{$descriptor} cannot be found at [path].", $path);
         }
 
         return $this->files->get($path);

@@ -4,7 +4,8 @@ namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Migrator\Exceptions\EmailRequiredException;
+use Illuminate\Support\Facades\Validator;
+use Statamic\Migrator\Exceptions\InvalidEmailException;
 
 class UserMigrator extends Migrator
 {
@@ -46,8 +47,8 @@ class UserMigrator extends Migrator
      */
     protected function validateEmail()
     {
-        if (! isset($this->user['email'])) {
-            throw new EmailRequiredException;
+        if (Validator::make($this->user, ['email' => 'required|email'])->fails()) {
+            throw new InvalidEmailException("A valid email is required to migrate user [{$this->handle}].");
         }
 
         return $this;
