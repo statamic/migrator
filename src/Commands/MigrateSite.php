@@ -140,7 +140,7 @@ class MigrateSite extends Command
     protected function migrateTaxonomies()
     {
         $this->getFileHandlesFromPath(base_path('site/content/taxonomies'))->each(function ($handle) {
-            $this->runMigratorOnHandle(UserMigrator::class, $handle);
+            $this->runMigratorOnHandle(TaxonomyMigrator::class, $handle);
         });
 
         return $this;
