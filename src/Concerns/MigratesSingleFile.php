@@ -3,18 +3,19 @@
 namespace Statamic\Migrator\Concerns;
 
 use Statamic\Migrator\YAML;
+use Statamic\Migrator\Exceptions\NotFoundException;
 
-trait MigratesSingleYamlFile
+trait MigratesSingleFile
 {
     /**
      * Get yaml contents.
      *
-     * @param string $handle
+     * @param string $sitePath
      * @return array
      */
-    protected function getSourceYaml($handle)
+    protected function getSourceYamlFromSite($sitePath)
     {
-        return YAML::parse($this->getSourceContents($handle));
+        return YAML::parse($this->getSourceContentsFromSite($sitePath));
     }
 
     /**
@@ -23,7 +24,7 @@ trait MigratesSingleYamlFile
      * @param string $path
      * @param array $migrated
      */
-    protected function saveMigratedToYaml($migrated)
+    protected function saveMigratedYaml($migrated)
     {
         $this->saveMigratedContents(YAML::dump($migrated));
     }
@@ -31,13 +32,13 @@ trait MigratesSingleYamlFile
     /**
      * Get file contents.
      *
-     * @param string $handle
+     * @param string $sitePath
      * @return string
      * @throws NotFoundException
      */
-    protected function getSourceContents($handle)
+    protected function getSourceContentsFromSite($sitePath)
     {
-        $path = $this->getSourcePath($handle);
+        $path = $this->sitePath($sitePath);
         $relativePath = str_replace(base_path() . '/', '', $path);
 
         if (! $this->files->exists($path)) {
@@ -62,16 +63,5 @@ trait MigratesSingleYamlFile
         }
 
         $this->files->put($this->newPath, $migrated);
-    }
-
-    /**
-     * Get file path.
-     *
-     * @param string $handle
-     * @return string
-     */
-    protected function getSourcePath($handle)
-    {
-        return "{$this->sourcePath}/{$handle}.yaml";
     }
 }
