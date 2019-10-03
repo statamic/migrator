@@ -13,6 +13,7 @@ class ServiceProvider extends BaseProvider
         Commands\MigrateFieldset::class,
         Commands\MigratePages::class,
         Commands\MigrateSite::class,
+        Commands\MigrateTaxonomy::class,
         Commands\MigrateUser::class,
     ];
 

@@ -1,0 +1,6 @@
+title: Tag
+hide: true
+fields:
+  link:
+    type: text
+    display: Wikipedia Link

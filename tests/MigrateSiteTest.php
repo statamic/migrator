@@ -21,6 +21,8 @@ class MigrateSiteTest extends TestCase
             'pages' => base_path('content/collections/pages'),
             'pagesCollectionConfig' => base_path('content/collections/pages.yaml'),
             'pagesStructureConfig' => base_path('content/structures/pages.yaml'),
+            'tags' => base_path('content/taxonomies/tags'),
+            'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -40,7 +42,7 @@ class MigrateSiteTest extends TestCase
 
         $this->artisan('statamic:migrate:site');
 
-        $this->assertCount(10, $this->files->files($this->paths('blueprints')));
+        $this->assertCount(11, $this->files->files($this->paths('blueprints')));
     }
 
     /** @test */
@@ -71,6 +73,18 @@ class MigrateSiteTest extends TestCase
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
         $this->assertFileExists($this->paths('pagesStructureConfig'));
         $this->assertCount(10, $this->files->files($this->paths('pages')));
+    }
+
+    /** @test */
+    function it_migrates_taxonomies()
+    {
+        $this->assertFileNotExists($this->paths('tags'));
+        $this->assertFileNotExists($this->paths('tagsTaxonomyConfig'));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertFileExists($this->paths('tagsTaxonomyConfig'));
+        $this->assertCount(2, $this->files->files($this->paths('tags')));
     }
 
     /** @test */

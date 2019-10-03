@@ -101,6 +101,20 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return $this->assertEquals($expected[$key], $parsed[$key]);
     }
 
+    protected function assertParsedYamlHasKey($key, $path)
+    {
+        $parsed = collect(YAML::parse($this->files->get($path)));
+
+        return $this->assertTrue($parsed->has($key));
+    }
+
+    protected function assertParsedYamlNotHasKey($key, $path)
+    {
+        $parsed = collect(YAML::parse($this->files->get($path)));
+
+        return $this->assertFalse($parsed->has($key));
+    }
+
     protected function sitePath($append = null)
     {
         return collect([base_path('site'), $append])->filter()->implode('/');
