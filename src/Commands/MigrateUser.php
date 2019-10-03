@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\UserMigrator;
-use Symfony\Component\Console\Input\InputArgument;
 use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\EmailRequiredException;
 

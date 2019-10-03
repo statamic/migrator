@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\TaxonomyMigrator;
-use Symfony\Component\Console\Input\InputArgument;
 use Statamic\Migrator\Exceptions\NotFoundException;
 
 class MigrateTaxonomy extends Command
