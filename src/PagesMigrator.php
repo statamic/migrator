@@ -46,6 +46,7 @@ class PagesMigrator extends Migrator
     protected function uniquePaths()
     {
         return [
+            $this->newPath(),
             $this->newPath('../pages.yaml'),
             $this->newPath('../../structures/pages.yaml'),
         ];
