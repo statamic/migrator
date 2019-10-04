@@ -1,11 +1,11 @@
 title: Default Globals
 hide: true
 fields:
-  site_name:
+  twitter_handle:
     type: text
-    display: Website Name
+    display: 'Twitter Handle'
     localizable: true
-  author_name:
+  instagram_handle:
     type: text
-    display: Website Name
+    display: 'Instagram Handle'
     localizable: true
