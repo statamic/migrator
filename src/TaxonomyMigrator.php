@@ -29,7 +29,11 @@ class TaxonomyMigrator extends Migrator
      */
     protected function migrateTerms()
     {
-        collect($this->files->files($this->newPath()))->each(function ($term) {
+        $files = $this->files->exists($this->newPath())
+            ? $this->files->files($this->newPath())
+            : [];
+
+        collect($files)->each(function ($term) {
             $this->updateYaml($this->newPath($term->getFilename()));
         });
 

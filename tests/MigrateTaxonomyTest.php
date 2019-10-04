@@ -52,6 +52,16 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_without_a_terms_folder()
+    {
+        $this->files->deleteDirectory($this->sitePath('content/taxonomies/tags'));
+
+        $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
+
+        $this->assertFileNotExists($this->path('tags'));
+    }
+
+    /** @test */
     function it_migrates_term_content_as_document_content()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
