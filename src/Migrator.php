@@ -8,6 +8,8 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 abstract class Migrator
 {
+    use Concerns\NormalizesPath;
+
     protected $handle;
     protected $newPath;
     protected $overwrite = false;
@@ -123,7 +125,7 @@ abstract class Migrator
 
         collect($this->uniquePaths())
             ->filter(function ($path) {
-                return $this->files->exists($path);
+                return $this->files->exists($this->normalizePath($path));
             })
             ->each(function ($path) use ($descriptor) {
                 throw new AlreadyExistsException("{$descriptor} already exists at [path].", $path);
