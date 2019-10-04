@@ -29,31 +29,16 @@ class PagesMigrator extends Migrator
     }
 
     /**
-     * Validate unique.
+     * Specify unique paths that shouldn't be overwritten.
      *
-     * @throws AlreadyExistsException
-     * @return $this
+     * @return array
      */
-    protected function validateUnique()
+    protected function uniquePaths()
     {
-        if ($this->overwrite) {
-            return $this;
-        }
-
-        $newPaths = [
+        return [
             $this->newPath('../pages.yaml'),
             $this->newPath('../../structures/pages.yaml'),
         ];
-
-        collect($newPaths)
-            ->filter(function ($path) {
-                return $this->files->exists($path);
-            })
-            ->each(function ($path) {
-                throw new AlreadyExistsException("Pages collection and/or structure already exists.");
-            });
-
-        return $this;
     }
 
     /**

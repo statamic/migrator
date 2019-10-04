@@ -115,13 +115,33 @@ abstract class Migrator
      */
     protected function validateUnique()
     {
-        $descriptor = static::descriptor();
-
-        if (! $this->overwrite && $this->files->exists($this->newPath)) {
-            throw new AlreadyExistsException("{$descriptor} already exists at [path].", $this->newPath);
+        if ($this->overwrite) {
+            return $this;
         }
 
+        $descriptor = static::descriptor();
+
+        collect($this->uniquePaths())
+            ->filter(function ($path) {
+                return $this->files->exists($path);
+            })
+            ->each(function ($path) use ($descriptor) {
+                throw new AlreadyExistsException("{$descriptor} already exists at [path].", $path);
+            });
+
         return $this;
+    }
+
+    /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            $this->newPath
+        ];
     }
 
     /**
