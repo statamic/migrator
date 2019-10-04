@@ -23,6 +23,19 @@ class TaxonomyMigrator extends Migrator
     }
 
     /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            $this->newPath(),
+            $this->newPath("../{$this->handle}.yaml"),
+        ];
+    }
+
+    /**
      * Migrate terms.
      *
      * @return $this
