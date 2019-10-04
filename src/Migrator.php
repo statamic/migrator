@@ -45,7 +45,7 @@ abstract class Migrator
     }
 
     /**
-     * Get descriptor.
+     * Get descriptor for use in command output.
      *
      * @return string
      */

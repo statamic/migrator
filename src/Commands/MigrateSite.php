@@ -113,21 +113,7 @@ class MigrateSite extends Command
      */
     protected function migratePages()
     {
-        try {
-            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
-        } catch (AlreadyExistsException $exception) {
-            $this->line("<comment>Pages collection/structure already exists:</comment> pages");
-            $this->skippedCount++;
-        } catch (MigratorException $exception) {
-            $this->line("<error>Pages collectin/structure could not be migrated:</error> pages");
-            $this->line($exception->getMessage());
-            $this->errorCount++;
-        }
-
-        if (! isset($exception)) {
-            $this->line("<info>Pages collection/structure successfully migrated:</info> pages");
-            $this->successCount++;
-        }
+        $this->runMigratorWithoutHandle(PagesMigrator::class, 'pages');
 
         return $this;
     }
@@ -204,8 +190,35 @@ class MigrateSite extends Command
     {
         $descriptor = $migrator::descriptor();
 
-        try {
+        $this->tryMigration(function () use ($migrator, $handle) {
             $migrator::handle($handle)->overwrite($this->option('force'))->migrate();
+        }, $descriptor, $handle);
+    }
+
+    /**
+     * Run migrator without handle (but can still pass one for command output).
+     *
+     * @param string $migrator
+     * @param string|null $handle
+     */
+    protected function runMigratorWithoutHandle($migrator, $handle = null)
+    {
+        $descriptor = $migrator::descriptor();
+
+        $this->tryMigration(function () use ($migrator) {
+            $migrator::withoutHandle()->overwrite($this->option('force'))->migrate();
+        }, $descriptor, $handle);
+    }
+
+    /**
+     * Try migration, with exception handling, and statistic recording.
+     *
+     * @param \Closure $migration
+     */
+    protected function tryMigration($migration, $descriptor, $handle)
+    {
+        try {
+            $migration();
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
             $this->skippedCount++;

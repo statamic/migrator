@@ -29,6 +29,16 @@ class PagesMigrator extends Migrator
     }
 
     /**
+     * Get descriptor for use in command output.
+     *
+     * @return string
+     */
+    public static function descriptor()
+    {
+        return 'Pages collection/structure';
+    }
+
+    /**
      * Specify unique paths that shouldn't be overwritten.
      *
      * @return array
