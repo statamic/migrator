@@ -67,7 +67,7 @@ class UserMigrator extends Migrator
     }
 
     /**
-     * Migrate default v2 user schema to default v3 user schema.
+     * Migrate default v2 user schema to default v3 schema.
      *
      * @return $this
      */
