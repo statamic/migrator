@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
+use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
 use Illuminate\Filesystem\Filesystem;
@@ -142,6 +143,32 @@ class MigrateSite extends Command
         $this->getFileHandlesFromPath(base_path('site/users'))->each(function ($handle) {
             $this->runMigratorOnHandle(UserMigrator::class, $handle);
         });
+
+        return $this;
+    }
+
+    /**
+     * Migrate forms.
+     *
+     * @return $this
+     */
+    protected function migrateForms()
+    {
+        $this->getFileHandlesFromPath(base_path('site/settings/formsets'))->each(function ($handle) {
+            $this->runMigratorOnHandle(FormMigrator::class, $handle);
+        });
+
+        return $this;
+    }
+
+    /**
+     * Migrate settings.
+     *
+     * @return $this
+     */
+    protected function migrateSettings()
+    {
+        //
 
         return $this;
     }
