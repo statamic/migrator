@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Str;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
@@ -53,7 +54,9 @@ abstract class Migrator
      */
     public static function descriptor()
     {
-        return preg_replace('/.*\\\(\w+)Migrator$/', '$1', get_called_class());
+        $extractedFromClassName = preg_replace('/.*\\\(\w+)Migrator$/', '$1', get_called_class());
+
+        return Str::modifyMultiple($extractedFromClassName, ['studlyToWords', 'ucfirst']);
     }
 
     /**
