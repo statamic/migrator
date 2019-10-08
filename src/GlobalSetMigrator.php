@@ -24,9 +24,10 @@ class GlobalSetMigrator extends Migrator
     /**
      * Parse user.
      *
+     * @param string $relativePath
      * @return $this
      */
-    protected function parseGlobalSet()
+    protected function parseGlobalSet($relativePath)
     {
         $this->set = $this->getSourceYaml($relativePath);
 
@@ -47,9 +48,9 @@ class GlobalSetMigrator extends Migrator
 
         $nonData = $set->except(['id', 'blueprint', 'title']);
 
-        $set->put('data', $nonData);
+        $set->put('data', $nonData->all());
 
-        $this->set = $set->intersectByKeys($nonData)->all();
+        $this->set = $set->diffKeys($nonData)->all();
 
         return $this;
     }
