@@ -2,10 +2,10 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Providers\AddonServiceProvider;
 use Illuminate\Console\Application as Artisan;
-use Statamic\Extend\ServiceProvider as BaseProvider;
 
-class ServiceProvider extends BaseProvider
+class ServiceProvider extends AddonServiceProvider
 {
     protected $commands = [
         Commands\MigrateAssetContainer::class,
