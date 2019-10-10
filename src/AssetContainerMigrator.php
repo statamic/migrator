@@ -6,6 +6,10 @@ use Statamic\Migrator\YAML;
 
 class AssetContainerMigrator extends Migrator
 {
+    use Concerns\MigratesFile;
+
+    protected $container;
+
     /**
      * Perform migration.
      *
@@ -14,10 +18,24 @@ class AssetContainerMigrator extends Migrator
     public function migrate()
     {
         $this
-            ->setNewPath(base_path($relativePath = 'content/assets'))
-            // ->validateUnique()
-            ->copyDirectoryFromSiteToNewPath($relativePath)
-            ->migrateYamlConfig();
+            ->setNewPath(base_path($relativePath = "content/assets/{$this->handle}.yaml"))
+            ->validateUnique()
+            ->parseAssetContainer($relativePath)
+            ->migrateYamlConfig()
+            ->saveMigratedYaml($this->container);
+    }
+
+    /**
+     * Parse asset container.
+     *
+     * @param string $relativePath
+     * @return $this
+     */
+    protected function parseAssetContainer($relativePath)
+    {
+        $this->container = $this->getSourceYaml($relativePath);
+
+        return $this;
     }
 
     /**
@@ -27,13 +45,22 @@ class AssetContainerMigrator extends Migrator
      */
     protected function migrateYamlConfig()
     {
-        $config = collect(YAML::parse($this->files->get($path = $this->newPath("{$this->handle}.yaml"))));
+        $config = collect($this->container);
 
-        $config->put('disk', $config->get('path'));
-        $config->forget('path');
+        $config->put('disk', $this->migrateDisk());
 
-        $this->files->put($path, YAML::dump($config->only('title', 'disk')->all()));
+        $this->container = $config->only('title', 'disk')->all();
 
         return $this;
+    }
+
+    /**
+     * Migrate disk.
+     *
+     * @return string
+     */
+    protected function migrateDisk()
+    {
+        return 'assets';
     }
 }
