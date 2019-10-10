@@ -11,6 +11,7 @@ use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
+use Statamic\Migrator\AssetContainerMigrator;
 use Statamic\Migrator\Exceptions\MigratorException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
@@ -75,8 +76,13 @@ class MigrateSite extends Command
             ->migrateCollections()
             ->migratePages()
             ->migrateTaxonomies()
+            ->migrateAssetContainers()
             ->migrateGlobalSets()
-            ->migrateUsers();
+            // ->migrateForms()
+            ->migrateUsers()
+            // ->migrateSettings()
+            // ->migrateTemplates()
+            ;
 
         $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
     }
@@ -130,6 +136,20 @@ class MigrateSite extends Command
     {
         $this->getFileHandlesFromPath(base_path('site/content/taxonomies'))->each(function ($handle) {
             $this->runMigratorOnHandle(TaxonomyMigrator::class, $handle);
+        });
+
+        return $this;
+    }
+
+    /**
+     * Migrate asset containers.
+     *
+     * @return $this
+     */
+    protected function migrateAssetContainers()
+    {
+        $this->getFileHandlesFromPath(base_path('site/content/assets'))->each(function ($handle) {
+            $this->runMigratorOnHandle(AssetContainerMigrator::class, $handle);
         });
 
         return $this;

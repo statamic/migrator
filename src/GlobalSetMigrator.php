@@ -22,7 +22,7 @@ class GlobalSetMigrator extends Migrator
     }
 
     /**
-     * Parse user.
+     * Parse global set.
      *
      * @param string $relativePath
      * @return $this
