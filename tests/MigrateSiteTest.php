@@ -24,6 +24,7 @@ class MigrateSiteTest extends TestCase
             'tags' => base_path('content/taxonomies/tags'),
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
+            'assetContainers' => base_path('content/assets'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -86,6 +87,16 @@ class MigrateSiteTest extends TestCase
 
         $this->assertFileExists($this->paths('tagsTaxonomyConfig'));
         $this->assertCount(2, $this->files->files($this->paths('tags')));
+    }
+
+    /** @test */
+    function it_migrates_asset_containers()
+    {
+        $this->assertCount(0, $this->files->files($this->paths('assetContainers')));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertCount(1, $this->files->files($this->paths('assetContainers')));
     }
 
     /** @test */
