@@ -60,6 +60,34 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_assets_folder()
+    {
+        $this->markTestSkipped();
+        // $this->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+
+        $this->assertCount(0, $this->files->allFiles(public_path('assets')));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+
+        $this->assertCount(3, $this->files->allFiles(public_path('assets')));
+    }
+
+    /** @test */
+    function it_can_migrate_meta()
+    {
+        $this->markTestSkipped();
+
+        // title: 'Main Assets'
+        // path: assets
+        // url: /assets
+        // assets:
+        //   img/coffee-mug.jpg:
+        //     title: 'Coffee Mug'
+        //   img/stetson.jpg:
+        //     alt: 'Fancy hat!'
+    }
+
+    /** @test */
     function it_migrates_assets_disk_into_default_laravel_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));

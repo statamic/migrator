@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
+use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
@@ -24,7 +25,8 @@ class AssetContainerMigrator extends Migrator
             ->validateUnique()
             ->parseAssetContainer($relativePath)
             ->migrateYamlConfig()
-            ->saveMigratedYaml($this->container);
+            ->saveMigratedYaml($this->container)
+            ->migrateAssetsFolder();
     }
 
     /**
@@ -37,7 +39,28 @@ class AssetContainerMigrator extends Migrator
     {
         $this->container = $this->getSourceYaml($relativePath);
 
+        $this->localPath = $this->getLocalPath($this->container);
+
         return $this;
+    }
+
+    /**
+     * Get local path.
+     *
+     * @param array $container
+     * @return $this
+     */
+    protected function getLocalPath($container)
+    {
+        $driver = $container['driver'] ?? 'local';
+        $path = $container['path'] ?? null;
+
+        if ($driver != 'local' || ! $path) {
+            // throw warning
+            return null;
+        }
+
+        return Str::startsWith($path, '/') ? $path : base_path($path);
     }
 
     /**
@@ -165,5 +188,21 @@ EOT;
     protected function diskExists($disk)
     {
         return Arr::has(include config_path('filesystems.php'), "disks.{$disk}");
+    }
+
+    /**
+     * Migrate assets folder.
+     *
+     * @return $this
+     */
+    protected function migrateAssetsFolder()
+    {
+        if (! $this->files->exists($this->localPath)) {
+            // throw warning
+        }
+
+        // Copy folder and meta
+
+        return $this;
     }
 }
