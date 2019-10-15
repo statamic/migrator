@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Arr;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
@@ -84,7 +85,7 @@ class AssetContainerMigrator extends Migrator
      */
     protected function migrateDiskKey()
     {
-        return config('filesystems.disks.assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
+        return $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
             ? "assets_{$this->handle}"
             : 'assets';
     }
@@ -153,5 +154,16 @@ class AssetContainerMigrator extends Migrator
         ],
 \n
 EOT;
+    }
+
+    /**
+     * Check if filesystem disk exists.
+     *
+     * @param string $disk
+     * @return bool
+     */
+    protected function diskExists($disk)
+    {
+        return Arr::has(include config_path('filesystems.php'), "disks.{$disk}");
     }
 }
