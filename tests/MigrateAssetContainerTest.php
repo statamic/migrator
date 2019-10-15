@@ -8,6 +8,30 @@ use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateAssetContainerTest extends TestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // If doesn't exist, backup original config/filesystems.php.
+        if (! $this->files->exists(config_path('filesystems-original.php'))) {
+            $this->files->copy(config_path('filesystems.php'), config_path('filesystems-original.php'));
+        }
+
+        $this->restoreConfig();
+    }
+
+    protected function tearDown(): void
+    {
+        $this->restoreConfig();
+
+        parent::tearDown();
+    }
+
+    protected function restoreConfig()
+    {
+        $this->files->copy(config_path('filesystems-original.php'), config_path('filesystems.php'));
+    }
+
     protected function paths()
     {
         return [
