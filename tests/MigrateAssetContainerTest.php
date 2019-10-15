@@ -258,6 +258,68 @@ EOT
         $this->assertFilesystemDiskExists('assets_main');
     }
 
+    /** @test */
+    function it_migrates_assets_disk_with_terser_keys_when_multiple_containers_exist()
+    {
+        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
+            'title' => 'Main Assets',
+            'path' => 'assets',
+            'url' => '/assets',
+        ]));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary']);
+
+        $this->assertFilesystemConfigFileContains(<<<EOT
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+        ],
+
+        'assets_main' => [
+            'driver' => 'local',
+            'root' => public_path('assets'),
+            'url' => '/assets',
+            'visibility' => 'public',
+        ],
+
+        'assets_secondary' => [
+            'driver' => 'local',
+            'root' => public_path('assets'),
+            'url' => '/assets',
+            'visibility' => 'public',
+        ],
+
+    ],
+EOT
+        );
+
+        $this->assertFilesystemDiskExists('local');
+        $this->assertFilesystemDiskExists('public');
+        $this->assertFilesystemDiskExists('s3');
+        $this->assertFilesystemDiskExists('assets_main');
+        $this->assertFilesystemDiskExists('assets_secondary');
+        $this->assertFilesystemDiskNotExists('assets');
+    }
+
     /**
      * Assert filesystem config file replacement is valid and contains specific content.
      *
@@ -299,5 +361,15 @@ EOT;
     protected function assertFilesystemDiskExists($disk)
     {
         return $this->assertTrue(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
+    }
+
+    /**
+     * Assert filesystem disk array key does not exist.
+     *
+     * @param string $disk
+     */
+    protected function assertFilesystemDiskNotExists($disk)
+    {
+        return $this->assertFalse(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
     }
 }
