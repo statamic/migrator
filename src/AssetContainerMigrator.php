@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Migrator\YAML;
+use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class AssetContainerMigrator extends Migrator
 {
@@ -61,6 +62,96 @@ class AssetContainerMigrator extends Migrator
      */
     protected function migrateDisk()
     {
-        return 'assets';
+        $disk = $this->migrateDiskKey();
+
+        if (config()->has($configKey = "filesystems.disks.{$disk}")) {
+            throw new AlreadyExistsException("Asset container filesystem disk [{$disk}] already exists.");
+        }
+
+        if ($this->attemptGracefulDiskInsertion($disk)) {
+            return $disk;
+        } elseif ($this->jamDiskIntoDrive($disk)) {
+            return $disk;
+        }
+
+        throw new \Exception('Cannot migrate filesystem config');
+    }
+
+    /**
+     * Migrate disk key.
+     *
+     * @return string
+     */
+    protected function migrateDiskKey()
+    {
+        return config('filesystems.disks.assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
+            ? "assets_{$this->handle}"
+            : 'assets';
+    }
+
+    /**
+     * Attempt to insert the disk config in a pretty way.
+     *
+     * @param string $disk
+     * @return bool
+     */
+    protected function attemptGracefulDiskInsertion($disk)
+    {
+        $config = $this->files->get($configPath = config_path('filesystems.php'));
+
+        preg_match($regex = '/(\X*\s{4}[\'"]disks\X*\s{8})\],*\s*\n*(^\s{4}\])/mU', $config, $matches);
+
+        if (count($matches) != 3) {
+            return false;
+        }
+
+        $updatedConfig = preg_replace($regex, '$1],' . $this->containerDiskConfig($disk) . '$2', $config);
+
+        $this->files->put($configPath, $updatedConfig);
+
+        return true;
+    }
+
+    /**
+     * Insert the disk config, without really caring how it looks.
+     *
+     * @param string $disk
+     * @return bool
+     */
+    protected function jamDiskIntoDrive($disk)
+    {
+        $config = $this->files->get($configPath = config_path('filesystems.php'));
+
+        preg_match($regex = '/([\'"]disks[\'"].*$)/mU', $config, $matches);
+
+        if (count($matches) != 2) {
+            return false;
+        }
+
+        $updatedConfig = preg_replace($regex, '$1' . $this->containerDiskConfig($disk), $config);
+
+        $this->files->put($configPath, $updatedConfig);
+
+        return true;
+    }
+
+    /**
+     * Generate container disk config.
+     *
+     * @param string $disk
+     * @return string
+     */
+    protected function containerDiskConfig($disk)
+    {
+        return <<<EOT
+\n
+        '{$disk}' => [
+            'driver' => 'local',
+            'root' => public_path('assets'),
+            'url' => '/assets',
+            'visibility' => 'public',
+        ],
+\n
+EOT;
     }
 }
