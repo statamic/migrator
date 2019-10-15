@@ -50,13 +50,14 @@ trait MigratesFile
      *
      * @param array|\Illuminate\Support\Collection $migrated
      * @param string|null $path
+     * @return $this
      */
     protected function saveMigratedYaml($migrated, $path = null)
     {
         $content = collect($migrated)->get('content');
         $migrated = collect($migrated)->except('content')->all();
 
-        $this->saveMigratedContents(YAML::dump($migrated, $content), $path);
+        return $this->saveMigratedContents(YAML::dump($migrated, $content), $path);
     }
 
     /**
@@ -64,6 +65,7 @@ trait MigratesFile
      *
      * @param string $migrated
      * @param string|null $path
+     * @return $this
      */
     protected function saveMigratedContents($migrated, $path = null)
     {
@@ -76,6 +78,8 @@ trait MigratesFile
         }
 
         $this->files->put($path, $migrated);
+
+        return $this;
     }
 
     /**
