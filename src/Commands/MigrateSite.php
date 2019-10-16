@@ -14,6 +14,7 @@ use Statamic\Migrator\CollectionMigrator;
 use Statamic\Migrator\AssetContainerMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
+use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class MigrateSite extends Command
 {
@@ -282,6 +283,8 @@ class MigrateSite extends Command
     {
         try {
             $migration();
+        } catch (MigratorWarningsException $warningsException) {
+            $this->outputMigrationWarnings($descriptor, $handle, $warningsException->getWarnings());
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
             $this->skippedCount++;
@@ -295,6 +298,25 @@ class MigrateSite extends Command
             $this->line("<info>{$descriptor} successfully migrated:</info> {$handle}");
             $this->successCount++;
         }
+    }
+
+    /**
+     * Output warnings.
+     *
+     * @param string $descriptor
+     * @param string $handle
+     * @param \Illuminate\Support\Collection $warnings
+     */
+    protected function outputMigrationWarnings($descriptor, $handle, $warnings)
+    {
+        $warnings->each(function ($warning) use ($descriptor, $handle) {
+            $this->line("<error>{$descriptor} migration warning:</error> {$handle}");
+            $this->line($warning->get('warning'));
+
+            if ($extra = $warning->get('extra')) {
+                $this->line($extra);
+            }
+        });
     }
 
     /**
