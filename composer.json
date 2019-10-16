@@ -2,7 +2,8 @@
     "name": "statamic/migrator",
     "type": "statamic-addon",
     "require": {
-        "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d"
+        "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d",
+        "league/flysystem-aws-s3-v3": "~1.0"
     },
     "require-dev": {
         "statamic/cms": "*",
