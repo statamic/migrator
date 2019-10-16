@@ -5,16 +5,20 @@ namespace Statamic\Migrator;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Storage;
 use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\InvalidContainerDriverException;
 
 class AssetContainerMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\MigratesFile,
+        Concerns\ThrowsFinalWarnings;
 
     protected $container;
     protected $localPath;
+    protected $metaData;
 
     /**
      * Perform migration.
@@ -30,7 +34,8 @@ class AssetContainerMigrator extends Migrator
             ->migrateYamlConfig()
             ->saveMigratedYaml($this->container)
             ->migrateFolder()
-            ->migrateMeta();
+            ->migrateMeta()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -60,6 +65,7 @@ class AssetContainerMigrator extends Migrator
         $this->container = $config->only('title', 'disk')->all();
 
         $this->localPath = $this->parseLocalPath($config);
+        $this->metaData = $this->parseMeta($config);
 
         return $this;
     }
@@ -81,6 +87,28 @@ class AssetContainerMigrator extends Migrator
         $path = collect(explode('/', $path))->filter()->last();
 
         return base_path($path);
+    }
+
+    /**
+     * Parse meta.
+     *
+     * @param string $config
+     * @return array
+     */
+    protected function parseMeta($config)
+    {
+        return collect(Arr::get($config, 'assets', []))
+            ->map(function ($metaData) {
+                return Arr::only($metaData, ['alt', 'focus']);
+            })
+            ->filter()
+            ->map(function ($metaData) {
+                if (isset($metaData['focus'])) {
+                    $metaData['focus'] .= '-1';
+                }
+
+                return ['data' => $metaData];
+            });
     }
 
     /**
@@ -276,9 +304,55 @@ EOT;
     /**
      * Migrate container meta.
      *
+     * @return $this
      */
     protected function migrateMeta()
     {
-        //
+        $this->refreshFilesystems();
+
+        try {
+            $this->migrateExplicitMetaData();
+            $this->migrateBlankMeta();
+        } catch (\Exception $exception) {
+            $this->addWarning(
+                'Could not generate asset meta.',
+                "Please ensure proper configuration on [{$this->container['disk']}] disk in [config/filesystems.php].\n" .
+                "Once properly configured, run `php please assets:meta` to complete meta migration."
+            );
+        }
+
+        return $this;
+    }
+
+    /**
+     * Refresh filesystems config, since we manually injected new config directly into the PHP file.
+     */
+    protected function refreshFilesystems()
+    {
+        $updatedFilesystemsConfig = include config_path('filesystems.php');
+
+        config(['filesystems' => $updatedFilesystemsConfig]);
+    }
+
+    /**
+     * Migrate explicit meta data (ie. `alt` and `focus`).
+     */
+    protected function migrateExplicitMetaData()
+    {
+        $disk = Storage::disk($this->container['disk']);
+        $regex = '/\/*([^\/]+)$/';
+
+        $this->metaData->each(function ($data, $file) use ($disk, $regex) {
+            $disk->makeDirectory(preg_replace($regex, '/.meta', $file), 0755, true);
+            $disk->put(preg_replace($regex, '/.meta/$1.yaml', $file), YAML::dump($data));
+        });
+    }
+
+    /**
+     * Migrate blank meta on all assets to prevent control panel errors.
+     */
+    protected function migrateBlankMeta()
+    {
+        Artisan::call('statamic:assets:meta', ['container' => $this->handle]);
     }
 }
