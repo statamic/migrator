@@ -16,6 +16,7 @@ class AssetContainerMigrator extends Migrator
     use Concerns\MigratesFile,
         Concerns\ThrowsFinalWarnings;
 
+    protected $disk;
     protected $container;
     protected $localPath;
     protected $metaData;
@@ -29,13 +30,43 @@ class AssetContainerMigrator extends Migrator
     {
         $this
             ->setNewPath(base_path($relativePath = "content/assets/{$this->handle}.yaml"))
+            ->parseDiskKey()
             ->validateUnique()
             ->parseAssetContainer($relativePath)
             ->migrateYamlConfig()
-            ->saveMigratedYaml($this->container)
+            ->migrateDisk()
             ->migrateFolder()
             ->migrateMeta()
             ->throwFinalWarnings();
+    }
+
+    /**
+     * Parse disk key.
+     *
+     * @return string
+     */
+    protected function parseDiskKey()
+    {
+        $this->disk = $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
+            ? 'assets_' . strtolower($this->handle)
+            : 'assets';
+
+        return $this;
+    }
+
+    /**
+     * Validate unique.
+     *
+     * @throws AlreadyExistsException
+     * @return $this
+     */
+    protected function validateUnique()
+    {
+        if (config()->has("filesystems.disks.{$this->disk}")) {
+            throw new AlreadyExistsException("Asset container filesystem disk [{$this->disk}] already exists.");
+        }
+
+        return parent::validateUnique();
     }
 
     /**
@@ -60,14 +91,26 @@ class AssetContainerMigrator extends Migrator
     {
         $config = collect($this->container);
 
-        $config->put('disk', $this->migrateDisk());
-
-        $this->container = $config->only('title', 'disk')->all();
-
+        $this->driver = $this->parseDriver($config);
         $this->localPath = $this->parseLocalPath($config);
         $this->metaData = $this->parseMeta($config);
 
-        return $this;
+        $config->put('disk', $this->disk);
+
+        $this->container = $config->only('title', 'disk')->all();
+
+        return $this->saveMigratedYaml($this->container);
+    }
+
+    /**
+     * Parse disk driver.
+     *
+     * @param array $config
+     * @return string
+     */
+    protected function parseDriver($config)
+    {
+        return strtolower(Arr::get($config, 'driver', 'local'));
     }
 
     /**
@@ -114,44 +157,26 @@ class AssetContainerMigrator extends Migrator
     /**
      * Migrate disk.
      *
-     * @return string
+     * @return $this
+     * @throws \Exception
      */
     protected function migrateDisk()
     {
-        $disk = $this->migrateDiskKey();
-
-        if (config()->has($configKey = "filesystems.disks.{$disk}")) {
-            throw new AlreadyExistsException("Asset container filesystem disk [{$disk}] already exists.");
-        }
-
-        if ($this->attemptGracefulDiskInsertion($disk)) {
-            return $disk;
-        } elseif ($this->jamDiskIntoDrive($disk)) {
-            return $disk;
+        if ($this->attemptGracefulDiskInsertion() === true) {
+            return $this;
+        } elseif ($this->jamDiskIntoDrive() === true) {
+            return $this;
         }
 
         throw new \Exception('Cannot migrate filesystem config');
     }
 
     /**
-     * Migrate disk key.
-     *
-     * @return string
-     */
-    protected function migrateDiskKey()
-    {
-        return $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
-            ? 'assets_' . strtolower($this->handle)
-            : 'assets';
-    }
-
-    /**
      * Attempt to insert the disk config in a pretty way.
      *
-     * @param string $disk
      * @return bool
      */
-    protected function attemptGracefulDiskInsertion($disk)
+    protected function attemptGracefulDiskInsertion()
     {
         $config = $this->files->get($configPath = config_path('filesystems.php'));
 
@@ -161,7 +186,7 @@ class AssetContainerMigrator extends Migrator
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, '$1],' . $this->diskConfig($disk) . '$2', $config);
+        $updatedConfig = preg_replace($regex, '$1],' . $this->diskConfig() . '$2', $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -171,10 +196,9 @@ class AssetContainerMigrator extends Migrator
     /**
      * Insert the disk config, without really caring how it looks.
      *
-     * @param string $disk
      * @return bool
      */
-    protected function jamDiskIntoDrive($disk)
+    protected function jamDiskIntoDrive()
     {
         $config = $this->files->get($configPath = config_path('filesystems.php'));
 
@@ -184,7 +208,7 @@ class AssetContainerMigrator extends Migrator
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, '$1' . $this->diskConfig($disk), $config);
+        $updatedConfig = preg_replace($regex, '$1' . $this->diskConfig(), $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -194,36 +218,32 @@ class AssetContainerMigrator extends Migrator
     /**
      * Generate container disk config.
      *
-     * @param string $disk
      * @return string
      */
-    protected function diskConfig($disk)
+    protected function diskConfig()
     {
-        $driver = strtolower(Arr::get($this->container, 'driver', 'local'));
-
-        switch ($driver) {
+        switch ($this->driver) {
             case 'local':
-                return $this->localDiskConfig($disk);
+                return $this->localDiskConfig();
             case 's3':
-                return $this->s3DiskConfig($disk);
+                return $this->s3DiskConfig();
         }
 
-        throw new InvalidContainerDriverException("Cannot migrate asset container with [{$driver}] driver.");
+        throw new InvalidContainerDriverException("Cannot migrate asset container with [{$this->driver}] driver.");
     }
 
     /**
      * Generate local disk config.
      *
-     * @param string $disk
      * @return string
      */
-    protected function localDiskConfig($disk)
+    protected function localDiskConfig()
     {
-        $path = $this->publicRelativePath($disk);
+        $path = $this->publicRelativePath();
 
         return <<<EOT
 \n
-        '{$disk}' => [
+        '{$this->disk}' => [
             'driver' => 'local',
             'root' => public_path('{$path}'),
             'url' => '/{$path}',
@@ -236,16 +256,15 @@ EOT;
     /**
      * Generate S3 disk config.
      *
-     * @param string $disk
      * @return string
      */
-    protected function s3DiskConfig($disk)
+    protected function s3DiskConfig()
     {
-        $envPrefix = strtoupper($disk);
+        $envPrefix = strtoupper($this->disk);
 
         return <<<EOT
 \n
-        '{$disk}' => [
+        '{$this->disk}' => [
             'driver' => 's3',
             'key' => env('{$envPrefix}_AWS_ACCESS_KEY_ID'),
             'secret' => env('{$envPrefix}_AWS_SECRET_ACCESS_KEY'),
@@ -260,12 +279,11 @@ EOT;
     /**
      * Generate public relative path from disk key.
      *
-     * @param string $disk
      * @return string
      */
-    protected function publicRelativePath($disk)
+    protected function publicRelativePath()
     {
-        return str_replace('assets_', 'assets/', $disk);
+        return str_replace('assets_', 'assets/', $this->disk);
     }
 
     /**
@@ -294,9 +312,7 @@ EOT;
             throw new NotFoundException("Assets folder cannot be found at [path].", $this->localPath);
         }
 
-        $publicPath = public_path($this->publicRelativePath($this->container['disk']));
-
-        $this->files->copyDirectory($this->localPath, $publicPath);
+        $this->files->copyDirectory($this->localPath, public_path($this->publicRelativePath()));
 
         return $this;
     }
@@ -316,7 +332,7 @@ EOT;
         } catch (\Exception $exception) {
             $this->addWarning(
                 'Could not generate asset meta.',
-                "Please ensure proper configuration on [{$this->container['disk']}] disk in [config/filesystems.php].\n" .
+                "Please ensure proper configuration on [{$this->disk}] disk in [config/filesystems.php].\n" .
                 "Once properly configured, run `php please assets:meta` to complete meta migration."
             );
         }
@@ -339,12 +355,12 @@ EOT;
      */
     protected function migrateExplicitMetaData()
     {
-        $disk = Storage::disk($this->container['disk']);
+        $storage = Storage::disk($this->disk);
         $regex = '/\/*([^\/]+)$/';
 
-        $this->metaData->each(function ($data, $file) use ($disk, $regex) {
-            $disk->makeDirectory(preg_replace($regex, '/.meta', $file), 0755, true);
-            $disk->put(preg_replace($regex, '/.meta/$1.yaml', $file), YAML::dump($data));
+        $this->metaData->each(function ($data, $file) use ($storage, $regex) {
+            $storage->makeDirectory(preg_replace($regex, '/.meta', $file), 0755, true);
+            $storage->put(preg_replace($regex, '/.meta/$1.yaml', $file), YAML::dump($data));
         });
     }
 
