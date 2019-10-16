@@ -62,14 +62,33 @@ class MigrateAssetContainerTest extends TestCase
     /** @test */
     function it_migrates_assets_folder()
     {
-        $this->markTestSkipped();
-        // $this->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
         $this->assertCount(0, $this->files->allFiles(public_path('assets')));
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
         $this->assertCount(3, $this->files->allFiles(public_path('assets')));
+    }
+
+    /** @test */
+    function it_migrates_multiple_assets_folders()
+    {
+        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
+            'title' => 'Main Assets',
+            'path' => 'somewhere/nested/secondary',
+        ]));
+
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('secondary'));
+
+        $this->assertCount(0, $this->files->allFiles(public_path('assets')));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary']);
+
+        $this->assertCount(3, $this->files->allFiles(public_path('assets/main')));
+        $this->assertCount(3, $this->files->allFiles(public_path('assets/secondary')));
     }
 
     /** @test */
