@@ -6,6 +6,7 @@ use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Migrator\Exceptions\InvalidContainerDriverException;
 
 class AssetContainerMigrator extends Migrator
 {
@@ -26,7 +27,8 @@ class AssetContainerMigrator extends Migrator
             ->parseAssetContainer($relativePath)
             ->migrateYamlConfig()
             ->saveMigratedYaml($this->container)
-            ->migrateAssetsFolder();
+            ->migrateFolder()
+            ->migrateMeta();
     }
 
     /**
@@ -39,28 +41,7 @@ class AssetContainerMigrator extends Migrator
     {
         $this->container = $this->getSourceYaml($relativePath);
 
-        $this->localPath = $this->getLocalPath($this->container);
-
         return $this;
-    }
-
-    /**
-     * Get local path.
-     *
-     * @param array $container
-     * @return $this
-     */
-    protected function getLocalPath($container)
-    {
-        $driver = $container['driver'] ?? 'local';
-        $path = $container['path'] ?? null;
-
-        if ($driver != 'local' || ! $path) {
-            // throw warning
-            return null;
-        }
-
-        return Str::startsWith($path, '/') ? $path : base_path($path);
     }
 
     /**
@@ -129,7 +110,7 @@ class AssetContainerMigrator extends Migrator
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, '$1],' . $this->containerDiskConfig($disk) . '$2', $config);
+        $updatedConfig = preg_replace($regex, '$1],' . $this->diskConfig($disk) . '$2', $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -152,7 +133,7 @@ class AssetContainerMigrator extends Migrator
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, '$1' . $this->containerDiskConfig($disk), $config);
+        $updatedConfig = preg_replace($regex, '$1' . $this->diskConfig($disk), $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -165,15 +146,61 @@ class AssetContainerMigrator extends Migrator
      * @param string $disk
      * @return string
      */
-    protected function containerDiskConfig($disk)
+    protected function diskConfig($disk)
     {
+        $driver = strtolower(Arr::get($this->container, 'driver', 'local'));
+
+        switch ($driver) {
+            case 'local':
+                return $this->localDiskConfig($disk);
+            case 's3':
+                return $this->s3DiskConfig($disk);
+        }
+
+        throw new InvalidContainerDriverException("Cannot migrate asset container with [{$driver}] driver.");
+    }
+
+    /**
+     * Generate local disk config.
+     *
+     * @param string $disk
+     * @return string
+     */
+    protected function localDiskConfig($disk)
+    {
+        $path = str_replace('assets_', 'assets/', $disk);
+
         return <<<EOT
 \n
         '{$disk}' => [
             'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
+            'root' => public_path('{$path}'),
+            'url' => '/{$path}',
             'visibility' => 'public',
+        ],
+\n
+EOT;
+    }
+
+    /**
+     * Generate S3 disk config.
+     *
+     * @param string $disk
+     * @return string
+     */
+    protected function s3DiskConfig($disk)
+    {
+        $envPrefix = strtoupper($disk);
+
+        return <<<EOT
+\n
+        '{$disk}' => [
+            'driver' => 's3',
+            'key' => env('{$envPrefix}_AWS_ACCESS_KEY_ID'),
+            'secret' => env('{$envPrefix}_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('{$envPrefix}_AWS_DEFAULT_REGION'),
+            'bucket' => env('{$envPrefix}_AWS_BUCKET'),
+            'url' => env('{$envPrefix}_AWS_URL'),
         ],
 \n
 EOT;
@@ -191,18 +218,38 @@ EOT;
     }
 
     /**
-     * Migrate assets folder.
+     * Migrate container folder.
      *
      * @return $this
      */
-    protected function migrateAssetsFolder()
+    protected function migrateFolder()
     {
-        if (! $this->files->exists($this->localPath)) {
-            // throw warning
-        }
+        // if (! $this->files->exists($this->localPath)) {
+        //     // throw warning
+        // }
 
         // Copy folder and meta
 
         return $this;
     }
+
+    /**
+     * Migrate container meta.
+     *
+     */
+    protected function migrateMeta()
+    {
+        //
+    }
+
+    // /**
+    //  * Get local path.
+    //  *
+    //  * @param string $disk
+    //  * @return $this
+    //  */
+    // protected function oldLocalPath($disk)
+    // {
+    //     return Str::startsWith($path, '/') ? $path : base_path($path);
+    // }
 }
