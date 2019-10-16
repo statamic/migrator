@@ -2,7 +2,7 @@
 
 namespace Statamic\Migrator\Exceptions;
 
-class InvalidEmailException extends MigratorException
+class InvalidEmailException extends MigratorErrorException
 {
     //
 }

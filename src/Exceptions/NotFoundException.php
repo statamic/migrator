@@ -2,7 +2,7 @@
 
 namespace Statamic\Migrator\Exceptions;
 
-class NotFoundException extends MigratorException
+class NotFoundException extends MigratorErrorException
 {
     public function __construct($message, $path = null)
     {

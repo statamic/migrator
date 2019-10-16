@@ -5,7 +5,7 @@ namespace Statamic\Migrator\Exceptions;
 use Exception;
 use Statamic\Migrator\Concerns\NormalizesPath;
 
-class MigratorException extends Exception
+class MigratorErrorException extends Exception
 {
     use NormalizesPath;
 

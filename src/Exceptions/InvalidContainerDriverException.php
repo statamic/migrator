@@ -2,7 +2,7 @@
 
 namespace Statamic\Migrator\Exceptions;
 
-class InvalidContainerDriverException extends MigratorException
+class InvalidContainerDriverException extends MigratorErrorException
 {
     //
 }
