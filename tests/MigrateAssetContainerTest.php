@@ -233,6 +233,66 @@ EOT
     }
 
     /** @test */
+    function it_migrates_assets_disk_with_s3_drivers()
+    {
+        $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
+            'title' => 'Main Assets',
+            'driver' => 's3',
+            'key' => 'some-key',
+            'secret' => 'some-secret',
+            'bucket' => 'some-bucket',
+            'region' => 'some-region',
+            'url' => '/cloud',
+            'path' => 'cloud', // TODO: need to handle subfolder of the bucket?
+            'cache' => 3600, // TODO: need to handle s3 filesystem caching?
+        ]));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+
+        $this->assertFilesystemConfigFileContains(<<<EOT
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+        ],
+
+        'assets' => [
+            'driver' => 's3',
+            'key' => env('ASSETS_AWS_ACCESS_KEY_ID'),
+            'secret' => env('ASSETS_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ASSETS_AWS_DEFAULT_REGION'),
+            'bucket' => env('ASSETS_AWS_BUCKET'),
+            'url' => env('ASSETS_AWS_URL'),
+        ],
+
+    ],
+EOT
+        );
+
+        $this->assertFilesystemDiskExists('local');
+        $this->assertFilesystemDiskExists('public');
+        $this->assertFilesystemDiskExists('s3');
+        $this->assertFilesystemDiskExists('assets');
+    }
+
+    /** @test */
     function it_migrates_assets_disk_with_terser_key_when_assets_already_exists()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-assets-already-exists.php', config_path('filesystems.php'));
@@ -270,8 +330,8 @@ EOT
 
         'assets_main' => [
             'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main',
             'visibility' => 'public',
         ],
 
@@ -287,16 +347,20 @@ EOT
     }
 
     /** @test */
-    function it_migrates_assets_disk_with_terser_keys_when_multiple_containers_exist()
+    function it_migrates_multiple_containers_with_terser_keys_only()
     {
-        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
-            'title' => 'Main Assets',
-            'path' => 'assets',
-            'url' => '/assets',
+        $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
+            'title' => 'Cloud Assets',
+            'driver' => 's3',
+            'key' => 'some-key',
+            'secret' => 'some-secret',
+            'bucket' => 'some-bucket',
+            'region' => 'some-region',
+            'url' => '/cloud',
         ]));
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
-        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary']);
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud']);
 
         $this->assertFilesystemConfigFileContains(<<<EOT
     'disks' => [
@@ -324,16 +388,18 @@ EOT
 
         'assets_main' => [
             'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main',
             'visibility' => 'public',
         ],
 
-        'assets_secondary' => [
-            'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
-            'visibility' => 'public',
+        'assets_cloud' => [
+            'driver' => 's3',
+            'key' => env('ASSETS_CLOUD_AWS_ACCESS_KEY_ID'),
+            'secret' => env('ASSETS_CLOUD_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
+            'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
+            'url' => env('ASSETS_CLOUD_AWS_URL'),
         ],
 
     ],
@@ -344,7 +410,7 @@ EOT
         $this->assertFilesystemDiskExists('public');
         $this->assertFilesystemDiskExists('s3');
         $this->assertFilesystemDiskExists('assets_main');
-        $this->assertFilesystemDiskExists('assets_secondary');
+        $this->assertFilesystemDiskExists('assets_cloud');
         $this->assertFilesystemDiskNotExists('assets');
     }
 
