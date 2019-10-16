@@ -5,4 +5,6 @@ assets:
   img/coffee-mug.jpg:
     title: 'Coffee Mug'
   img/stetson.jpg:
+    title: 'Stetson'
     alt: 'Fancy hat!'
+    focus: 15-24

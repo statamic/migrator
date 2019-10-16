@@ -94,16 +94,34 @@ class MigrateAssetContainerTest extends TestCase
     /** @test */
     function it_can_migrate_meta()
     {
-        $this->markTestSkipped();
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
-        // title: 'Main Assets'
-        // path: assets
-        // url: /assets
-        // assets:
-        //   img/coffee-mug.jpg:
-        //     title: 'Coffee Mug'
-        //   img/stetson.jpg:
-        //     alt: 'Fancy hat!'
+        $this->assertCount(0, $this->files->allFiles(public_path('assets'), true));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+
+        $this->assertCount(1, $this->files->allFiles(public_path('assets/.meta'), true));
+        $this->assertCount(2, $this->files->allFiles(public_path('assets/img/.meta'), true));
+
+        $blankMeta = YAML::parse($this->files->get(public_path('assets/.meta/harry-potter-screenplay.txt.yaml')));
+
+        $this->assertArrayHasKey('data', $blankMeta);
+        $this->assertArrayHasKey('size', $blankMeta);
+        $this->assertArrayHasKey('last_modified', $blankMeta);
+        $this->assertArrayHasKey('width', $blankMeta);
+        $this->assertArrayHasKey('height', $blankMeta);
+        $this->assertEmpty($blankMeta['data']);
+
+        $fullMeta = YAML::parse($this->files->get(public_path('assets/img/.meta/stetson.jpg.yaml')));
+
+        $this->assertArrayHasKey('data', $fullMeta);
+        $this->assertArrayHasKey('size', $fullMeta);
+        $this->assertArrayHasKey('last_modified', $fullMeta);
+        $this->assertArrayHasKey('width', $fullMeta);
+        $this->assertArrayHasKey('height', $fullMeta);
+        $this->assertArrayNotHasKey('title', $fullMeta['data']);
+        $this->assertEquals('Fancy hat!', $fullMeta['data']['alt']);
+        $this->assertEquals('15-24-1', $fullMeta['data']['focus']);
     }
 
     /** @test */
