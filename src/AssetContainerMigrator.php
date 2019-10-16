@@ -5,6 +5,7 @@ namespace Statamic\Migrator;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
+use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\InvalidContainerDriverException;
 
@@ -13,6 +14,7 @@ class AssetContainerMigrator extends Migrator
     use Concerns\MigratesFile;
 
     protected $container;
+    protected $localPath;
 
     /**
      * Perform migration.
@@ -57,7 +59,28 @@ class AssetContainerMigrator extends Migrator
 
         $this->container = $config->only('title', 'disk')->all();
 
+        $this->localPath = $this->parseLocalPath($config);
+
         return $this;
+    }
+
+    /**
+     * Parse local path.
+     *
+     * @param string $config
+     * @return null|string
+     */
+    protected function parseLocalPath($config)
+    {
+        if (Arr::get($config, 'driver', 'local') !== 'local') {
+            return null;
+        }
+
+        $path = Arr::get($config, 'path');
+
+        $path = collect(explode('/', $path))->filter()->last();
+
+        return base_path($path);
     }
 
     /**
@@ -90,7 +113,7 @@ class AssetContainerMigrator extends Migrator
     protected function migrateDiskKey()
     {
         return $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
-            ? "assets_{$this->handle}"
+            ? 'assets_' . strtolower($this->handle)
             : 'assets';
     }
 
@@ -168,7 +191,7 @@ class AssetContainerMigrator extends Migrator
      */
     protected function localDiskConfig($disk)
     {
-        $path = str_replace('assets_', 'assets/', $disk);
+        $path = $this->publicRelativePath($disk);
 
         return <<<EOT
 \n
@@ -207,6 +230,17 @@ EOT;
     }
 
     /**
+     * Generate public relative path from disk key.
+     *
+     * @param string $disk
+     * @return string
+     */
+    protected function publicRelativePath($disk)
+    {
+        return str_replace('assets_', 'assets/', $disk);
+    }
+
+    /**
      * Check if filesystem disk exists.
      *
      * @param string $disk
@@ -224,11 +258,17 @@ EOT;
      */
     protected function migrateFolder()
     {
-        // if (! $this->files->exists($this->localPath)) {
-        //     // throw warning
-        // }
+        if (! $this->localPath) {
+            return $this;
+        }
 
-        // Copy folder and meta
+        if (! $this->files->exists($this->localPath)) {
+            throw new NotFoundException("Assets folder cannot be found at [path].", $this->localPath);
+        }
+
+        $publicPath = public_path($this->publicRelativePath($this->container['disk']));
+
+        $this->files->copyDirectory($this->localPath, $publicPath);
 
         return $this;
     }
@@ -241,15 +281,4 @@ EOT;
     {
         //
     }
-
-    // /**
-    //  * Get local path.
-    //  *
-    //  * @param string $disk
-    //  * @return $this
-    //  */
-    // protected function oldLocalPath($disk)
-    // {
-    //     return Str::startsWith($path, '/') ? $path : base_path($path);
-    // }
 }
