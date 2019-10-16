@@ -4,7 +4,7 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\PagesMigrator;
-use Statamic\Migrator\Exceptions\MigratorException;
+use Statamic\Migrator\Exceptions\MigratorErrorException;
 
 class MigratePages extends Command
 {
@@ -31,7 +31,7 @@ class MigratePages extends Command
     {
         try {
             PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
-        } catch (MigratorException $exception) {
+        } catch (MigratorErrorException $exception) {
             return $this->error($exception->getMessage());
         }
 

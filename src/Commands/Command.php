@@ -4,8 +4,8 @@ namespace Statamic\Migrator\Commands;
 
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
-use Statamic\Migrator\Exceptions\MigratorException;
 use Illuminate\Console\Command as IlluminateCommand;
+use Statamic\Migrator\Exceptions\MigratorErrorException;
 
 class Command extends IlluminateCommand
 {
@@ -20,7 +20,7 @@ class Command extends IlluminateCommand
             $this->migrator::handle($handle)
                 ->overwrite($this->option('force'))
                 ->migrate();
-        } catch (MigratorException $exception) {
+        } catch (MigratorErrorException $exception) {
             return $this->error($exception->getMessage());
         }
 
