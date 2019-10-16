@@ -356,11 +356,9 @@ EOT;
     protected function migrateExplicitMetaData()
     {
         $storage = Storage::disk($this->disk);
-        $regex = '/\/*([^\/]+)$/';
 
-        $this->metaData->each(function ($data, $file) use ($storage, $regex) {
-            $storage->makeDirectory(preg_replace($regex, '/.meta', $file), 0755, true);
-            $storage->put(preg_replace($regex, '/.meta/$1.yaml', $file), YAML::dump($data));
+        $this->metaData->each(function ($data, $file) use ($storage) {
+            $storage->put(preg_replace('/\/*([^\/]+)$/', '/.meta/$1.yaml', $file), YAML::dump($data));
         });
     }
 
