@@ -39,7 +39,7 @@ trait MigratesFile
             : $this->sitePath($path);
 
         if (! $this->files->exists($path)) {
-            throw new NotFoundException("{$descriptor} cannot be found at [path].", $path);
+            throw new NotFoundException("{$descriptor} cannot be found at path [path].", $path);
         }
 
         return $this->files->get($path);

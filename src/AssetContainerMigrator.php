@@ -127,9 +127,17 @@ class AssetContainerMigrator extends Migrator
 
         $path = Arr::get($config, 'path');
 
-        $path = collect(explode('/', $path))->filter()->last();
+        $path = collect(explode('/', Arr::get($config, 'path')))->filter()->last();
 
-        return base_path($path);
+        if ($this->files->exists($pathFromSite = base_path("site/{$path}"))) {
+            return $pathFromSite;
+        } elseif ($this->files->exists($pathFromMigrator = base_path("migrator/{$path}"))) {
+            return $pathFromMigrator;
+        } elseif ($this->files->exists($path = base_path($path))) {
+            return $path;
+        }
+
+        throw new NotFoundException("Assets folder cannot be found at path [path].", $path);
     }
 
     /**
@@ -306,10 +314,6 @@ EOT;
     {
         if (! $this->localPath) {
             return $this;
-        }
-
-        if (! $this->files->exists($this->localPath)) {
-            throw new NotFoundException("Assets folder cannot be found at [path].", $this->localPath);
         }
 
         $this->files->copyDirectory($this->localPath, public_path($this->publicRelativePath()));
