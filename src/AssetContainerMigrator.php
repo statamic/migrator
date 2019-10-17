@@ -97,7 +97,12 @@ class AssetContainerMigrator extends Migrator
 
         $config->put('disk', $this->disk);
 
-        $this->container = $config->only('title', 'disk')->all();
+        if ($fieldset = $config->get('fieldset')) {
+            $config->put('blueprint', $fieldset);
+            $config->forget('fieldset');
+        }
+
+        $this->container = $config->only('title', 'disk', 'blueprint')->all();
 
         return $this->saveMigratedYaml($this->container);
     }
@@ -148,9 +153,13 @@ class AssetContainerMigrator extends Migrator
      */
     protected function parseMeta($config)
     {
+        $fieldset = Arr::get($config, 'fieldset');
+
         return collect(Arr::get($config, 'assets', []))
-            ->map(function ($metaData) {
-                return Arr::only($metaData, ['alt', 'focus']);
+            ->map(function ($metaData) use ($fieldset) {
+                return $fieldset
+                    ? $metaData
+                    : Arr::only($metaData, ['alt', 'focus']);
             })
             ->filter()
             ->map(function ($metaData) {

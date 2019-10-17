@@ -75,7 +75,7 @@ class MigrateAssetContainerTest extends TestCase
     function it_migrates_multiple_assets_folders()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
-            'title' => 'Main Assets',
+            'title' => 'Secondary Assets',
             'path' => 'somewhere/nested/secondary',
         ]));
 
@@ -119,9 +119,45 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertArrayHasKey('last_modified', $fullMeta);
         $this->assertArrayHasKey('width', $fullMeta);
         $this->assertArrayHasKey('height', $fullMeta);
-        $this->assertArrayNotHasKey('title', $fullMeta['data']);
+        $this->assertCount(2, $fullMeta['data']);
         $this->assertEquals('Fancy hat!', $fullMeta['data']['alt']);
         $this->assertEquals('15-24-1', $fullMeta['data']['focus']);
+    }
+
+    /** @test */
+    function it_can_migrate_with_custom_fieldset_meta()
+    {
+        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
+            'title' => 'Secondary Assets',
+            'path' => 'somewhere/nested/secondary',
+            'fieldset' => 'asset_fields',
+            'assets' => [
+                'img/stetson.jpg' => [
+                    'title' => 'A Hat',
+                    'alt' => 'fancy hat',
+                    'purchase' => 'amazon.texas/stetson'
+                ]
+            ]
+        ]));
+
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('secondary'));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary']);
+
+        $expected = [
+            'title' => 'Secondary Assets',
+            'disk' => 'assets_secondary',
+            'blueprint' => 'asset_fields',
+        ];
+
+        $this->assertParsedYamlEquals($expected, $this->containerPath('secondary.yaml'));
+
+        $meta = YAML::parse($this->files->get(public_path('assets/secondary/img/.meta/stetson.jpg.yaml')));
+
+        $this->assertCount(3, $meta['data']);
+        $this->assertEquals('A Hat', $meta['data']['title']);
+        $this->assertEquals('fancy hat', $meta['data']['alt']);
+        $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
     }
 
     /** @test */
