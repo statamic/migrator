@@ -29,7 +29,7 @@ composer require statamic/migrator --dev
 
 ## Getting started
 
-All of the migrators assume the presence of your v2 project's `site` folder.  Be sure to copy this into your v3 project root before running any of the migrator commands.
+All of the migrators assume the presence of your v2 project's `site` folder, as well as any asset container folders.  Be sure to copy these into your v3 project root before running any of the migrator commands.
 
 ## Using the site migrator
 
@@ -83,7 +83,7 @@ In this example, `tags` is the taxonomy handle.
 
 ### Asset container migrator
 
-In v3, [...].  To migrate an asset container:
+In v3, asset containers are now stored within a [Laravel filesystem](https://laravel.com/docs/6.x/filesystem), and image meta data is stored alongside your assets.  To migrate a local asset container, you will also need to copy the folder containing your assets into your v3 project root.  You can skip this step if migrating an S3 based container.  Once ready, run the following command:
 
 ```
 php please migrate:asset-container main
