@@ -34,6 +34,12 @@ class TestCase extends \Orchestra\Testbench\TestCase
         });
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
+
+        if (! $this->files->exists(config_path('filesystems-original.php'))) {
+            $this->files->copy(config_path('filesystems.php'), config_path('filesystems-original.php'));
+        }
+
+        $this->restoreFilesystemConfig();
     }
 
     protected function tearDown(): void
@@ -41,6 +47,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->getPaths()->each(function ($path) {
             $this->deleteFolder($path);
         });
+
+        $this->restoreFilesystemConfig();
 
         parent::tearDown();
     }
@@ -81,6 +89,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function getFolderFromPath($path)
     {
         return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', $path);
+    }
+
+    protected function restoreFilesystemConfig()
+    {
+        $this->files->copy(config_path('filesystems-original.php'), config_path('filesystems.php'));
     }
 
     protected function assertParsedYamlEquals($expected, $path)
