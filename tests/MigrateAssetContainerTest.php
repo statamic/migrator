@@ -6,9 +6,12 @@ use Tests\TestCase;
 use Statamic\Support\Arr;
 use Statamic\Migrator\YAML;
 use Tests\Console\Foundation\InteractsWithConsole;
+use Statamic\Migrator\Concerns\DirectlyModifiesFilesystemConfig;
 
 class MigrateAssetContainerTest extends TestCase
 {
+    use DirectlyModifiesFilesystemConfig;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -578,25 +581,5 @@ EOT;
     protected function assertFilesystemDiskNotExists($disk)
     {
         return $this->assertFalse(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
-    }
-
-    /**
-     * Jam disk into drive, because I can't seem to set config on artisan console command runtime environment using the config() helper.
-     *
-     * @params string $diskConfig
-     */
-    protected function jamDiskIntoDrive($diskConfig)
-    {
-        $config = $this->files->get($configPath = config_path('filesystems.php'));
-
-        preg_match($regex = '/([\'"]disks[\'"].*$)/mU', $config, $matches);
-
-        if (count($matches) != 2) {
-            return false;
-        }
-
-        $updatedConfig = preg_replace($regex, '$1' . $diskConfig, $config);
-
-        $this->files->put($configPath, $updatedConfig);
     }
 }

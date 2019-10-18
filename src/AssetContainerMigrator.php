@@ -13,7 +13,8 @@ use Statamic\Migrator\Exceptions\InvalidContainerDriverException;
 
 class AssetContainerMigrator extends Migrator
 {
-    use Concerns\MigratesFile,
+    use Concerns\DirectlyModifiesFilesystemConfig,
+        Concerns\MigratesFile,
         Concerns\ThrowsFinalWarnings;
 
     protected $metaOnly = false;
@@ -212,57 +213,15 @@ class AssetContainerMigrator extends Migrator
      */
     protected function migrateDisk()
     {
-        if ($this->attemptGracefulDiskInsertion() === true) {
+        $diskConfig = $this->diskConfig();
+
+        if ($this->attemptGracefulDiskInsertion($diskConfig) === true) {
             return $this;
-        } elseif ($this->jamDiskIntoDrive() === true) {
+        } elseif ($this->jamDiskIntoDrive($diskConfig) === true) {
             return $this;
         }
 
         throw new \Exception('Cannot migrate filesystem config');
-    }
-
-    /**
-     * Attempt to insert the disk config in a pretty way.
-     *
-     * @return bool
-     */
-    protected function attemptGracefulDiskInsertion()
-    {
-        $config = $this->files->get($configPath = config_path('filesystems.php'));
-
-        preg_match($regex = '/(\X*\s{4}[\'"]disks\X*\s{8})\],*\s*\n*(^\s{4}\])/mU', $config, $matches);
-
-        if (count($matches) != 3) {
-            return false;
-        }
-
-        $updatedConfig = preg_replace($regex, '$1],' . $this->diskConfig() . '$2', $config);
-
-        $this->files->put($configPath, $updatedConfig);
-
-        return true;
-    }
-
-    /**
-     * Insert the disk config, without really caring how it looks.
-     *
-     * @return bool
-     */
-    protected function jamDiskIntoDrive()
-    {
-        $config = $this->files->get($configPath = config_path('filesystems.php'));
-
-        preg_match($regex = '/([\'"]disks[\'"].*$)/mU', $config, $matches);
-
-        if (count($matches) != 2) {
-            return false;
-        }
-
-        $updatedConfig = preg_replace($regex, '$1' . $this->diskConfig(), $config);
-
-        $this->files->put($configPath, $updatedConfig);
-
-        return true;
     }
 
     /**
@@ -384,16 +343,6 @@ EOT;
         }
 
         return $this;
-    }
-
-    /**
-     * Refresh filesystems config, since we manually injected new config directly into the PHP file.
-     */
-    protected function refreshFilesystems()
-    {
-        $updatedFilesystemsConfig = include config_path('filesystems.php');
-
-        config(['filesystems' => $updatedFilesystemsConfig]);
     }
 
     /**
