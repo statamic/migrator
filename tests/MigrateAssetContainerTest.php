@@ -204,7 +204,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_assets_disk_into_default_laravel_config()
+    function it_migrates_disk_into_default_laravel_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));
 
@@ -252,7 +252,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_assets_disk_into_sanely_user_edited_config()
+    function it_migrates_disk_into_sanely_user_edited_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-edited.php', config_path('filesystems.php'));
 
@@ -295,7 +295,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_assets_disk_into_weirdly_mangled_config()
+    function it_migrates_disk_into_weirdly_mangled_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-weird.php', config_path('filesystems.php'));
 
@@ -303,17 +303,13 @@ EOT
 
         $this->assertFilesystemConfigFileContains(<<<EOT
 'disks' => [
-
         'assets' => [
             'driver' => 'local',
             'root' => public_path('assets'),
             'url' => '/assets',
             'visibility' => 'public',
         ],
-EOT
-        );
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
     'local' => [
         'driver' => 'local',
         'root' => storage_path('app'),
@@ -349,7 +345,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_assets_disk_with_s3_drivers()
+    function it_migrates_disk_with_s3_drivers()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
             'title' => 'Main Assets',
@@ -409,7 +405,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_assets_disk_with_terser_key_when_assets_already_exists()
+    function it_migrates_disk_with_terser_key_when_assets_already_exists()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-assets-already-exists.php', config_path('filesystems.php'));
 
@@ -463,7 +459,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_multiple_containers_with_terser_keys_only()
+    function it_migrates_multiple_disks_with_terser_keys_only()
     {
         $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
             'title' => 'Cloud Assets',
