@@ -8,8 +8,8 @@ use Statamic\Migrator\YAML;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Migrator\Exceptions\FilesystemException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
-use Statamic\Migrator\Exceptions\InvalidContainerDriverException;
 
 class AssetContainerMigrator extends Migrator
 {
@@ -242,7 +242,7 @@ class AssetContainerMigrator extends Migrator
                 return $this->s3DiskConfig();
         }
 
-        throw new InvalidContainerDriverException("Cannot migrate asset container with [{$this->driver}] driver.");
+        throw new FilesystemException("Cannot migrate asset container with [{$this->driver}] driver.");
     }
 
     /**
