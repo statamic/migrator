@@ -86,6 +86,10 @@ class AssetContainerMigrator extends Migrator
      */
     protected function validateUnique()
     {
+        if ($this->overwrite) {
+            return $this;
+        }
+
         if (config()->has("filesystems.disks.{$this->disk}")) {
             throw new AlreadyExistsException("Asset container filesystem disk [{$this->disk}] already exists.");
         }
