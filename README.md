@@ -83,7 +83,7 @@ In this example, `tags` is the taxonomy handle.
 
 ### Asset container migrator
 
-In v3, asset containers are now stored within a [Laravel filesystem](https://laravel.com/docs/6.x/filesystem), and image meta data is stored alongside your assets.  To migrate a local asset container, you will also need to copy the folder containing your assets into your v3 project root.  You can skip this step if migrating an S3 based container.  Once ready, run the following command:
+In v3, assets and related meta data are now stored within a [Laravel filesystem](https://laravel.com/docs/6.x/filesystem).  To migrate a local asset container, you will need to copy your assets folder into your v3 project root, along side your `site` folder.  You can skip this step if migrating an S3 based container.  Once ready, run the following command:
 
 ```
 php please migrate:asset-container main
