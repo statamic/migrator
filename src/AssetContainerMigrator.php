@@ -16,6 +16,7 @@ class AssetContainerMigrator extends Migrator
     use Concerns\MigratesFile,
         Concerns\ThrowsFinalWarnings;
 
+    protected $metaOnly = false;
     protected $disk;
     protected $container;
     protected $localPath;
@@ -31,13 +32,35 @@ class AssetContainerMigrator extends Migrator
         $this
             ->setNewPath(base_path($relativePath = "content/assets/{$this->handle}.yaml"))
             ->parseDiskKey()
-            ->validateUnique()
             ->parseAssetContainer($relativePath)
+            ->parseYamlConfig();
+
+        if ($this->metaOnly) {
+            return $this
+                ->migrateMeta()
+                ->throwFinalWarnings();
+        }
+
+        $this
+            ->validateUnique()
             ->migrateYamlConfig()
             ->migrateDisk()
             ->migrateFolder()
             ->migrateMeta()
             ->throwFinalWarnings();
+    }
+
+    /**
+     * Determine whether to run on meta only.
+     *
+     * @param bool $metaOnly
+     * @return $this
+     */
+    public function metaOnly($metaOnly)
+    {
+        $this->metaOnly = $metaOnly;
+
+        return $this;
     }
 
     /**
@@ -87,7 +110,7 @@ class AssetContainerMigrator extends Migrator
      *
      * @return $this
      */
-    protected function migrateYamlConfig()
+    protected function parseYamlConfig()
     {
         $config = collect($this->container);
 
@@ -104,7 +127,7 @@ class AssetContainerMigrator extends Migrator
 
         $this->container = $config->only('title', 'disk', 'blueprint')->all();
 
-        return $this->saveMigratedYaml($this->container);
+        return $this;
     }
 
     /**
@@ -169,6 +192,16 @@ class AssetContainerMigrator extends Migrator
 
                 return ['data' => $metaData];
             });
+    }
+
+    /**
+     * Migrate yaml config.
+     *
+     * @return $this
+     */
+    protected function migrateYamlConfig()
+    {
+        return $this->saveMigratedYaml($this->container);
     }
 
     /**
@@ -345,8 +378,8 @@ EOT;
         } catch (\Exception $exception) {
             $this->addWarning(
                 'Could not generate asset meta.',
-                "Please ensure proper configuration on [{$this->disk}] disk in [config/filesystems.php].\n" .
-                "Once properly configured, run `php please assets:meta` to complete meta migration."
+                "Please ensure proper configuration on [{$this->disk}] disk in [config/filesystems.php],\n" .
+                "Then run `php please migrate:asset-container {$this->handle} --meta-only` to complete meta migration."
             );
         }
 

@@ -161,6 +161,46 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
+    function it_can_migrate_only_meta()
+    {
+        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
+            'title' => 'Secondary Assets',
+            'path' => 'somewhere/nested/secondary',
+            'fieldset' => 'asset_fields',
+            'assets' => [
+                'img/stetson.jpg' => [
+                    'title' => 'A Hat',
+                    'alt' => 'fancy hat',
+                    'purchase' => 'amazon.texas/stetson'
+                ]
+            ]
+        ]));
+
+        $this->jamDiskIntoDrive(
+            "'assets_secondary' => [
+                'driver' => 'local',
+                'root' => public_path('assets/secondary'),
+                'url' => '/assets/secondary',
+                'visibility' => 'public',
+            ],"
+        );
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
+
+        $meta = YAML::parse($this->files->get(public_path('assets/secondary/img/.meta/stetson.jpg.yaml')));
+
+        // Assert no yaml config or assets get copied over.
+        $this->assertFileNotExists($this->containerPath('secondary.yaml'));
+        $this->assertCount(0, $this->files->allFiles(base_path('content/assets')));
+
+        // Assert meta is still generated.
+        $this->assertCount(3, $meta['data']);
+        $this->assertEquals('A Hat', $meta['data']['title']);
+        $this->assertEquals('fancy hat', $meta['data']['alt']);
+        $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
+    }
+
+    /** @test */
     function it_migrates_assets_disk_into_default_laravel_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));
@@ -538,5 +578,25 @@ EOT;
     protected function assertFilesystemDiskNotExists($disk)
     {
         return $this->assertFalse(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
+    }
+
+    /**
+     * Jam disk into drive, because I can't seem to set config on artisan console command runtime environment using the config() helper.
+     *
+     * @params string $diskConfig
+     */
+    protected function jamDiskIntoDrive($diskConfig)
+    {
+        $config = $this->files->get($configPath = config_path('filesystems.php'));
+
+        preg_match($regex = '/([\'"]disks[\'"].*$)/mU', $config, $matches);
+
+        if (count($matches) != 2) {
+            return false;
+        }
+
+        $updatedConfig = preg_replace($regex, '$1' . $diskConfig, $config);
+
+        $this->files->put($configPath, $updatedConfig);
     }
 }

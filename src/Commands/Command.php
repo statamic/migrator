@@ -18,9 +18,7 @@ class Command extends IlluminateCommand
         $handle = $this->argument('handle');
 
         try {
-            $this->migrator::handle($handle)
-                ->overwrite($this->option('force'))
-                ->migrate();
+            $this->runMigration($handle);
         } catch (MigratorWarningsException $exception) {
             $this->outputWarnings($exception->getWarnings());
         } catch (MigratorErrorException $exception) {
@@ -30,6 +28,18 @@ class Command extends IlluminateCommand
         $descriptor = $this->migrator::descriptor();
 
         $this->info("{$descriptor} [{$handle}] has been successfully migrated.");
+    }
+
+    /**
+     * Run migration.
+     *
+     * @param string $handle
+     */
+    protected function runMigration($handle)
+    {
+        $this->migrator::handle($handle)
+            ->overwrite($this->option('force'))
+            ->migrate();
     }
 
     /**
