@@ -35,6 +35,7 @@ class MigrateSiteTest extends TestCase
         parent::setUp();
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
     }
 
     /** @test */
