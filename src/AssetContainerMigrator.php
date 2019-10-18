@@ -219,13 +219,14 @@ class AssetContainerMigrator extends Migrator
     {
         $diskConfig = $this->diskConfig();
 
-        if ($this->attemptGracefulDiskInsertion($diskConfig) === true) {
-            return $this;
-        } elseif ($this->jamDiskIntoDrive($diskConfig) === true) {
-            return $this;
+        switch (true) {
+            case $this->attemptDiskReplacement($diskConfig):
+            case $this->attemptGracefulDiskInsertion($diskConfig):
+            case $this->jamDiskIntoDrive($diskConfig):
+                return $this;
+            default:
+                throw new FilesystemException("Cannot migrate filesystem disk config.");
         }
-
-        throw new \Exception('Cannot migrate filesystem config');
     }
 
     /**
@@ -286,6 +287,21 @@ EOT;
     }
 
     /**
+     * Attempt disk replacement.
+     *
+     * @param string $diskConfig
+     * @return bool
+     */
+    protected function attemptDiskReplacement($diskConfig)
+    {
+        if (! $this->diskExists($this->disk)) {
+            return false;
+        }
+
+        return $this->replaceFilesystemDisk($this->disk, $diskConfig);
+    }
+
+    /**
      * Generate public relative path from disk key.
      *
      * @return string
@@ -303,6 +319,8 @@ EOT;
      */
     protected function diskExists($disk)
     {
+        $this->refreshFilesystems();
+
         return Arr::has(include config_path('filesystems.php'), "disks.{$disk}");
     }
 

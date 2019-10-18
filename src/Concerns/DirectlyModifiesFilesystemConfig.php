@@ -43,7 +43,31 @@ trait DirectlyModifiesFilesystemConfig
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, "$1\n\n{$diskConfig}\n\n", $config);
+        $updatedConfig = preg_replace($regex, "$1\n{$diskConfig}\n", $config);
+
+        $this->files->put($configPath, $updatedConfig);
+
+        return true;
+    }
+
+    /**
+     * Replace filesystem disk.
+     *
+     * @param string $disk
+     * @param string $diskConfig
+     * @return bool
+     */
+    protected function replaceFilesystemDisk($disk, $diskConfig)
+    {
+        $config = $this->files->get($configPath = config_path('filesystems.php'));
+
+        preg_match($regex = "/^(\s{8}['\"]{$this->disk}['\"]\X*^\s{8}],)$/mU", $config, $matches);
+
+        if (count($matches) != 2) {
+            return false;
+        }
+
+        $updatedConfig = preg_replace($regex, $diskConfig, $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -52,11 +76,15 @@ trait DirectlyModifiesFilesystemConfig
 
     /**
      * Refresh filesystems config, since we manually injected new config directly into the PHP file.
+     *
+     * @return $this
      */
     protected function refreshFilesystems()
     {
         $updatedFilesystemsConfig = include config_path('filesystems.php');
 
         config(['filesystems' => $updatedFilesystemsConfig]);
+
+        return $this;
     }
 }
