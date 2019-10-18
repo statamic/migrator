@@ -530,6 +530,190 @@ EOT
         $this->assertFilesystemDiskNotExists('assets');
     }
 
+    /** @test */
+    function it_overwrites_disks_when_forced()
+    {
+        $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
+            'title' => 'Cloud Assets',
+            'driver' => 's3',
+            'key' => 'some-key',
+            'secret' => 'some-secret',
+            'bucket' => 'some-bucket',
+            'region' => 'some-region',
+            'url' => '/cloud',
+        ]));
+
+        $this->attemptGracefulDiskInsertion(<<<EOT
+        'assets_main' => [
+            'driver' => 'local',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main/edited-route',
+            'visibility' => 'public',
+        ],
+EOT
+        );
+
+        $this->attemptGracefulDiskInsertion(<<<EOT
+        'assets_cloud' => [
+            'driver' => 'local',
+            'root' => public_path('assets/cloud'),
+            'url' => '/assets/cloud/edited-route',
+            'visibility' => 'public',
+        ],
+EOT
+        );
+
+        $this->refreshFilesystems();
+
+        $this->assertEquals('/assets/main/edited-route', config('filesystems.disks.assets_main.url'));
+        $this->assertEquals('/assets/cloud/edited-route', config('filesystems.disks.assets_cloud.url'));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main', '--force' => true]);
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud', '--force' => true]);
+
+        $this->assertFilesystemConfigFileContains(<<<EOT
+    'disks' => [
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+        ],
+
+        'assets_main' => [
+            'driver' => 'local',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main',
+            'visibility' => 'public',
+        ],
+
+        'assets_cloud' => [
+            'driver' => 's3',
+            'key' => env('ASSETS_CLOUD_AWS_ACCESS_KEY_ID'),
+            'secret' => env('ASSETS_CLOUD_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
+            'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
+            'url' => env('ASSETS_CLOUD_AWS_URL'),
+        ],
+
+    ],
+EOT
+        );
+
+        $this->assertFilesystemDiskExists('local');
+        $this->assertFilesystemDiskExists('public');
+        $this->assertFilesystemDiskExists('s3');
+        $this->assertFilesystemDiskExists('assets_main');
+        $this->assertFilesystemDiskExists('assets_cloud');
+        $this->assertFilesystemDiskNotExists('assets');
+    }
+
+    /** @test */
+    function it_overwrites_disks_in_weirdly_mangled_config_when_forced()
+    {
+        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-weird.php', config_path('filesystems.php'));
+
+        $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
+            'title' => 'Cloud Assets',
+            'driver' => 's3',
+            'key' => 'some-key',
+            'secret' => 'some-secret',
+            'bucket' => 'some-bucket',
+            'region' => 'some-region',
+            'url' => '/cloud',
+        ]));
+
+        $this->jamDiskIntoDrive(<<<EOT
+        'assets_main' => [
+            'driver' => 'local',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main/edited-route',
+            'visibility' => 'public',
+        ],
+EOT
+        );
+
+        $this->jamDiskIntoDrive(<<<EOT
+        'assets_cloud' => [
+            'driver' => 'local',
+            'root' => public_path('assets/cloud'),
+            'url' => '/assets/cloud/edited-route',
+            'visibility' => 'public',
+        ],
+EOT
+        );
+
+        $this->refreshFilesystems();
+
+        $this->assertEquals('/assets/main/edited-route', config('filesystems.disks.assets_main.url'));
+        $this->assertEquals('/assets/cloud/edited-route', config('filesystems.disks.assets_cloud.url'));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main', '--force' => true]);
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud', '--force' => true]);
+
+        $this->assertFilesystemConfigFileContains(<<<EOT
+'disks' => [
+        'assets_cloud' => [
+            'driver' => 's3',
+            'key' => env('ASSETS_CLOUD_AWS_ACCESS_KEY_ID'),
+            'secret' => env('ASSETS_CLOUD_AWS_SECRET_ACCESS_KEY'),
+            'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
+            'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
+            'url' => env('ASSETS_CLOUD_AWS_URL'),
+        ],
+
+        'assets_main' => [
+            'driver' => 'local',
+            'root' => public_path('assets/main'),
+            'url' => '/assets/main',
+            'visibility' => 'public',
+        ],
+
+    'local' => [
+        'driver' => 'local',
+        'root' => storage_path('app'),
+    ],
+    'public' => [
+        'driver' => 'local',
+        'root' => storage_path('app/public'),
+        'url' => env('APP_URL').'/storage',
+        'visibility' => 'public',
+    ],
+    's3' => [
+        'driver' => 's3',
+        'key' => env('AWS_ACCESS_KEY_ID'),
+        'secret' => env('AWS_SECRET_ACCESS_KEY'),
+        'region' => env('AWS_DEFAULT_REGION'),
+        'bucket' => env('AWS_BUCKET'),
+        'url' => env('AWS_URL'),
+    ],
+],
+EOT
+        );
+
+        $this->assertFilesystemDiskExists('local');
+        $this->assertFilesystemDiskExists('public');
+        $this->assertFilesystemDiskExists('s3');
+        $this->assertFilesystemDiskExists('assets_main');
+        $this->assertFilesystemDiskExists('assets_cloud');
+        $this->assertFilesystemDiskNotExists('assets');
+    }
+
     /**
      * Assert filesystem config file replacement is valid and contains specific content.
      *
