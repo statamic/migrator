@@ -20,7 +20,7 @@ trait DirectlyModifiesFilesystemConfig
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, "$1],{$diskConfig}$2", $config);
+        $updatedConfig = preg_replace($regex, "$1],\n\n{$diskConfig}\n\n$2", $config);
 
         $this->files->put($configPath, $updatedConfig);
 
@@ -43,7 +43,7 @@ trait DirectlyModifiesFilesystemConfig
             return false;
         }
 
-        $updatedConfig = preg_replace($regex, "$1{$diskConfig}", $config);
+        $updatedConfig = preg_replace($regex, "$1\n\n{$diskConfig}\n\n", $config);
 
         $this->files->put($configPath, $updatedConfig);
 

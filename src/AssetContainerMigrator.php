@@ -251,14 +251,12 @@ class AssetContainerMigrator extends Migrator
         $path = $this->publicRelativePath();
 
         return <<<EOT
-\n
         '{$this->disk}' => [
             'driver' => 'local',
             'root' => public_path('{$path}'),
             'url' => '/{$path}',
             'visibility' => 'public',
         ],
-\n
 EOT;
     }
 
@@ -272,7 +270,6 @@ EOT;
         $envPrefix = strtoupper($this->disk);
 
         return <<<EOT
-\n
         '{$this->disk}' => [
             'driver' => 's3',
             'key' => env('{$envPrefix}_AWS_ACCESS_KEY_ID'),
@@ -281,7 +278,6 @@ EOT;
             'bucket' => env('{$envPrefix}_AWS_BUCKET'),
             'url' => env('{$envPrefix}_AWS_URL'),
         ],
-\n
 EOT;
     }
 
