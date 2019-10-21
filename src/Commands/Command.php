@@ -50,7 +50,7 @@ class Command extends IlluminateCommand
     protected function outputWarnings($warnings)
     {
         $warnings->each(function ($warning) {
-            $this->error($warning->get('warning'));
+            $this->comment('Warning: ' . $warning->get('warning'));
 
             if ($extra = $warning->get('extra')) {
                 $this->line($extra);

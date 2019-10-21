@@ -49,6 +49,13 @@ class MigrateSite extends Command
     protected $skippedCount = 0;
 
     /**
+     * Warning count.
+     *
+     * @var int
+     */
+    protected $warningCount = 0;
+
+    /**
      * Error count.
      *
      * @var int
@@ -285,6 +292,7 @@ class MigrateSite extends Command
             $migration();
         } catch (MigratorWarningsException $warningsException) {
             $this->outputMigrationWarnings($descriptor, $handle, $warningsException->getWarnings());
+            $this->warningCount++;
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
             $this->skippedCount++;
@@ -310,7 +318,7 @@ class MigrateSite extends Command
     protected function outputMigrationWarnings($descriptor, $handle, $warnings)
     {
         $warnings->each(function ($warning) use ($descriptor, $handle) {
-            $this->line("<error>{$descriptor} migration warning:</error> {$handle}");
+            $this->line("<comment>{$descriptor} migration warning:</comment> {$handle}");
             $this->line($warning->get('warning'));
 
             if ($extra = $warning->get('extra')) {
@@ -329,6 +337,7 @@ class MigrateSite extends Command
         return collect([
             "{$this->skippedCount} skipped",
             "{$this->errorCount} " . ($this->errorCount == 1 ? 'error' : 'errors'),
+            "{$this->warningCount} " . ($this->warningCount == 1 ? 'warning' : 'warnings'),
             "{$this->successCount} successful",
         ]);
     }
