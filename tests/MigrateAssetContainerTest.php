@@ -182,6 +182,45 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
+    function it_can_migrate_meta_into_s3_path()
+    {
+        $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
+            'title' => 'Secondary Assets',
+            'driver' => 's3',
+            'path' => 'somewhere/nested',
+            'fieldset' => 'asset_fields',
+            'assets' => [
+                'img/stetson.jpg' => [
+                    'title' => 'A Hat',
+                    'alt' => 'fancy hat',
+                    'purchase' => 'amazon.texas/stetson'
+                ]
+            ]
+        ]));
+
+        // Fake S3 connection so that we can test `path` on `s3` driver.
+        $this->jamDiskIntoDrive(
+            "'assets_secondary' => [
+                'driver' => 'local',
+                'root' => public_path('assets/secondary'),
+                'url' => '/assets/secondary',
+                'visibility' => 'public',
+            ],"
+        );
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
+
+        $this->assertFileNotExists('assets/secondary/img/.meta/stetson.jpg.yaml');
+
+        $meta = YAML::parse($this->files->get(public_path('assets/secondary/somewhere/nested/img/.meta/stetson.jpg.yaml')));
+
+        $this->assertCount(3, $meta['data']);
+        $this->assertEquals('A Hat', $meta['data']['title']);
+        $this->assertEquals('fancy hat', $meta['data']['alt']);
+        $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
+    }
+
+    /** @test */
     function it_migrates_disk_into_default_laravel_config()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));
