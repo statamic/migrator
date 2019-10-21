@@ -21,6 +21,7 @@ class AssetContainerMigrator extends Migrator
     protected $disk;
     protected $container;
     protected $localPath;
+    protected $s3Path;
     protected $metaData;
 
     /**
@@ -121,6 +122,7 @@ class AssetContainerMigrator extends Migrator
 
         $this->driver = $this->parseDriver($config);
         $this->localPath = $this->parseLocalPath($config);
+        $this->s3Path = $this->parseS3Path($config);
         $this->metaData = $this->parseMeta($config);
 
         $config->put('disk', $this->disk);
@@ -171,6 +173,28 @@ class AssetContainerMigrator extends Migrator
         }
 
         throw new NotFoundException("Assets folder cannot be found at path [path].", $path);
+    }
+
+    /**
+     * Parse S3 path.
+     *
+     * @param array $config
+     * @return string
+     */
+    protected function parseS3Path($config)
+    {
+        if (Arr::get($config, 'driver', 'local') !== 's3') {
+            return null;
+        }
+
+        if ($path = Arr::get($config, 'path', null)) {
+            $this->addWarning(
+                'Subfolder `path` option no longer supported.',
+                'Asset container disks now point to the root of your S3 bucket.'
+            );
+        }
+
+        return $path;
     }
 
     /**
@@ -371,8 +395,22 @@ EOT;
         $storage = Storage::disk($this->disk);
 
         $this->metaData->each(function ($data, $file) use ($storage) {
-            $storage->put(preg_replace('/\/*([^\/]+)$/', '/.meta/$1.yaml', $file), YAML::dump($data));
+            $storage->put($this->metaPath($file), YAML::dump($data));
         });
+    }
+
+    /**
+     * Get proper meta path for meta migration.
+     *
+     * @param string $file
+     * @return string
+     */
+    protected function metaPath($file)
+    {
+        $path = preg_replace('/(\/*)([^\/]+)$/', '$1.meta/$2.yaml', $file);
+        $subFolder = $this->s3Path ? "{$this->s3Path}/" : '';
+
+        return $subFolder . $path;
     }
 
     /**
