@@ -127,14 +127,31 @@ abstract class Migrator
         $descriptor = static::descriptor();
 
         collect($this->uniquePaths())
+            ->map(function ($path) {
+                return $this->normalizePath($path);
+            })
             ->filter(function ($path) {
-                return $this->files->exists($this->normalizePath($path));
+                return $this->pathExists($path);
             })
             ->each(function ($path) use ($descriptor) {
                 throw new AlreadyExistsException("{$descriptor} already exists at [path].", $path);
             });
 
         return $this;
+    }
+
+    /**
+     * Check if path exists (with files, if directory).
+     *
+     * @param mixed $path
+     */
+    protected function pathExists($path)
+    {
+        $pathExists = $this->files->exists($path);
+
+        return $this->files->isDirectory($path)
+            ? $pathExists && $this->files->files($path)
+            : $pathExists;
     }
 
     /**

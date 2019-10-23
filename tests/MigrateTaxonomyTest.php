@@ -75,4 +75,33 @@ EOT;
 
         $this->assertEquals($expected, $this->files->get($this->path('tags/spring.yaml')));
     }
+
+    /** @test */
+    function it_migrates_into_empty_terms_folder_without_complaining()
+    {
+        $this->files->makeDirectory($this->path('tags'));
+
+        $this->assertFileExists($this->path('tags'));
+        $this->assertFileNotExists($this->path('tags.yaml'));
+
+        $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
+
+        $this->assertFileExists($this->path('tags.yaml'));
+        $this->assertCount(2, $this->files->files($this->path('tags')));
+    }
+
+    /** @test */
+    function it_wont_migrate_into_a_populated_terms_folder()
+    {
+        $this->files->makeDirectory($this->path('tags'));
+        $this->files->put($this->path('tags/llamas.yaml'), '');
+
+        $this->assertFileExists($this->path('tags/llamas.yaml'));
+        $this->assertFileNotExists($this->path('tags.yaml'));
+
+        $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
+
+        $this->assertFileNotExists($this->path('tags.yaml'));
+        $this->assertCount(1, $this->files->files($this->path('tags')));
+    }
 }
