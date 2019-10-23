@@ -8,6 +8,7 @@ use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\SettingsMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
@@ -88,7 +89,7 @@ class MigrateSite extends Command
             ->migrateGlobalSets()
             // ->migrateForms()
             ->migrateUsers()
-            // ->migrateSettings()
+            ->migrateSettings()
             // ->migrateTemplates()
             ;
 
@@ -212,7 +213,9 @@ class MigrateSite extends Command
      */
     protected function migrateSettings()
     {
-        //
+        $this->getFileHandlesFromPath(base_path('site/settings'))->each(function ($handle) {
+            $this->runMigratorOnHandle(SettingsMigrator::class, $handle);
+        });
 
         return $this;
     }
