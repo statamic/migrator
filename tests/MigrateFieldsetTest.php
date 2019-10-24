@@ -8,23 +8,24 @@ use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateFieldsetTest extends TestCase
 {
-    protected function path()
+    protected function paths($key = null)
     {
-        return resource_path('blueprints/post.yaml');
-    }
+        $paths = [
+            'new' => resource_path('blueprints/post.yaml'),
+            'old' => $this->sitePath('settings/fieldsets/post.yaml'),
+            'system' => $this->sitePath('settings/system.yaml'),
+        ];
 
-    protected function originalPath()
-    {
-        return base_path('site/settings/fieldsets/post.yaml');
+        return $key ? $paths[$key] : $paths;
     }
 
     private function migrateFieldsetToBlueprint($fieldsetConfig)
     {
-        $this->files->put($this->originalPath(), YAML::dump($fieldsetConfig));
+        $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
 
         $this->artisan('statamic:migrate:fieldset', ['handle' => 'post']);
 
-        return YAML::parse($this->files->get($this->path()));
+        return YAML::parse($this->files->get($this->paths('new')));
     }
 
     /** @test */
@@ -301,6 +302,69 @@ class MigrateFieldsetTest extends TestCase
                     'field' => [
                         'type' => 'text',
                         'width' => 50
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /** @test */
+    function it_migrates_redactor_to_bard()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'content' => [
+                    'type' => 'redactor',
+                ]
+            ]
+        ]);
+
+        $this->assertEquals($blueprint, [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'content',
+                    'field' => [
+                        'type' => 'bard',
+                        'save_html' => true,
+                        'buttons' => ['formatting', 'bold', 'italic', 'link', 'unorderedlist', 'orderedlist', 'html'],
+                    ]
+                ]
+            ]
+        ]);
+    }
+
+    /** @test */
+    function it_migrates_redactor_with_custom_settings_to_bard()
+    {
+        $this->files->put($this->paths('system'), YAML::dump([
+            'redactor' => [
+                ['name' => 'Custom', 'settings' => ['buttons' => ['unorderedlist', 'orderedlist']]],
+            ]
+        ]));
+
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'content' => [
+                    'type' => 'redactor',
+                    'settings' => 'Custom',
+                    'container' => 'main',
+                ]
+            ]
+        ]);
+
+        $this->assertEquals($blueprint, [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'content',
+                    'field' => [
+                        'type' => 'bard',
+                        'save_html' => true,
+                        'container' => 'main',
+                        'buttons' => ['unorderedlist', 'orderedlist', 'image'],
                     ]
                 ]
             ]
