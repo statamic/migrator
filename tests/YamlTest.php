@@ -16,6 +16,7 @@ class YamlTest extends TestCase
     /** @test */
     function it_detects_parser()
     {
+        $this->files->delete($this->path());
         $this->assertFileNotExists($this->path());
         $this->assertEquals(null, YAML::detect());
 
