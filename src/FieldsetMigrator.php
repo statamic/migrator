@@ -7,7 +7,8 @@ use Statamic\Support\Str;
 
 class FieldsetMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\MigratesFile,
+        Concerns\ThrowsFinalWarnings;
 
     protected $blueprint;
 
@@ -24,7 +25,8 @@ class FieldsetMigrator extends Migrator
             ->validateUnique()
             ->migrateToBlueprintSchema()
             ->removeOldFunctionality()
-            ->saveMigratedYaml($this->blueprint);
+            ->saveMigratedYaml($this->blueprint)
+            ->throwFinalWarnings();
     }
 
     /**
@@ -125,6 +127,11 @@ class FieldsetMigrator extends Migrator
             $config = $this->migrateFieldConditions($config);
         }
 
+        switch ($config['type'] ?? 'text') {
+            case 'redactor':
+                $config = $this->migrateRedactorField($config);
+        }
+
         return $this->normalizeConfigToArray($config);
     }
 
@@ -173,6 +180,53 @@ class FieldsetMigrator extends Migrator
             ->forget('show_when')
             ->forget('hide_when')
             ->put($key, $conditions);
+    }
+
+    /**
+     * Migrate redactor field.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function migrateRedactorField($config)
+    {
+        $this->addWarning(
+            'Redactor field(s) have been migrated to bard.',
+            'Not all redactor features and settings are bard-compatible.'
+        );
+
+        return $config
+            ->put('type', 'bard')
+            ->put('save_html', true)
+            ->put('buttons', $this->migrateRedactorButtons($config))
+            ->forget('settings');
+    }
+
+    /**
+     * Migrate redactor buttons.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function migrateRedactorButtons($config)
+    {
+        $defaultSettings = [
+            ['name' => 'Standard', 'settings' => ['buttons' => ['formatting', 'bold', 'italic', 'link', 'unorderedlist', 'orderedlist', 'html']]],
+            ['name' => 'Basic', 'settings' => ['buttons' => ['bold', 'italic']]],
+        ];
+
+        $buttons = collect($this->getSourceYaml('settings/system.yaml')['redactor'] ?? $defaultSettings)
+            ->keyBy('name')
+            ->map(function ($preset) {
+                return $preset['settings']['buttons'];
+            })
+            ->get($config['settings'] ?? 'Standard');
+
+        if ($config['container'] ?? false) {
+            $buttons[] = 'image';
+        }
+
+        return $buttons;
     }
 
     /**
