@@ -99,19 +99,20 @@ class FieldsetMigrator extends Migrator
      */
     protected function migrateField($field, $handle)
     {
-        return [
-            'handle' => $field['handle'] ?? $handle,
-            'field' => $field['field'] ?? $this->migrateFieldConfig($field),
-        ];
+        $handle = $field['handle'] ?? $handle;
+        $field = $field['field'] ?? $this->migrateFieldConfig($field, $handle);
+
+        return compact('handle', 'field');
     }
 
     /**
      * Migrate field config.
      *
      * @param array $config
+     * @param string $handle
      * @return array
      */
-    protected function migrateFieldConfig($config)
+    protected function migrateFieldConfig($config, $handle)
     {
         $config = collect($config)->except(['handle', 'field']);
 
@@ -129,7 +130,7 @@ class FieldsetMigrator extends Migrator
 
         switch ($config['type'] ?? 'text') {
             case 'redactor':
-                $config = $this->migrateRedactorField($config);
+                $config = $this->migrateRedactorField($config, $handle);
         }
 
         return $this->normalizeConfigToArray($config);
@@ -186,13 +187,15 @@ class FieldsetMigrator extends Migrator
      * Migrate redactor field.
      *
      * @param array $config
+     * @param string $handle
      * @return array
      */
-    protected function migrateRedactorField($config)
+    protected function migrateRedactorField($config, $handle)
     {
         $this->addWarning(
-            'Redactor field(s) have been migrated to bard.',
-            'Not all redactor features and settings are bard-compatible.'
+            "Redactor field [{$handle}] has been migrated to bard.",
+            "Not all redactor features and settings are bard-compatible.\n" .
+            "Please revise your bard configuration as necessary."
         );
 
         return $config
