@@ -25,18 +25,11 @@ class MigratePages extends Command
     protected $description = 'Migrate v2 pages';
 
     /**
-     * Execute the console command.
+     * Runs migrator.
+     *
+     * @var string
      */
-    public function handle()
-    {
-        try {
-            PagesMigrator::withoutHandle()->overwrite($this->option('force'))->migrate();
-        } catch (MigratorErrorException $exception) {
-            return $this->error($exception->getMessage());
-        }
-
-        $this->info("Pages collection has been successfully migrated.");
-    }
+    protected $migrator = PagesMigrator::class;
 
     /**
      * Get the console command arguments.
