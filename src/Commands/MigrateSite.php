@@ -89,7 +89,7 @@ class MigrateSite extends Command
             ->migrateGlobalSets()
             // ->migrateForms()
             ->migrateUsers()
-            ->migrateSettings()
+            // ->migrateSettings()
             // ->migrateTemplates()
             ;
 

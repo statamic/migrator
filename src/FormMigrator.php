@@ -24,9 +24,10 @@ class FormMigrator extends Migrator
     /**
      * Parse user.
      *
+     * @param string $relativePath
      * @return $this
      */
-    protected function parseForm()
+    protected function parseForm($relativePath)
     {
         $this->form = $this->getSourceYaml($relativePath);
 
