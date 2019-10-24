@@ -91,7 +91,7 @@ class MigrateSite extends Command
             ->migrateUsers()
             // ->migrateSettings()
             // ->migrateTemplates()
-            ;
+            ->clearCache();
 
         $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
     }

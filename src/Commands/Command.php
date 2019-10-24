@@ -25,6 +25,8 @@ class Command extends IlluminateCommand
             return $this->error($exception->getMessage());
         }
 
+        $this->clearCache();
+
         $descriptor = $this->migrator::descriptor();
 
         $this->info("{$descriptor} [{$handle}] has been successfully migrated.");
@@ -56,6 +58,18 @@ class Command extends IlluminateCommand
                 $this->line($extra);
             }
         });
+    }
+
+    /**
+     * Clear cache.
+     *
+     * @return $this
+     */
+    protected function clearCache()
+    {
+        $this->callSilent('cache:clear');
+
+        return $this;
     }
 
     /**
