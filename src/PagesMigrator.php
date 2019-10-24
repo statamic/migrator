@@ -77,7 +77,7 @@ class PagesMigrator extends Migrator
 
         $page['slug'] = $key === 'root'
             ? Str::slug($page['title'])
-            : preg_replace('/.*\/[0-9]*\.([^\/]*)$/', '$1', $folder);
+            : preg_replace('/.*\/_*[0-9]*\.([^\/]*)$/', '$1', $folder);
 
         $this->entries[] = $page;
         $this->usedBlueprints[] = $page['fieldset'] ?? null;
