@@ -15,7 +15,7 @@ class Command extends IlluminateCommand
      */
     public function handle()
     {
-        $handle = $this->argument('handle');
+        $handle = $this->hasArgument('handle') ? $this->argument('handle') : false;
 
         try {
             $this->runMigration($handle);
@@ -28,18 +28,23 @@ class Command extends IlluminateCommand
         $this->clearCache();
 
         $descriptor = $this->migrator::descriptor();
+        $handleDescriptor = $handle ? " [{$handle}]" : null;
 
-        $this->info("{$descriptor} [{$handle}] has been successfully migrated.");
+        $this->info("{$descriptor}{$handleDescriptor} has been successfully migrated.");
     }
 
     /**
      * Run migration.
      *
-     * @param string $handle
+     * @param string|bool $handle
      */
     protected function runMigration($handle)
     {
-        $this->migrator::handle($handle)
+        $migrator = $handle
+            ? $this->migrator::handle($handle)
+            : $this->migrator::withoutHandle();
+
+        $migrator
             ->overwrite($this->option('force'))
             ->migrate();
     }
