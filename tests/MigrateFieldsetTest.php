@@ -328,7 +328,7 @@ class MigrateFieldsetTest extends TestCase
                     'field' => [
                         'type' => 'bard',
                         'save_html' => true,
-                        'buttons' => ['formatting', 'bold', 'italic', 'link', 'unorderedlist', 'orderedlist', 'html'],
+                        'buttons' => ['bold', 'italic', 'unorderedlist', 'orderedlist', 'html', 'quote', 'codeblock', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'anchor'],
                     ]
                 ]
             ]
@@ -340,7 +340,7 @@ class MigrateFieldsetTest extends TestCase
     {
         $this->files->put($this->paths('system'), YAML::dump([
             'redactor' => [
-                ['name' => 'Custom', 'settings' => ['buttons' => ['unorderedlist', 'orderedlist']]],
+                ['name' => 'Custom', 'settings' => ['buttons' => ['unorderedlist', 'orderedlist', 'h1']]],
             ]
         ]));
 
@@ -364,7 +364,7 @@ class MigrateFieldsetTest extends TestCase
                         'type' => 'bard',
                         'save_html' => true,
                         'container' => 'main',
-                        'buttons' => ['unorderedlist', 'orderedlist', 'image'],
+                        'buttons' => ['unorderedlist', 'orderedlist', 'h1', 'image'],
                     ]
                 ]
             ]
