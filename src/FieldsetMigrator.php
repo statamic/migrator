@@ -213,6 +213,33 @@ class FieldsetMigrator extends Migrator
      */
     protected function migrateRedactorButtons($config)
     {
+        $buttons = $this->getRedactorButtons($config);
+
+        if ($config['container'] ?? false) {
+            $buttons->push('image');
+        }
+
+        if ($buttons->has('formatting')) {
+            $buttons = $buttons
+                ->merge(['quote', 'codeblock', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6'])
+                ->forget('formatting');
+        }
+
+        if ($buttons->has('link')) {
+            $buttons->push('anchor')->forget('link');
+        }
+
+        return $buttons->unique()->values()->all();
+    }
+
+    /**
+     * Get redactor buttons from system config.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function getRedactorButtons($config)
+    {
         $defaultSettings = [
             ['name' => 'Standard', 'settings' => ['buttons' => ['formatting', 'bold', 'italic', 'link', 'unorderedlist', 'orderedlist', 'html']]],
             ['name' => 'Basic', 'settings' => ['buttons' => ['bold', 'italic']]],
@@ -225,11 +252,9 @@ class FieldsetMigrator extends Migrator
             })
             ->get($config['settings'] ?? 'Standard');
 
-        if ($config['container'] ?? false) {
-            $buttons[] = 'image';
-        }
-
-        return $buttons;
+        return collect($buttons)->keyBy(function ($value) {
+            return $value;
+        });
     }
 
     /**
