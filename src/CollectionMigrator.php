@@ -17,9 +17,9 @@ class CollectionMigrator extends Migrator
         $this
             ->setNewPath(base_path($relativePath = "content/collections/{$this->handle}"))
             ->validateUnique()
-            ->copyDirectoryFromSiteToNewPath($relativePath)
             ->migrateYamlConfig()
-            ->deleteOldConfig();
+            ->deleteOldConfig()
+            ->migrateEntries($relativePath);
     }
 
     /**
@@ -68,5 +68,46 @@ class CollectionMigrator extends Migrator
         $this->files->delete($this->newPath('folder.yaml'));
 
         return $this;
+    }
+
+    /**
+     * Migrate entries.
+     *
+     * @param string $relativePath
+     * @return $this
+     */
+    protected function migrateEntries($relativePath)
+    {
+        $this->files->makeDirectory($this->newPath());
+
+        collect($this->files->files($this->sitePath($relativePath)))
+            ->reject(function ($file) {
+                return $file->getFilename() === 'folder.yaml';
+            })
+            ->mapWithKeys(function ($file) {
+                return [$file->getFilename() => $this->getSourceYaml($file)];
+            })
+            ->each(function ($entry, $filename) {
+                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->newPath($filename));
+            });
+
+        return $this;
+    }
+
+    /**
+     * Migrate entry.
+     *
+     * @param string $entry
+     * @return string
+     */
+    protected function migrateEntry($entry)
+    {
+        if (isset($entry['fieldset'])) {
+            $entry['blueprint'] = $entry['fieldset'];
+        }
+
+        unset($entry['fieldset']);
+
+        return $entry;
     }
 }
