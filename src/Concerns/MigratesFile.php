@@ -54,6 +54,20 @@ trait MigratesFile
      */
     protected function saveMigratedYaml($migrated, $path = null)
     {
+        $migrated = collect($migrated)->all();
+
+        return $this->saveMigratedContents(YAML::dump($migrated), $path);
+    }
+
+    /**
+     * Save migrate file contents with yaml front matter.
+     *
+     * @param array|\Illuminate\Support\Collection $migrated
+     * @param string|null $path
+     * @return $this
+     */
+    protected function saveMigratedWithYamlFrontMatter($migrated, $path = null)
+    {
         $content = collect($migrated)->get('content');
         $migrated = collect($migrated)->except('content')->all();
 
