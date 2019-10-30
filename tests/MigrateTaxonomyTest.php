@@ -62,15 +62,14 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_term_content_as_document_content()
+    function it_migrates_term_content_under_content_key()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
         $expected = <<<EOT
----
 title: spring
----
-Spring has sprung!
+content: 'Spring has sprung!'
+
 EOT;
 
         $this->assertEquals($expected, $this->files->get($this->path('tags/spring.yaml')));
