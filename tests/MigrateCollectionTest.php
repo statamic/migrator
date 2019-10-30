@@ -55,4 +55,30 @@ class MigrateCollectionTest extends TestCase
 
         $this->assertParsedYamlNotHasKey('route', $this->path('blog.yaml'));
     }
+
+    /** @test */
+    function it_migrates_entry()
+    {
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $path = $this->path('blog/2017-09-28.what-i-did-last-summer.md');
+
+        $this->assertParsedYamlHasKey('id', $path);
+        $this->assertParsedYamlContains(['blueprint' => 'long_form'], $path);
+        $this->assertParsedYamlNotHasKey('fieldset', $path);
+    }
+
+    /** @test */
+    function it_migrates_entry_content_as_document_content()
+    {
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $expected = <<<EOT
+id: f5c18e4c-4d51-4fc6-ab52-b7afe5116b3a
+---
+Let me first explain myself. I am not a brave person by nature.
+EOT;
+
+        $this->assertContains($expected, $this->files->get($this->path('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
+    }
 }
