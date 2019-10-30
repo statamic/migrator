@@ -9,6 +9,8 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
+    use Concerns\MigratesFile;
+
     protected $entries = [];
     protected $structure = [];
     protected $usedBlueprints = [];
@@ -111,7 +113,7 @@ class PagesMigrator extends Migrator
             'tree' => $this->structure['root']['children'],
         ];
 
-        $this->files->put($this->newPath('../../structures/pages.yaml'), YAML::dump($config));
+        $this->saveMigratedYaml($config, $this->newPath('../../structures/pages.yaml'));
 
         return $this;
     }
@@ -130,7 +132,7 @@ class PagesMigrator extends Migrator
             'structure' => 'pages',
         ];
 
-        $this->files->put($this->newPath('../pages.yaml'), YAML::dump($config));
+        $this->saveMigratedYaml($config, $this->newPath('../pages.yaml'));
 
         return $this;
     }
@@ -170,7 +172,7 @@ class PagesMigrator extends Migrator
                 return $this->migrateFieldsetToBlueprint($entry);
             })
             ->map(function ($entry) {
-                $this->files->put($this->generateEntryPath($entry), $this->dumpEntryToMarkdown($entry));
+                $this->saveMigratedWithYamlFrontMatter($entry, $this->generateEntryPath($entry));
             });
 
         return $this;
@@ -213,18 +215,5 @@ class PagesMigrator extends Migrator
         unset($entry['fieldset']);
 
         return $entry;
-    }
-
-    /**
-     * Dump entry to markdown.
-     *
-     * @param array $entry
-     * @return string
-     */
-    protected function dumpEntryToMarkdown($entry)
-    {
-        return isset($entry['content'])
-            ? YAML::dumpFrontMatter(collect($entry)->except('content')->all()) . $entry['content']
-            : YAML::dump($entry);
     }
 }
