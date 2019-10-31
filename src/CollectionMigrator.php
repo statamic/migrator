@@ -88,7 +88,7 @@ class CollectionMigrator extends Migrator
                 return [$file->getFilename() => $this->getSourceYaml($file)];
             })
             ->each(function ($entry, $filename) {
-                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->newPath($filename));
+                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->migratePath($filename));
             });
 
         return $this;
@@ -109,5 +109,16 @@ class CollectionMigrator extends Migrator
         unset($entry['fieldset']);
 
         return $entry;
+    }
+
+    /**
+     * Migrate path.
+     *
+     * @param string $filename
+     * @return $string
+     */
+    protected function migratePath($filename)
+    {
+        return $this->newPath(preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename));
     }
 }
