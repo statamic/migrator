@@ -25,6 +25,7 @@ class MigrateSiteTest extends TestCase
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
             'assetContainers' => base_path('content/assets'),
+            'views' => resource_path('views'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -118,5 +119,15 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('users')));
+    }
+
+    /** @test */
+    function it_migrates_theme()
+    {
+        $this->assertCount(0, $this->files->allFiles($this->paths('views')));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertCount(25, $this->files->allFiles($this->paths('views')));
     }
 }
