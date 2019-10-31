@@ -9,6 +9,9 @@ class CollectionMigrator extends Migrator
     use Concerns\MigratesFile,
         Concerns\MigratesRoute;
 
+    protected $availableTaxonomies;
+    protected $usedTaxonomies;
+
     /**
      * Perform migration.
      */
@@ -17,9 +20,10 @@ class CollectionMigrator extends Migrator
         $this
             ->setNewPath(base_path($relativePath = "content/collections/{$this->handle}"))
             ->validateUnique()
+            ->parseAvailableTaxonomies()
+            ->migrateEntries($relativePath)
             ->migrateYamlConfig()
-            ->deleteOldConfig()
-            ->migrateEntries($relativePath);
+            ->deleteOldConfig();
     }
 
     /**
@@ -36,36 +40,15 @@ class CollectionMigrator extends Migrator
     }
 
     /**
-     * Migrate yaml config.
+     * Parse available taxonomies.
      *
      * @return $this
      */
-    protected function migrateYamlConfig()
+    public function parseAvailableTaxonomies()
     {
-        $config = $this->getSourceYaml("content/collections/{$this->handle}/folder.yaml", true);
-
-        if ($fieldset = $config->get('fieldset')) {
-            $config->put('blueprints', [$fieldset]);
-            $config->forget('fieldset');
-        }
-
-        if ($route = $this->migrateRoute("collections.{$this->handle}")) {
-            $config->put('route', $route);
-        }
-
-        $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
-
-        return $this;
-    }
-
-    /**
-     * Delete old folder.yaml config from copied folder.
-     *
-     * @return $this
-     */
-    protected function deleteOldConfig()
-    {
-        $this->files->delete($this->newPath('folder.yaml'));
+        $this->availableTaxnomies = collect($this->files->files($this->sitePath('content/taxonomies')))
+            ->map
+            ->getFilenameWithoutExtension();
 
         return $this;
     }
@@ -108,7 +91,32 @@ class CollectionMigrator extends Migrator
 
         unset($entry['fieldset']);
 
+        $this->migrateUsedTaxonomies($entry);
+
         return $entry;
+    }
+
+    /**
+     * Migrate used taxonomies.
+     *
+     * @param mixed $entry
+     */
+    protected function migrateUsedTaxonomies($entry)
+    {
+        $usedTaxonomies = $this->availableTaxnomies
+            ->filter(function ($taxonomy) use ($entry) {
+                return ! empty($entry[$taxonomy]) && is_array($entry[$taxonomy]);
+            });
+
+        if ($usedTaxonomies->isEmpty()) {
+            return;
+        }
+
+        $this->usedTaxonomies = collect($this->usedTaxonomies)
+            ->merge($usedTaxonomies)
+            ->unique()
+            ->sort()
+            ->values();
     }
 
     /**
@@ -120,5 +128,44 @@ class CollectionMigrator extends Migrator
     protected function migratePath($filename)
     {
         return $this->newPath(preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename));
+    }
+
+    /**
+     * Migrate yaml config.
+     *
+     * @return $this
+     */
+    protected function migrateYamlConfig()
+    {
+        $config = $this->getSourceYaml("content/collections/{$this->handle}/folder.yaml", true);
+
+        if ($fieldset = $config->get('fieldset')) {
+            $config->put('blueprints', [$fieldset]);
+            $config->forget('fieldset');
+        }
+
+        if ($route = $this->migrateRoute("collections.{$this->handle}")) {
+            $config->put('route', $route);
+        }
+
+        if ($taxonomies = $this->usedTaxonomies) {
+            $config->put('taxonomies', $taxonomies->all());
+        }
+
+        $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
+
+        return $this;
+    }
+
+    /**
+     * Delete old folder.yaml config from copied folder.
+     *
+     * @return $this
+     */
+    protected function deleteOldConfig()
+    {
+        $this->files->delete($this->newPath('folder.yaml'));
+
+        return $this;
     }
 }
