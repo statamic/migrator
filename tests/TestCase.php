@@ -4,9 +4,12 @@ namespace Tests;
 
 use Statamic\Migrator\YAML;
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Migrator\Concerns\PreparesPathFolder;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
+    use PreparesPathFolder;
+
     protected function getPackageProviders($app)
     {
         return [
@@ -66,29 +69,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $paths->push(base_path('site'));
 
         return $paths;
-    }
-
-    protected function prepareFolder($path)
-    {
-        $folder = $this->getFolderFromPath($path);
-
-        if (! $this->files->exists($folder)) {
-            $this->files->makeDirectory($folder, 0755, true);
-        }
-    }
-
-    protected function deleteFolder($path)
-    {
-        $folder = $this->getFolderFromPath($path);
-
-        if ($this->files->exists($folder)) {
-            $this->files->deleteDirectory($folder);
-        }
-    }
-
-    protected function getFolderFromPath($path)
-    {
-        return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', $path);
     }
 
     protected function restoreFilesystemConfig()
