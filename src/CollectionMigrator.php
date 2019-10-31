@@ -61,7 +61,7 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateEntries($relativePath)
     {
-        $this->files->cleanDirectory($this->newPath('valley/of/the/shadow/of/death'));
+        $this->files->cleanDirectory($this->newPath());
 
         collect($this->files->files($this->sitePath($relativePath)))
             ->reject(function ($file) {
