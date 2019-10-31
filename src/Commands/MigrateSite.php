@@ -2,10 +2,13 @@
 
 namespace Statamic\Migrator\Commands;
 
+use Statamic\Support\Arr;
+use Statamic\Migrator\YAML;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
+use Statamic\Migrator\ThemeMigrator;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\SettingsMigrator;
@@ -90,7 +93,7 @@ class MigrateSite extends Command
             // ->migrateForms()
             ->migrateUsers()
             // ->migrateSettings()
-            // ->migrateTemplates()
+            ->migrateTheme()
             ->clearCache();
 
         $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
@@ -221,6 +224,18 @@ class MigrateSite extends Command
     }
 
     /**
+     * Migrate theme.
+     *
+     * @return $this
+     */
+    protected function migrateTheme()
+    {
+        $this->runMigratorOnHandle(ThemeMigrator::class, $this->getSetting('theming.theme', 'redwood'));
+
+        return $this;
+    }
+
+    /**
      * Get file handles from path.
      *
      * @param string $path
@@ -252,6 +267,26 @@ class MigrateSite extends Command
         return collect($this->files->directories($path))->map(function ($path) {
             return preg_replace('/.*\/([^\/]+)/', '$1', $path);
         });
+    }
+
+    /**
+     * Get setting.
+     *
+     * @param string $dottedPath
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function getSetting($dottedPath, $default = null)
+    {
+        $file = collect(explode('.', $dottedPath))->first();
+
+        $path = base_path("site/settings/{$file}.yaml");
+
+        $settings = $this->files->exists($path)
+            ? YAML::parse($this->files->get($path))
+            : [];
+
+        return Arr::get($settings, $dottedPath, $default);
     }
 
     /**

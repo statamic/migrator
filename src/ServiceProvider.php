@@ -17,6 +17,7 @@ class ServiceProvider extends AddonServiceProvider
         Commands\MigrateSettings::class,
         Commands\MigrateSite::class,
         Commands\MigrateTaxonomy::class,
+        Commands\MigrateTheme::class,
         Commands\MigrateUser::class,
     ];
 
