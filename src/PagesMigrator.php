@@ -23,7 +23,6 @@ class PagesMigrator extends Migrator
         $this
             ->setNewPath(base_path("content/collections/pages"))
             ->validateUnique()
-            ->copyDirectoryFromSiteToNewPath("content/pages")
             ->parseTree()
             ->createStructure()
             ->createYamlConfig()
@@ -61,7 +60,7 @@ class PagesMigrator extends Migrator
      */
     protected function parseTree()
     {
-        $this->parsePageFolder($this->newPath());
+        $this->parsePageFolder($this->sitePath('content/pages'));
 
         return $this;
     }
