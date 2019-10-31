@@ -1,0 +1,45 @@
+<section class="regular">
+
+    <header>
+        <h1>Register</h1>
+    </header>
+
+    <article class="content">
+
+        {{ user:register_form redirect="/account" }}
+
+            {{ if errors }}
+                <div class="alert alert-danger">
+                    {{ errors }}
+                        {{ value }}<br>
+                    {{ /errors }}
+                </div>
+            {{ /if }}
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="{{ old:username }}" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" value="{{ old:email }}" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Password Confirmation</label>
+                <input type="password" name="password_confirmation" class="form-control" />
+            </div>
+
+            <button class="btn btn-primary">Register</button>
+
+        {{ /user:register_form }}
+
+    </article>
+
+</section>

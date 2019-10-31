@@ -1,0 +1,8 @@
+jake:
+  title: true
+  ensure_right: ": The Amy Santiago Story"
+summary:
+    strip_tags: [img, a, p]
+    safe_truncate: 210
+    ensure_right: ...
+    widont: true

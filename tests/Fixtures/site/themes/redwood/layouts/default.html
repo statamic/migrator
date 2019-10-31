@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7"><![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Another awesome Statamic site">
+    <title>{{ title ensure_right=" / " }}{{ site_name }}</title>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ theme:css }}">
+</head>
+
+<body class="section-{{ segment_1 or "home" }}">
+
+    {{ partial:nav }}
+
+    {{ template_content }}
+
+    <footer class="page">
+        <p class="copyright">&copy; {{ now format="Y" }} {{ author_name }}</p>
+        <p class="tribute">Built with Statamic</p>
+    </footer>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="{{ theme:js }}"></script>
+
+</body>
+</html>

@@ -1,0 +1,22 @@
+input.giant {
+	font-family: $font_sans;
+	font-size: 60px;
+	font-weight: 300;
+	color: $color_dark;
+	box-shadow: none;
+	border: none;
+	border-radius: 0;
+	height: $gap * 3;
+	margin-bottom: $gap;
+	margin-left: -5px;
+	padding: 0px;
+	letter-spacing: -.03em;
+	outline: none;
+
+	&:focus,
+	&:active {
+		outline: none;
+		box-shadow: none !important;
+	}
+	
+}

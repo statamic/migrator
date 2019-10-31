@@ -1,0 +1,29 @@
+<section class="regular">
+
+    <header>
+        <h1>Users</h1>
+        <h2>Here are all the registered users.</h2>
+    </header>
+
+    <article>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{ users }}
+                    <tr>
+                        <td><a href="{{ link to='/users/{ username }' }}">
+                            {{ if name }}{{ name | entities }}{{ else }}{{ username }}{{ /if }}
+                        </a></td>
+                        <td>{{ email }}</td>
+                    </tr>
+                {{ /users }}
+            </tbody>
+        </table>
+    </article>
+
+</section>

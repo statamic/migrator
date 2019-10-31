@@ -1,0 +1,13 @@
+<section class="regular text-center">
+
+    {{ user:profile username="{username}" }}
+
+        <header>
+            <h1>{{ if name }}{{ name | entities }}{{ else }}{{ username }}{{ /if }}</h1>
+            <h2>{{ email }}</h2>
+            <img src="{{ email | gravatar:200 }}" alt="{{ name | entities }}" class="img-circle" />
+        </header>
+
+    {{ /user:profile }}
+
+</section>

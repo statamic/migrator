@@ -1,0 +1,28 @@
+<section class="hero">
+
+	<div class="hero-background" style="background-image: url({{ hero_image }})">
+		<div class="overlay"></div>
+		<header>
+			<h1>{{ title }}</h1>
+			{{ sub_title wrap="h2" }}
+		</header>
+		<div class="meta">
+			<div class="avatar">
+				<img src="https://s3.amazonaws.com/uifaces/faces/twitter/rssems/48.jpg" class="img-circle" width="48" height="48">
+			</div>
+			<div class="name">
+				<a href="" class="name">{{ author_name }}</a>
+			</div>
+			<div class="length">{{ content | read_time }} minute read</div>
+			<div class="date">
+				{{ date format="F j, Y" }}
+			</div>
+		</div>
+	</div>
+
+	<article class="content">
+		{{ content }}
+	</article>
+</section>
+
+{{ partial:article-footer }}

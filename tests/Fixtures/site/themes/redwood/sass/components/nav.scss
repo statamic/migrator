@@ -1,0 +1,89 @@
+.navbar-redwood {
+    background: #fff;
+	border-bottom: 1px solid rgba(0,0,0,.1);
+	border-radius: 0;
+	min-height: 60px;
+
+	.nav {
+		color: $color_light;
+		font-family: $font_sans;
+		font-size: 12px;
+		overflow: hidden;
+	}
+
+	.nav a {
+		color: $color_light;
+		letter-spacing: .1em;
+		margin-left: 32px;
+		padding: 20px 0;
+		text-transform: uppercase;
+		-webkit-backface-visibility: hidden;
+		&:before {
+			position: absolute;
+			left: 0;
+			bottom: -3px;
+			width: 100%;
+			height: 2px;
+			background: $color_light;
+			content: '';
+			transition: all 100ms ease;
+			opacity: 0;
+		}
+		&:hover,
+		&:focus {
+			background: transparent;
+			&:before {
+				opacity: 1;
+				bottom: 0;
+			}
+		}
+	}
+
+	.nav .active a {
+		color: $color_dark;
+		font-weight: bold;
+		position: relative;
+		&:before {
+			bottom: 0;
+			height: 2px;
+			background: $color_dark;
+			opacity: 1;
+		}
+	}
+
+	.navbar-brand {
+		color: $color_dark;
+		font-weight: 900;
+		font-size: 32px;
+		height: 60px;
+		padding: 20px 15px;
+		letter-spacing: -.05em;
+	}
+
+	.navbar-form {
+		margin-top: 13px;
+	}
+
+	.search {
+		border-radius: $gap;
+		font-family: $font_sans;
+		font-size: 14px;
+		width: 180px;
+		display: block;
+		transition: width 220ms ease;
+	}
+	.search.grow {
+		width: 300px;
+	}
+}
+
+
+.navbar-toggle {
+	background: #eee;
+	margin-top: 12px;
+
+	.icon-bar {
+		background: #aaa;
+	}
+}
+

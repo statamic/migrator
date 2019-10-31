@@ -1,0 +1,42 @@
+<section class="regular">
+
+    <header>
+        <h1>Login</h1>
+    </header>
+
+    <article class="content">
+
+        {{ user:login_form redirect="/account" }}
+
+            {{ if errors }}
+                <div class="alert alert-danger">
+                    {{ errors }}
+                        {{ value }}<br>
+                    {{ /errors }}
+                </div>
+            {{ /if }}
+
+            <div class="form-group">
+                <label>Username</label>
+                <input type="text" name="username" value="{{ old:username }}" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" name="password" value="{{ old:password }}" class="form-control" />
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <button class="btn btn-primary">Log in</button>
+                </div>
+                <div class="col-md-6 text-right">
+                    <a href="/forgot-password">Forgot password?</a>
+                </div>
+            </div>
+
+        {{ /user:login_form }}
+
+    </article>
+
+</section>

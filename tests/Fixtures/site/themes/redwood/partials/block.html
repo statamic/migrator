@@ -1,0 +1,34 @@
+<div class="block">
+	<a href="{{ url }}">
+
+		{{ if tag:long_form }}
+			{{ tag:long_form where="type:image" limit="1" }}
+			<img src="{{ glide:photo width='140' height='140' }}" width="140" height="140" class="small-image">
+			{{ /tag:long_form }}
+		{{ elseif tag:intro_image }}
+			<img src="{{ glide:intro_image width='140' height='140' }}" width="140" height="140" class="small-image">
+		{{ elseif tag:hero_image }}
+			<img src="{{ glide:hero_image width='140' height='140' }}" width="140" height="140" class="small-image">
+		{{ /if }}
+
+		<h3>{{ title }}</h3>
+
+        {{ if tag:long_form }}
+            {{ tag:long_form where="type:text" limit="1" }}
+                <p>{{ text | macro:summary }}</p>
+            {{ /tag:long_form }}
+        {{ else }}
+    		<p>{{ content | macro:summary }}</p>
+        {{ /if }}
+
+		<div class="meta">
+			{{ if (date | days_ago) < 21 }}
+				{{ date | relative }}
+			{{ elseif (date | format:Y) == now | format:Y }}
+				{{ date format="M j" }}
+			{{ else }}
+				{{ date format="M j, Y" }}
+			{{ /if }}
+		</div>
+	</a>
+</div>

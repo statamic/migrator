@@ -1,0 +1,42 @@
+<section class="regular">
+	<header>
+		<h6>Search Results</h6>
+		<form role="search" action="/search">
+			<input type="text" name="q" class="form-control giant search" value="{{ get:q }}" placeholder="Search">
+		</form>
+	</header>
+	<article class="content">
+		{{ search:results }}
+			{{ if no_results }}
+				No results.
+			{{ /if }}
+
+			<div class="block">
+				<a href="{{ url }}">
+
+					{{ if intro_image  }}
+						<img src="{{ glide src='{ intro_image }' square='140' fit='crop' }}" width="140" height="140" class="small-image">
+					{{ elseif hero_image  }}
+						<img src="{{ glide src='{ hero_image }' square='140' fit='crop' }}" width="140" height="140" class="small-image">
+					{{ /if }}
+
+					<h3>{{ title }}</h3>
+
+					<p>{{ content strip_tags="img|a|p" safe_truncate="180|..." }}</p>
+
+					<code>{{ url }}</code>
+
+					<div class="meta">
+						{{ if (date | days_ago) < 7 }}
+							{{ date | relative }}
+						{{ elseif (date | format:Y) == now | format:Y }}
+							{{ date format="M j" }}
+						{{ else }}
+							{{ date format="M j, Y" }}
+						{{ /if }}
+					</div>
+				</a>
+			</div>
+		{{ /search:results }}
+	</article>
+</section>
