@@ -41,6 +41,9 @@ class MigrateCollectionTest extends TestCase
                 'description' => '@seo:content'
             ],
             'route' => '/blog/{year}/{month}/{day}/{slug}',
+            'taxonomies' => [
+                'tags',
+            ],
         ];
 
         $this->assertParsedYamlEquals($expected, $this->path('blog.yaml'));
@@ -80,5 +83,26 @@ Let me first explain myself. I am not a brave person by nature.
 EOT;
 
         $this->assertContains($expected, $this->files->get($this->path('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
+    }
+
+    /** @test */
+    function it_can_migrate_multiple_taxonomies_onto_collection()
+    {
+        $path = $this->sitePath('content/collections/blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md');
+        $entry = $this->files->get($path);
+
+        $entry = str_replace('---', <<<EOT
+colours:
+  - red
+  - blue
+---
+EOT
+        , $entry);
+
+        $this->files->put($path, $entry);
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlContains(['taxonomies' => ['colours', 'tags']], $this->path('blog.yaml'));
     }
 }
