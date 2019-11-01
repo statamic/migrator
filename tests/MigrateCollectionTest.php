@@ -105,4 +105,16 @@ EOT
 
         $this->assertParsedYamlContains(['taxonomies' => ['colours', 'tags']], $this->path('blog.yaml'));
     }
+
+    /** @test */
+    function it_will_not_migrate_taxonomies_if_none_are_referenced()
+    {
+        collect($this->files->allFiles($this->sitePath('content/collections/blog')))->each(function ($entry) {
+            $this->files->put($entry->getPathname(), str_replace('tags:', 'not_tags:', $entry->getContents()));
+        });
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlNotHasKey('taxonomies', $this->path('blog.yaml'));
+    }
 }
