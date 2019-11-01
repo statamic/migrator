@@ -26,9 +26,9 @@ class MigrateThemeTest extends TestCase
 
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
 
-        $this->assertCount(25, $this->files->allFiles($this->viewsPath()));
+        $this->assertCount(26, $this->files->allFiles($this->viewsPath()));
         $this->assertCount(5, $this->files->directories($this->viewsPath()));
-        $this->assertCount(9, $this->files->files($this->viewsPath()));
+        $this->assertCount(10, $this->files->files($this->viewsPath()));
 
         $expectedUserViews = [
             'account.antlers.html',
@@ -42,5 +42,13 @@ class MigrateThemeTest extends TestCase
             ->all();
 
         $this->assertEquals($expectedUserViews, $migratedUserViews);
+    }
+
+    /** @test */
+    function it_leaves_blade_extension_alone()
+    {
+        $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
+
+        $this->assertFileExists($this->viewsPath('not-antlers.blade.php'));
     }
 }
