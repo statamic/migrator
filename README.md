@@ -16,7 +16,7 @@ Make migrating from v2 to v3 all the moar easier 🤘
     - [Form migrator](#form-migrator)
     - [User migrator](#user-migrator)
     - [Settings migrator](#settings-migrator)
-    - [Template migrator](#template-migrator)
+    - [Theme migrator](#theme-migrator)
 - [After migration](#after-migration)
 - [Reporting issues](#reporting-issues)
 
@@ -153,15 +153,19 @@ In v3, site settings are now stored in a conventional Laravel [config directory]
 php please migrate:settings
 ```
 
-### Template migrator
+### Theme migrator
 
-In v3, [antlers templating](https://statamic.dev/antlers) has undergone a fair number of changes.  The most obvious change is that antlers now uses the `.antlers.html` file extension.  However, you'll also notice a few changes in the available [tags](https://statamic.dev/tags), [modifiers](https://statamic.dev/modifiers), and how variables [cascade]().  We cannot guarantee a complete migration, but this migration attempts to update the most obvious stuff.  To migrate a template:
+In v3, [the concept of 'themes' is gone](https://statamic.dev/upgrade-guide#theming-and-views).  Your site just has the one, and it's in the `resources` directory.  When running a full site migration, we only attempt the migration of your active theme.  However, you can specify any theme handle when running this migrator individually:
 
 ```
-php please migrate:template redwood/templates/about.html
+php please migrate:theme redwood
 ```
 
-Be sure to pass a path relative to your `site/themes` folder.
+In this example, `redwood` is the handle of a theme located in the `site/themes` folder.
+
+It's worth noting that [antlers templating](https://statamic.dev/antlers) has undergone a fair number of changes.  The most obvious change is that antlers now uses the `.antlers.html` file extension.  You'll also notice changes in the available [tags](https://statamic.dev/tags), [modifiers](https://statamic.dev/modifiers), and how variables [cascade](), etc.
+
+Due to the evolution of antlers templating, we cannot guarantee a complete migration of your theme, but we attempt to update the most obvious stuff for you.
 
 ## After migration
 
