@@ -51,4 +51,16 @@ class MigrateThemeTest extends TestCase
 
         $this->assertFileExists($this->viewsPath('not-antlers.blade.php'));
     }
+
+    /** @test */
+    function it_migrates_blade_global_modify_calls()
+    {
+        $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
+
+        $file = $this->files->get($this->viewsPath('not-antlers.blade.php'));
+
+        $expected = '{{ \Statamic\Modifiers\Modify::value($content)->striptags() }}';
+
+        $this->assertContains($expected, $file);
+    }
 }
