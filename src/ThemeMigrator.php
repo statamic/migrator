@@ -61,7 +61,7 @@ class ThemeMigrator extends Migrator
     protected function migrateTemplates()
     {
         $this->templates->each(function ($template, $path) {
-            $this->files->put($this->migratePath($path), $this->migrateTemplate($template->getContents()));
+            $this->files->put($this->migratePath($path), $this->migrateTemplate($template));
         });
     }
 
@@ -86,7 +86,7 @@ class ThemeMigrator extends Migrator
      */
     protected function convertExtension($path)
     {
-        if (Str::endsWith($path, '.antlers.html')) {
+        if (Str::endsWith($path, ['.antlers.html', '.blade.php'])) {
             return $path;
         }
 
@@ -96,11 +96,39 @@ class ThemeMigrator extends Migrator
     /**
      * Migrate template.
      *
-     * @param string $template
+     * @param \Symfony\Component\Finder\SplFileInfo $template
      * @return string
      */
     protected function migrateTemplate($template)
     {
+        if (Str::endsWith($template->getPathname(), '.blade.php')) {
+            return $this->migrateBladeTemplate($template->getContents());
+        }
+
+        return $this->migrateAntlersTemplate($template->getContents());
+    }
+
+    /**
+     * Migrate antlers template.
+     *
+     * @param string $template
+     * @return string
+     */
+    protected function migrateAntlersTemplate($template)
+    {
+        return $template;
+    }
+
+    /**
+     * Migrate blade template.
+     *
+     * @param string $template
+     * @return string
+     */
+    protected function migrateBladeTemplate($template)
+    {
+        $template = preg_replace('/modify\((.*)\)->/mU', '\Statamic\Modifiers\Modify::value($1)->', $template);
+
         return $template;
     }
 }
