@@ -152,6 +152,12 @@ class CollectionMigrator extends Migrator
             $config->put('taxonomies', $taxonomies->all());
         }
 
+        if ($config->get('order') === 'date') {
+            $config->put('date', true);
+            $config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
+            $config->forget('order');
+        }
+
         $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
 
         return $this;

@@ -32,7 +32,6 @@ class MigrateCollectionTest extends TestCase
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
         $expected = [
-            'order' => 'date',
             'blueprints' => [
                 'post',
             ],
@@ -43,6 +42,11 @@ class MigrateCollectionTest extends TestCase
             'route' => '/blog/{year}/{month}/{day}/{slug}',
             'taxonomies' => [
                 'tags',
+            ],
+            'date' => true,
+            'date_behavior' => [
+                'past' => 'public',
+                'future' => 'unlisted',
             ],
         ];
 
@@ -116,5 +120,18 @@ EOT
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
         $this->assertParsedYamlNotHasKey('taxonomies', $this->path('blog.yaml'));
+    }
+
+    /** @test */
+    function it_will_not_migrate_date_settings_if_none_are_referenced()
+    {
+        $path = $this->sitePath('content/collections/blog/folder.yaml');
+
+        $this->files->put($path, str_replace('order:', 'not_order:', $this->files->get($path)));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlNotHasKey('date', $this->path('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('date_behavior', $this->path('blog.yaml'));
     }
 }
