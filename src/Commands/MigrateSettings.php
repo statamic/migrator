@@ -3,7 +3,7 @@
 namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
-use Statamic\Migrator\FormMigrator;
+use Statamic\Migrator\SettingsMigrator;
 
 class MigrateSettings extends Command
 {
