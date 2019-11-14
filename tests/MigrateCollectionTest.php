@@ -48,6 +48,7 @@ class MigrateCollectionTest extends TestCase
                 'past' => 'public',
                 'future' => 'unlisted',
             ],
+            'sort_dir' => 'desc',
         ];
 
         $this->assertParsedYamlEquals($expected, $this->path('blog.yaml'));

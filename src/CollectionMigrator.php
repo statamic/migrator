@@ -11,6 +11,7 @@ class CollectionMigrator extends Migrator
 
     protected $availableTaxonomies;
     protected $usedTaxonomies;
+    protected $entryOrder;
 
     /**
      * Perform migration.
@@ -20,6 +21,7 @@ class CollectionMigrator extends Migrator
         $this
             ->setNewPath(base_path($relativePath = "content/collections/{$this->handle}"))
             ->validateUnique()
+            ->parseYamlConfig()
             ->parseAvailableTaxonomies()
             ->migrateEntries($relativePath)
             ->migrateYamlConfig()
@@ -40,13 +42,25 @@ class CollectionMigrator extends Migrator
     }
 
     /**
+     * Parse yaml config.
+     *
+     * @return $this
+     */
+    protected function parseYamlConfig()
+    {
+        $this->config = $this->getSourceYaml("content/collections/{$this->handle}/folder.yaml", true);
+
+        return $this;
+    }
+
+    /**
      * Parse available taxonomies.
      *
      * @return $this
      */
-    public function parseAvailableTaxonomies()
+    protected function parseAvailableTaxonomies()
     {
-        $this->availableTaxnomies = collect($this->files->files($this->sitePath('content/taxonomies')))
+        $this->availableTaxonomies = collect($this->files->files($this->sitePath('content/taxonomies')))
             ->map
             ->getFilenameWithoutExtension();
 
@@ -71,7 +85,7 @@ class CollectionMigrator extends Migrator
                 return [$file->getFilename() => $this->getSourceYaml($file)];
             })
             ->each(function ($entry, $filename) {
-                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->migratePath($filename));
+                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->migratePath($filename, $entry));
             });
 
         return $this;
@@ -80,7 +94,7 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate entry.
      *
-     * @param string $entry
+     * @param array $entry
      * @return string
      */
     protected function migrateEntry($entry)
@@ -103,7 +117,7 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateUsedTaxonomies($entry)
     {
-        $usedTaxonomies = $this->availableTaxnomies
+        $usedTaxonomies = $this->availableTaxonomies
             ->filter(function ($taxonomy) use ($entry) {
                 return ! empty($entry[$taxonomy]) && is_array($entry[$taxonomy]);
             });
@@ -123,11 +137,22 @@ class CollectionMigrator extends Migrator
      * Migrate path.
      *
      * @param string $filename
+     * @param array $entry
      * @return $string
      */
-    protected function migratePath($filename)
+    protected function migratePath($filename, $entry)
     {
-        return $this->newPath(preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename));
+        // Ensure file has .md extension.
+        $filename = preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename);
+
+        // If filename has order key, store order and remove order key.
+        if ($this->config->get('order') === 'number') {
+            preg_match($regex = '/^([0-9]+)\./', $filename, $matches);
+            $this->entryOrder[$matches[1]] = $entry['id'];
+            $filename = preg_replace($regex, '', $filename);
+        }
+
+        return $this->newPath($filename);
     }
 
     /**
@@ -137,28 +162,37 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateYamlConfig()
     {
-        $config = $this->getSourceYaml("content/collections/{$this->handle}/folder.yaml", true);
-
-        if ($fieldset = $config->get('fieldset')) {
-            $config->put('blueprints', [$fieldset]);
-            $config->forget('fieldset');
+        if ($fieldset = $this->config->get('fieldset')) {
+            $this->config->put('blueprints', [$fieldset]);
+            $this->config->forget('fieldset');
         }
 
         if ($route = $this->migrateRoute("collections.{$this->handle}")) {
-            $config->put('route', $route);
+            $this->config->put('route', $route);
         }
 
         if ($taxonomies = $this->usedTaxonomies) {
-            $config->put('taxonomies', $taxonomies->all());
+            $this->config->put('taxonomies', $taxonomies->all());
         }
 
-        if ($config->get('order') === 'date') {
-            $config->put('date', true);
-            $config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
-            $config->forget('order');
+        switch ($this->config->get('order')) {
+            case 'date':
+                $this->config->put('date', true);
+                $this->config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
+                $this->config->put('sort_dir', 'desc');
+                break;
+            case 'number':
+                $this->config->put('orderable', true);
+                break;
         }
 
-        $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
+        $this->config->forget('order');
+
+        if ($this->entryOrder) {
+            $this->config->put('entry_order', collect($this->entryOrder)->sortKeys()->values()->all());
+        }
+
+        $this->saveMigratedYaml($this->config, $this->newPath("../{$this->handle}.yaml"));
 
         return $this;
     }
