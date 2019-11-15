@@ -104,10 +104,29 @@ class Configurator
     }
 
     /**
+     * Merge spaciously into array config.
+     *
+     * @param string $key
+     * @param array $value
+     * @return return $this
+     */
+    public function mergeSpaciously($key, $items)
+    {
+        $this->normalize();
+
+        foreach ($items as $childKey => $value) {
+            $this->attemptToMergeIntoArray($key, $childKey, $value, true);
+        }
+
+        return $this->normalize();
+    }
+
+    /**
      * Attempt to set array config value.
      *
      * @param string $key
      * @param mixed $value
+     * @return bool
      */
     protected function attemptToSetArrayValue($key, $value)
     {
@@ -137,6 +156,7 @@ class Configurator
      *
      * @param string $key
      * @param mixed $value
+     * @return bool
      */
     protected function attemptToSetStringValue($key, $value)
     {
@@ -164,6 +184,7 @@ class Configurator
      *
      * @param string $key
      * @param mixed $value
+     * @return bool
      */
     protected function attemptToSetNewValue($key, $value)
     {
@@ -192,8 +213,10 @@ class Configurator
      * @param string $key
      * @param string $childKey
      * @param mixed $value
+     * @param bool $spaciously
+     * @return bool
      */
-    protected function attemptToMergeIntoArray($key, $childKey, $value)
+    protected function attemptToMergeIntoArray($key, $childKey, $value, $spaciously = false)
     {
         if ($this->configHasKey($fullKey = "{$key}.{$childKey}")) {
             return $this->set($fullKey, $value);
@@ -211,7 +234,9 @@ class Configurator
 
         $element = $this->varExport($childKey) . ' => ' . $this->varExport($value) . ',';
 
-        $updatedConfig = preg_replace($regex, "$1$2{$element}\n$3", $config);
+        $element = $spaciously ? "\n{$element}\n" : $element;
+
+        $updatedConfig = preg_replace($regex, "$1$2\n{$element}\n$3", $config);
 
         $this->files->put($this->path(), $updatedConfig);
 
@@ -317,7 +342,7 @@ class Configurator
     protected function buildEndingGroup($isArrayValue, $indentation, $matchParent = false)
     {
         $endingGroup = $matchParent
-            ? "(^\s{{$indentation}}]*,)"
+            ? "\n*(^\s{{$indentation}}]*,)"
             : '(,)';
 
         return $isArrayValue
