@@ -242,6 +242,82 @@ EOT
         );
     }
 
+    /** @test */
+    function it_can_spaciously_merge_into_array()
+    {
+        $this->assertConfigFileContains(<<<EOT
+    'routes' => [
+        // '/' => 'home'
+    ],
+EOT
+        );
+
+        $this->configurator->mergeSpaciously('routes', [
+            '/search' => 'search',
+            '/blog' => 'blog',
+        ]);
+
+        $this->assertConfigFileContains(<<<EOT
+    'routes' => [
+        // '/' => 'home'
+
+        '/search' => 'search',
+
+        '/blog' => 'blog',
+
+    ],
+EOT
+        );
+
+        $this->configurator->mergeSpaciously('routes', [
+            '/blog' => 'new-blog',
+            '/feed' => 'feed',
+        ]);
+
+
+        $this->assertConfigFileContains(<<<EOT
+    'routes' => [
+        // '/' => 'home'
+
+        '/search' => 'search',
+
+        '/blog' => 'new-blog',
+
+        '/feed' => 'feed',
+
+    ],
+EOT
+        );
+    }
+
+    /** @test */
+    function it_can_spaciously_merge_into_nested_array()
+    {
+        $this->assertConfigFileContains(<<<EOT
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+EOT
+        );
+
+        $this->configurator->mergeSpaciously('disks_spacious.local', [
+            'root' => 'beer',
+            'coca' => 'cola',
+        ]);
+
+        $this->assertConfigFileContains(<<<EOT
+        'local' => [
+            'driver' => 'local',
+            'root' => 'beer',
+
+            'coca' => 'cola',
+
+        ],
+EOT
+        );
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *
