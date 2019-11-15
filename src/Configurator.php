@@ -62,6 +62,7 @@ class Configurator
      *
      * @param string $key
      * @param string $value
+     * @param bool $allowFalsey
      * @return return $this
      */
     public function set($key, $value, $allowFalsey = false)
@@ -71,8 +72,6 @@ class Configurator
         if (! $allowFalsey && $value === false) {
             return $this;
         }
-
-        $value = $this->varExport($value);
 
         switch (true) {
             case $this->attemptToSetArrayValue($key, $value):
@@ -90,7 +89,7 @@ class Configurator
      * Merge into array config.
      *
      * @param string $key
-     * @param string $value
+     * @param array $value
      * @return return $this
      */
     public function merge($key, $items)
@@ -124,6 +123,8 @@ class Configurator
             return false;
         }
 
+        $value = $this->varExport($value);
+
         $updatedConfig = preg_replace($regex, "$1{$value}$2", $config);
 
         $this->files->put($this->path(), $updatedConfig);
@@ -148,6 +149,8 @@ class Configurator
         if (count($matches) != 3) {
             return false;
         }
+
+        $value = $this->varExport($value);
 
         $updatedConfig = preg_replace($regex, "$1{$value}$2", $config);
 
@@ -174,7 +177,7 @@ class Configurator
             return false;
         }
 
-        $element = $this->varExport($key) . ' => ' . $value;
+        $element = $this->varExport($key) . ' => ' . $this->varExport($value);
 
         $updatedConfig = preg_replace($regex, "{$element}\n\n$1", $config);
 
@@ -257,7 +260,7 @@ class Configurator
      * @param bool $matchParentCloser
      * @return string
      */
-    public function buildPatternForKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
+    protected function buildPatternForKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
     {
         if (Str::contains($key, '.')) {
             return $this->buildPatternForNestedKey($pattern, $key, $isArrayValue, $matchParentCloser);
@@ -283,7 +286,7 @@ class Configurator
      * @param bool $matchParentCloser
      * @return string
      */
-    public function buildPatternForNestedKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
+    protected function buildPatternForNestedKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
     {
         $indentation = 0;
 
@@ -308,6 +311,7 @@ class Configurator
      *
      * @param bool $isArrayValue
      * @param int $indentation
+     * @param bool $matchParent
      * @return string
      */
     protected function buildEndingGroup($isArrayValue, $indentation, $matchParent = false)
@@ -327,7 +331,7 @@ class Configurator
      * @param mixed $value
      * @return string
      */
-    public function varExport($value)
+    protected function varExport($value)
     {
         // Utilize PHP's var_export.
         $value = var_export($value, true);
