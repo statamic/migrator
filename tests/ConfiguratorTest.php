@@ -219,8 +219,6 @@ EOT
     /** @test */
     function it_can_merge_into_nested_array()
     {
-        $this->markTestSkipped();
-
         $this->assertConfigFileContains(<<<EOT
         'local' => [
             'driver' => 'local',

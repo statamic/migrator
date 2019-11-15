@@ -114,7 +114,9 @@ class Configurator
     {
         $config = $this->files->get($this->path());
 
-        $regex = $this->buildPatternForKey('\X*', $key, true);
+        $isArrayValue = is_array($this->configGet($key));
+
+        $regex = $this->buildPatternForKey('\X*', $key, $isArrayValue);
 
         preg_match($regex, $config, $matches);
 
@@ -225,6 +227,18 @@ class Configurator
     }
 
     /**
+     * Get from config by key.
+     *
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    protected function configGet($key, $default = null)
+    {
+        return Arr::get(include $this->path(), $key, $default);
+    }
+
+    /**
      * Get full config file path.
      *
      * @return string
@@ -246,7 +260,7 @@ class Configurator
     public function buildPatternForKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
     {
         if (Str::contains($key, '.')) {
-            return $this->buildPatternForNestedKey('.*', $key, $isArrayValue);
+            return $this->buildPatternForNestedKey($pattern, $key, $isArrayValue, $matchParentCloser);
         }
 
         $indentation = 4;
