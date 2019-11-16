@@ -319,6 +319,50 @@ EOT
     }
 
     /** @test */
+    function it_can_spaciously_merge_into_mangled_array()
+    {
+        $this->assertConfigFileContains(<<<EOT
+'disks_mangled' => [
+'s3'=>[
+'driver'=>'s3',
+'key'=>env('AWS_ACCESS_KEY_ID'),
+'secret'   =>  env('AWS_SECRET_ACCESS_KEY'),
+'region' => env('AWS_DEFAULT_REGION'),
+'bucket' => env('AWS_BUCKET'),
+'url' => env('AWS_URL')
+]
+EOT
+        );
+
+        $this->configurator->mergeSpaciously('disks_mangled', [
+            'local' => [
+                'driver' => 'local',
+                'root' => "storage_path('app')",
+            ],
+        ]);
+
+        $this->assertConfigFileContains(<<<EOT
+    'disks_mangled' => [
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+        ],
+
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+
+    ],
+EOT
+        );
+    }
+
+    /** @test */
     function it_can_refresh_config()
     {
         $this->configurator->merge('disks_spacious.local', [
