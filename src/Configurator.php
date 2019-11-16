@@ -122,6 +122,24 @@ class Configurator
     }
 
     /**
+     * Refresh config, since we manually inject new config directly into the PHP file.
+     *
+     * @return $this
+     */
+    public function refresh()
+    {
+        $key = str_replace(config_path() . '/', '', $this->path());
+        $key = str_replace('.php', '', $key);
+        $key = str_replace('/', '.', $key);
+
+        $updatedConfig = include $this->path();
+
+        config([$key => $updatedConfig]);
+
+        return $this;
+    }
+
+    /**
      * Attempt to set array config value.
      *
      * @param string $key

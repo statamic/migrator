@@ -318,6 +318,20 @@ EOT
         );
     }
 
+    /** @test */
+    function it_can_refresh_config()
+    {
+        $this->configurator->merge('disks_spacious.local', [
+            'root' => 'beer',
+        ]);
+
+        $this->assertNotEquals('beer', config('statamic.configurator-test.disks_spacious.local.root'));
+
+        $this->configurator->refresh();
+
+        $this->assertEquals('beer', config('statamic.configurator-test.disks_spacious.local.root'));
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *
