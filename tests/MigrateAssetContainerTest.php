@@ -5,12 +5,20 @@ namespace Tests;
 use Tests\TestCase;
 use Statamic\Support\Arr;
 use Statamic\Migrator\YAML;
+use Statamic\Migrator\Configurator;
+use Facades\Statamic\Console\Processes\Process;
 use Tests\Console\Foundation\InteractsWithConsole;
-use Statamic\Migrator\Concerns\DirectlyModifiesFilesystemConfig;
 
 class MigrateAssetContainerTest extends TestCase
 {
-    use DirectlyModifiesFilesystemConfig;
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->configurator = Configurator::file('filesystems.php');
+
+        Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
+    }
 
     protected function paths()
     {
@@ -157,14 +165,14 @@ class MigrateAssetContainerTest extends TestCase
             ]
         ]));
 
-        $this->jamDiskIntoDrive(
-            "'assets_secondary' => [
+        $this->configurator->mergeSpaciously('disks', [
+            'assets_secondary' => [
                 'driver' => 'local',
                 'root' => public_path('assets/secondary'),
                 'url' => '/assets/secondary',
                 'visibility' => 'public',
-            ],"
-        );
+            ]
+        ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
 
@@ -199,14 +207,14 @@ class MigrateAssetContainerTest extends TestCase
         ]));
 
         // Fake S3 connection so that we can test `path` on `s3` driver.
-        $this->jamDiskIntoDrive(
-            "'assets_secondary' => [
+        $this->configurator->mergeSpaciously('disks', [
+            'assets_secondary' => [
                 'driver' => 'local',
                 'root' => public_path('assets/secondary'),
                 'url' => '/assets/secondary',
                 'visibility' => 'public',
-            ],"
-        );
+            ]
+        ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
 
@@ -221,7 +229,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_disk_into_default_laravel_config()
+    function it_migrates_disk_with_local_driver()
     {
         $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));
 
@@ -269,100 +277,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_disk_into_sanely_user_edited_config()
-    {
-        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-edited.php', config_path('filesystems.php'));
-
-        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
-
-        $this->assertFilesystemConfigFileContains(<<<EOT
-    'disks' => [
-
-        'local' => [
-            'driver' => 'local',
-            'root' => storage_path('app'),
-        ],
-
-        'custom' => [
-            'driver' => 'local',
-            'root' => storage_path('app/custom'),
-        ],
-
-        'assets' => [
-            'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
-            'visibility' => 'public',
-        ],
-
-    ],
-EOT
-        );
-
-        $this->assertFilesystemConfigFileContains(<<<EOT
-    'extra-config' => [
-        'from-some-other-package' => true
-    ],
-EOT
-        );
-
-        $this->assertFilesystemDiskExists('local');
-        $this->assertFilesystemDiskExists('custom');
-        $this->assertFilesystemDiskExists('assets');
-    }
-
-    /** @test */
-    function it_migrates_disk_into_weirdly_mangled_config()
-    {
-        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-weird.php', config_path('filesystems.php'));
-
-        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
-
-        $this->assertFilesystemConfigFileContains(<<<EOT
-'disks' => [
-        'assets' => [
-            'driver' => 'local',
-            'root' => public_path('assets'),
-            'url' => '/assets',
-            'visibility' => 'public',
-        ],
-
-    'local' => [
-        'driver' => 'local',
-        'root' => storage_path('app'),
-    ],
-    'public' => [
-        'driver' => 'local',
-        'root' => storage_path('app/public'),
-        'url' => env('APP_URL').'/storage',
-        'visibility' => 'public',
-    ],
-    's3' => [
-        'driver' => 's3',
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION'),
-        'bucket' => env('AWS_BUCKET'),
-        'url' => env('AWS_URL'),
-    ],
-EOT
-        );
-
-        $this->assertFilesystemConfigFileContains(<<<EOT
-'extra-config' => [
-    'from-some-other-package' => true
-],
-EOT
-        );
-
-        $this->assertFilesystemDiskExists('local');
-        $this->assertFilesystemDiskExists('public');
-        $this->assertFilesystemDiskExists('s3');
-        $this->assertFilesystemDiskExists('assets');
-    }
-
-    /** @test */
-    function it_migrates_disk_with_s3_drivers()
+    function it_migrates_disk_with_s3_driver()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
             'title' => 'Main Assets',
@@ -556,27 +471,22 @@ EOT
             'url' => '/cloud',
         ]));
 
-        $this->attemptGracefulDiskInsertion(<<<EOT
-        'assets_main' => [
-            'driver' => 'local',
-            'root' => public_path('assets/main'),
-            'url' => '/assets/main/edited-route',
-            'visibility' => 'public',
-        ],
-EOT
-        );
-
-        $this->attemptGracefulDiskInsertion(<<<EOT
-        'assets_cloud' => [
-            'driver' => 'local',
-            'root' => public_path('assets/cloud'),
-            'url' => '/assets/cloud/edited-route',
-            'visibility' => 'public',
-        ],
-EOT
-        );
-
-        $this->refreshFilesystems();
+        $this->configurator
+            ->mergeSpaciously('disks', [
+                'assets_main' => [
+                    'driver' => 'local',
+                    'root' => public_path('assets/main'),
+                    'url' => '/assets/main/edited-route',
+                    'visibility' => 'public',
+                ],
+                'assets_cloud' => [
+                    'driver' => 'local',
+                    'root' => public_path('assets/cloud'),
+                    'url' => '/assets/cloud/edited-route',
+                    'visibility' => 'public',
+                ],
+            ])
+            ->refresh();
 
         $this->assertEquals('/assets/main/edited-route', config('filesystems.disks.assets_main.url'));
         $this->assertEquals('/assets/cloud/edited-route', config('filesystems.disks.assets_cloud.url'));
@@ -636,98 +546,8 @@ EOT
         $this->assertFilesystemDiskNotExists('assets');
     }
 
-    /** @test */
-    function it_overwrites_disks_in_weirdly_mangled_config_when_forced()
-    {
-        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-weird.php', config_path('filesystems.php'));
-
-        $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
-            'title' => 'Cloud Assets',
-            'driver' => 's3',
-            'key' => 'some-key',
-            'secret' => 'some-secret',
-            'bucket' => 'some-bucket',
-            'region' => 'some-region',
-            'url' => '/cloud',
-        ]));
-
-        $this->jamDiskIntoDrive(<<<EOT
-        'assets_main' => [
-            'driver' => 'local',
-            'root' => public_path('assets/main'),
-            'url' => '/assets/main/edited-route',
-            'visibility' => 'public',
-        ],
-EOT
-        );
-
-        $this->jamDiskIntoDrive(<<<EOT
-        'assets_cloud' => [
-            'driver' => 'local',
-            'root' => public_path('assets/cloud'),
-            'url' => '/assets/cloud/edited-route',
-            'visibility' => 'public',
-        ],
-EOT
-        );
-
-        $this->refreshFilesystems();
-
-        $this->assertEquals('/assets/main/edited-route', config('filesystems.disks.assets_main.url'));
-        $this->assertEquals('/assets/cloud/edited-route', config('filesystems.disks.assets_cloud.url'));
-
-        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main', '--force' => true]);
-        $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud', '--force' => true]);
-
-        $this->assertFilesystemConfigFileContains(<<<EOT
-'disks' => [
-        'assets_cloud' => [
-            'driver' => 's3',
-            'key' => env('ASSETS_CLOUD_AWS_ACCESS_KEY_ID'),
-            'secret' => env('ASSETS_CLOUD_AWS_SECRET_ACCESS_KEY'),
-            'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
-            'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
-            'url' => env('ASSETS_CLOUD_AWS_URL'),
-        ],
-
-        'assets_main' => [
-            'driver' => 'local',
-            'root' => public_path('assets/main'),
-            'url' => '/assets/main',
-            'visibility' => 'public',
-        ],
-
-    'local' => [
-        'driver' => 'local',
-        'root' => storage_path('app'),
-    ],
-    'public' => [
-        'driver' => 'local',
-        'root' => storage_path('app/public'),
-        'url' => env('APP_URL').'/storage',
-        'visibility' => 'public',
-    ],
-    's3' => [
-        'driver' => 's3',
-        'key' => env('AWS_ACCESS_KEY_ID'),
-        'secret' => env('AWS_SECRET_ACCESS_KEY'),
-        'region' => env('AWS_DEFAULT_REGION'),
-        'bucket' => env('AWS_BUCKET'),
-        'url' => env('AWS_URL'),
-    ],
-],
-EOT
-        );
-
-        $this->assertFilesystemDiskExists('local');
-        $this->assertFilesystemDiskExists('public');
-        $this->assertFilesystemDiskExists('s3');
-        $this->assertFilesystemDiskExists('assets_main');
-        $this->assertFilesystemDiskExists('assets_cloud');
-        $this->assertFilesystemDiskNotExists('assets');
-    }
-
     /**
+     *
      * Assert filesystem config file replacement is valid and contains specific content.
      *
      * @param string $content
