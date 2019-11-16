@@ -231,8 +231,6 @@ class MigrateAssetContainerTest extends TestCase
     /** @test */
     function it_migrates_disk_with_local_driver()
     {
-        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-default.php', config_path('filesystems.php'));
-
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
         $this->assertFilesystemConfigFileContains(<<<EOT
@@ -339,7 +337,12 @@ EOT
     /** @test */
     function it_migrates_disk_with_terser_key_when_assets_already_exists()
     {
-        $this->files->copy(__DIR__.'/Fixtures/config/filesystem-assets-already-exists.php', config_path('filesystems.php'));
+        $this->configurator->mergeSpaciously('disks', [
+            'assets' => [
+                'driver' => 'local',
+                'root' => "storage_path('app/some-other-user-assets-unrelated-to-statamic')",
+            ]
+        ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
