@@ -13,10 +13,10 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class AssetContainerMigrator extends Migrator
 {
-    use Concerns\DirectlyModifiesFilesystemConfig,
-        Concerns\MigratesFile,
+    use Concerns\MigratesFile,
         Concerns\ThrowsFinalWarnings;
 
+    protected $configurator;
     protected $metaOnly = false;
     protected $disk;
     protected $container;
@@ -32,6 +32,7 @@ class AssetContainerMigrator extends Migrator
     public function migrate()
     {
         $this
+            ->instantiateConfigurator()
             ->setNewPath(base_path($relativePath = "content/assets/{$this->handle}.yaml"))
             ->parseDiskKey()
             ->parseAssetContainer($relativePath)
@@ -50,6 +51,18 @@ class AssetContainerMigrator extends Migrator
             ->migrateFolder()
             ->migrateMeta()
             ->throwFinalWarnings();
+    }
+
+    /**
+     * Instantiate configurator.
+     *
+     * @return $this
+     */
+    protected function instantiateConfigurator()
+    {
+        $this->configurator = Configurator::file('filesystems.php');
+
+        return $this;
     }
 
     /**
@@ -243,14 +256,15 @@ class AssetContainerMigrator extends Migrator
     {
         $diskConfig = $this->diskConfig();
 
-        switch (true) {
-            case $this->attemptDiskReplacement($diskConfig):
-            case $this->attemptGracefulDiskInsertion($diskConfig):
-            case $this->jamDiskIntoDrive($diskConfig):
-                return $this;
-            default:
-                throw new FilesystemException("Cannot migrate filesystem disk config.");
+        try {
+            $this->configurator
+                ->mergeSpaciously('disks', [$this->disk => $this->diskConfig()])
+                ->normalize();
+        } catch (\Exception $exception) {
+            throw new FilesystemException("Cannot migrate filesystem disk config.");
         }
+
+        return $this;
     }
 
     /**
@@ -273,41 +287,37 @@ class AssetContainerMigrator extends Migrator
     /**
      * Generate local disk config.
      *
-     * @return string
+     * @return array
      */
     protected function localDiskConfig()
     {
         $path = $this->publicRelativePath();
 
-        return <<<EOT
-        '{$this->disk}' => [
+        return [
             'driver' => 'local',
-            'root' => public_path('{$path}'),
-            'url' => '/{$path}',
+            'root' => "public_path('{$path}')",
+            'url' => "/{$path}",
             'visibility' => 'public',
-        ],
-EOT;
+        ];
     }
 
     /**
      * Generate S3 disk config.
      *
-     * @return string
+     * @return array
      */
     protected function s3DiskConfig()
     {
         $envPrefix = strtoupper($this->disk);
 
-        return <<<EOT
-        '{$this->disk}' => [
+        return [
             'driver' => 's3',
-            'key' => env('{$envPrefix}_AWS_ACCESS_KEY_ID'),
-            'secret' => env('{$envPrefix}_AWS_SECRET_ACCESS_KEY'),
-            'region' => env('{$envPrefix}_AWS_DEFAULT_REGION'),
-            'bucket' => env('{$envPrefix}_AWS_BUCKET'),
-            'url' => env('{$envPrefix}_AWS_URL'),
-        ],
-EOT;
+            'key' => "env('{$envPrefix}_AWS_ACCESS_KEY_ID')",
+            'secret' => "env('{$envPrefix}_AWS_SECRET_ACCESS_KEY')",
+            'region' => "env('{$envPrefix}_AWS_DEFAULT_REGION')",
+            'bucket' => "env('{$envPrefix}_AWS_BUCKET')",
+            'url' => "env('{$envPrefix}_AWS_URL')",
+        ];
     }
 
     /**
@@ -322,7 +332,9 @@ EOT;
             return false;
         }
 
-        return $this->replaceFilesystemDisk($this->disk, $diskConfig);
+        $this->configurator->set("disks.{$this->disk}", $diskConfig)->normalize();
+
+        return true;
     }
 
     /**
@@ -343,7 +355,7 @@ EOT;
      */
     protected function diskExists($disk)
     {
-        $this->refreshFilesystems();
+        $this->configurator->refresh();
 
         return Arr::has(include config_path('filesystems.php'), "disks.{$disk}");
     }
@@ -371,7 +383,7 @@ EOT;
      */
     protected function migrateMeta()
     {
-        $this->refreshFilesystems();
+        $this->configurator->refresh();
 
         try {
             $this->migrateExplicitMetaData();

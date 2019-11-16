@@ -385,6 +385,12 @@ class Configurator
         // Remove numeric keys.
         $value = preg_replace("/(\s*)[0-9]+\s=>\s(.*)/", '$1$2', $value);
 
+        // Ensure dynamic function stubs are not treated as strings.
+        $value = preg_replace("/(.*=> )'([_a-zA-Z]*\()([^()]*)(\))'(.*)/", '$1$2$3$4$5', $value);
+
+        // Unescape single quotes.
+        $value = str_replace("\'", "'", $value);
+
         return $value;
     }
 }
