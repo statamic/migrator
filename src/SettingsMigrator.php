@@ -2,6 +2,8 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Migrator\Exceptions\MigratorSkippedException;
+
 class SettingsMigrator extends Migrator
 {
     use Concerns\MigratesFile;
@@ -36,6 +38,8 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateCp()
     {
+        $this->validateFreshStatamicConfig('cp.php');
+
         $cp = $this->getSourceYaml('settings/cp.yaml');
 
         Configurator::file('statamic/cp.php')->set('start_page', $cp['start_page'] ?? false);
@@ -53,6 +57,8 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateRoutes()
     {
+        $this->validateFreshStatamicConfig('routes.php');
+
         $routes = $this->getSourceYaml('settings/routes.yaml');
 
         Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
@@ -69,6 +75,8 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateSystem()
     {
+        $this->validateFreshStatamicConfig('system.php');
+
         $system = $this->getSourceYaml('settings/system.yaml');
 
         Configurator::file('statamic/sites.php')->mergeSpaciously('sites', $this->migrateLocales($system));
@@ -105,5 +113,25 @@ class SettingsMigrator extends Migrator
         $migrateMethod = 'migrate' . ucfirst($this->handle);
 
         return $this->{$migrateMethod}();
+    }
+
+    /**
+     * Validate fresh statamic config.
+     *
+     * @throws AlreadyExistsException
+     * @return $this
+     */
+    protected function validateFreshStatamicConfig($configFile)
+    {
+        if ($this->overwrite) {
+            return $this;
+        }
+
+        $currentConfig = $this->files->get(config_path("statamic/{$configFile}"));
+        $defaultConfig = $this->files->get("vendor/statamic/cms/config/{$configFile}");
+
+        if ($currentConfig !== $defaultConfig) {
+            throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
+        }
     }
 }

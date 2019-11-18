@@ -18,6 +18,7 @@ use Statamic\Migrator\CollectionMigrator;
 use Statamic\Migrator\AssetContainerMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
+use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class MigrateSite extends Command
@@ -338,6 +339,10 @@ class MigrateSite extends Command
             $this->warningCount++;
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
+            $this->skippedCount++;
+        } catch (MigratorSkippedException $exception) {
+            $this->line("<comment>{$descriptor} could not be migrated:</comment> {$handle}");
+            $this->line($exception->getMessage());
             $this->skippedCount++;
         } catch (MigratorErrorException $exception) {
             $this->line("<error>{$descriptor} could not be migrated:</error> {$handle}");
