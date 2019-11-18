@@ -71,7 +71,7 @@ class SettingsMigrator extends Migrator
     {
         $system = $this->getSourceYaml('settings/system.yaml');
 
-        Configurator::file('statamic/sites.php')->merge('sites', $this->migrateLocales($system));
+        Configurator::file('statamic/sites.php')->mergeSpaciously('sites', $this->migrateLocales($system));
 
         return $this;
     }

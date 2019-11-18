@@ -119,13 +119,22 @@ EOT
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        // TODO: Insert spaciously
         $this->assertConfigFileContains('sites.php', <<<EOT
+    'sites' => [
+
+        'default' => [
+            'name' => config('app.name'),
+            'locale' => 'en_US',
+            'url' => '/',
+        ],
+
         'en' => [
             'name' => 'English',
             'locale' => 'en_US',
             'url' => '/',
-        ]
+        ],
+
+    ],
 EOT
         );
     }
