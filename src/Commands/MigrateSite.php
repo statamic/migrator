@@ -346,7 +346,7 @@ class MigrateSite extends Command
         }
 
         if (! isset($exception)) {
-            $this->line("<info>{$descriptor} successfully migrated:</info> {$handle}");
+            $this->line("<info>{$descriptor} migrated successfully:</info> {$handle}");
             $this->successCount++;
         }
     }

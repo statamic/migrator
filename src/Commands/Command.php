@@ -30,7 +30,7 @@ class Command extends IlluminateCommand
         $descriptor = $this->migrator::descriptor();
         $handleDescriptor = $handle ? " [{$handle}]" : null;
 
-        $this->info("{$descriptor}{$handleDescriptor} has been successfully migrated.");
+        $this->info("{$descriptor}{$handleDescriptor} migrated successfully.");
     }
 
     /**
