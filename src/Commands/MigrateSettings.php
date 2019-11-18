@@ -4,6 +4,7 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\SettingsMigrator;
+use Symfony\Component\Console\Input\InputArgument;
 
 class MigrateSettings extends Command
 {
@@ -29,4 +30,16 @@ class MigrateSettings extends Command
      * @var string
      */
     protected $migrator = SettingsMigrator::class;
+
+    /**
+     * Get the console command arguments.
+     *
+     * @return array
+     */
+    protected function getArguments()
+    {
+        return [
+            ['handle', InputArgument::OPTIONAL, 'The handle to be migrated'],
+        ];
+    }
 }
