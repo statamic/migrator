@@ -71,10 +71,10 @@ EOT
 EOT
         );
 
-        // $this->assertConfigFileContains('cp.php', <<<EOT
-    // 'pagination_size' => 12,
-// EOT
-        // );
+        $this->assertConfigFileContains('cp.php', <<<EOT
+    'pagination_size' => 12,
+EOT
+        );
     }
 
     /** @test */
