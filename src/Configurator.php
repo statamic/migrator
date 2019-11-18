@@ -236,7 +236,7 @@ class Configurator
      */
     protected function attemptToMergeIntoArray($key, $childKey, $value, $spaciously = false)
     {
-        if ($this->configHasKey($fullKey = "{$key}.{$childKey}")) {
+        if (is_string($childKey) && $this->configHasKey($fullKey = "{$key}.{$childKey}")) {
             return $this->set($fullKey, $value);
         }
 
@@ -250,7 +250,9 @@ class Configurator
             return false;
         }
 
-        $element = $this->varExport($childKey) . ' => ' . $this->varExport($value) . ',';
+        $element = is_string($childKey)
+            ? $this->varExport($childKey) . ' => ' . $this->varExport($value) . ','
+            : $this->varExport($value) . ',';
 
         $element = $spaciously ? "\n{$element}\n" : $element;
 
