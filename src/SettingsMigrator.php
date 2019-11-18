@@ -16,17 +16,17 @@ class SettingsMigrator extends Migrator
         }
 
         $this
-            ->migrateAssets()
-            ->migrateCaching()
+            // ->migrateAssets()
+            // ->migrateCaching()
             ->migrateCp()
-            ->migrateDebug()
-            ->migrateEmail()
+            // ->migrateDebug()
+            // ->migrateEmail()
             ->migrateRoutes()
-            ->migrateRoutes()
-            ->migrateSearch()
+            // ->migrateSearch()
             ->migrateSystem()
-            ->migrateTheming()
-            ->migrateUsers();
+            // ->migrateTheming()
+            // ->migrateUsers()
+            ;
     }
 
     /**

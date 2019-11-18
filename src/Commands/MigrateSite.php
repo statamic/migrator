@@ -92,7 +92,7 @@ class MigrateSite extends Command
             ->migrateGlobalSets()
             // ->migrateForms()
             ->migrateUsers()
-            // ->migrateSettings()
+            ->migrateSettings()
             ->migrateTheme()
             ->clearCache();
 
@@ -216,9 +216,14 @@ class MigrateSite extends Command
      */
     protected function migrateSettings()
     {
-        $this->getFileHandlesFromPath(base_path('site/settings'))->each(function ($handle) {
-            $this->runMigratorOnHandle(SettingsMigrator::class, $handle);
-        });
+        $this->runMigratorOnHandle(SettingsMigrator::class, 'cp');
+        $this->runMigratorOnHandle(SettingsMigrator::class, 'routes');
+        $this->runMigratorOnHandle(SettingsMigrator::class, 'system');
+
+        // TODO: Run this once each settings migration is 'complete'
+        // $this->getFileHandlesFromPath(base_path('site/settings'))->each(function ($handle) {
+        //     $this->runMigratorOnHandle(SettingsMigrator::class, $handle);
+        // });
 
         return $this;
     }
