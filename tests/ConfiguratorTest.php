@@ -392,6 +392,83 @@ EOT
         $this->assertEquals('beer', config('statamic.configurator-test.disks_spacious.local.root'));
     }
 
+    /** @test */
+    function it_wont_merge_duplicate_values()
+    {
+        $this->assertConfigFileContains(<<<EOT
+    'routes' => [
+        // '/' => 'home'
+    ],
+EOT
+        );
+
+        $this->assertConfigFileContains(<<<EOT
+    'widgets' => [
+        'getting_started',
+    ],
+EOT
+        );
+
+        $this->configurator->merge('routes', [
+            '/search' => 'search',
+            '/blog' => 'blog',
+        ]);
+
+        $this->configurator->mergeSpaciously('routes', [
+            '/search' => 'search',
+            '/pages' => 'pages',
+        ]);
+
+        $this->configurator->merge('widgets', [
+            'getting_started',
+            [
+                'type' => 'collection',
+                'collection' => 'posts',
+                'limit' => 5,
+            ],
+        ]);
+
+        $this->configurator->mergeSpaciously('widgets', [
+            'getting_started',
+            [
+                'type' => 'collection',
+                'collection' => 'things',
+                'limit' => 3,
+            ],
+        ]);
+
+        $this->assertConfigFileContains(<<<EOT
+    'routes' => [
+        // '/' => 'home'
+        '/search' => 'search',
+        '/blog' => 'blog',
+
+        '/pages' => 'pages',
+
+    ],
+EOT
+        );
+
+        $this->assertConfigFileContains(<<<EOT
+    'widgets' => [
+        'getting_started',
+        [
+            'type' => 'collection',
+            'collection' => 'posts',
+            'limit' => 5,
+        ],
+
+        [
+            'type' => 'collection',
+            'collection' => 'things',
+            'limit' => 3,
+        ],
+
+    ],
+EOT
+        );
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *

@@ -238,6 +238,8 @@ class Configurator
     {
         if (is_string($childKey) && $this->configHasKey($fullKey = "{$key}.{$childKey}")) {
             return $this->set($fullKey, $value);
+        } elseif (! is_string($childKey) && $this->configHasArrayValue($key, $value)) {
+            return false;
         }
 
         $config = $this->files->get($this->path());
@@ -272,6 +274,18 @@ class Configurator
     protected function configHasKey($key)
     {
         return Arr::has(include $this->path(), $key);
+    }
+
+    /**
+     * Determine if config already has array value.
+     *
+     * @param string $key
+     * @param mixed $value
+     * @return bool
+     */
+    protected function configHasArrayValue($key, $value)
+    {
+        return in_array($value, $this->configGet($key));
     }
 
     /**

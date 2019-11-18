@@ -78,6 +78,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Dashboard Widgets
+    |--------------------------------------------------------------------------
+    |
+    | Here you may define any number of dashboard widgets. You're free to
+    | use the same widget multiple times in different configurations.
+    |
+    */
+
+    'widgets' => [
+        'getting_started',
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
     |
