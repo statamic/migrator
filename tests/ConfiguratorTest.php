@@ -90,7 +90,6 @@ EOT
         );
     }
 
-
     /** @test */
     function it_can_set_array_value_to_something_new()
     {

@@ -550,7 +550,6 @@ EOT
     }
 
     /**
-     *
      * Assert filesystem config file replacement is valid and contains specific content.
      *
      * @param string $content

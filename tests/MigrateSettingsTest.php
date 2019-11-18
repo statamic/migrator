@@ -12,15 +12,7 @@ class MigrateSettingsTest extends TestCase
     {
         parent::setUp();
 
-        $this->files->deleteDirectory($this->path());
-        $this->files->copyDirectory('vendor/statamic/cms/config', $this->path());
-
         Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
-    }
-
-    protected function path($append = null)
-    {
-        return collect([config_path('statamic'), $append])->filter()->implode('/');
     }
 
     /** @test */

@@ -43,7 +43,6 @@ class TestCase extends \Orchestra\Testbench\TestCase
         }
 
         $this->restoreFilesystemConfig();
-
         $this->restoreStatamicConfigs();
     }
 
@@ -54,6 +53,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
         });
 
         $this->restoreFilesystemConfig();
+        $this->restoreStatamicConfigs();
 
         parent::tearDown();
     }
