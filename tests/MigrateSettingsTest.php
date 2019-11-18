@@ -105,7 +105,7 @@ EOT
         );
 
         $this->assertConfigFileContains('routes.php', <<<EOT
-    'redirects' => [
+    'redirect' => [
         // '/here' => '/there',
         '/articles' => '/',
         '/blog/posts' => '/blog',

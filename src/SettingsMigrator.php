@@ -57,7 +57,7 @@ class SettingsMigrator extends Migrator
 
         Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
         Configurator::file('statamic/routes.php')->merge('vanity', $routes['vanity'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('redirects', $routes['redirect'] ?? []);
+        Configurator::file('statamic/routes.php')->merge('redirect', $routes['redirect'] ?? []);
 
         return $this;
     }
