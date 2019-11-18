@@ -43,6 +43,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
         }
 
         $this->restoreFilesystemConfig();
+
+        $this->restoreStatamicConfigs();
     }
 
     protected function tearDown(): void
@@ -74,6 +76,11 @@ class TestCase extends \Orchestra\Testbench\TestCase
     protected function restoreFilesystemConfig()
     {
         $this->files->copy(config_path('filesystems-original.php'), config_path('filesystems.php'));
+    }
+
+    protected function restoreStatamicConfigs()
+    {
+        $this->files->copyDirectory(__DIR__.'/../vendor/statamic/cms/config', config_path('statamic'));
     }
 
     protected function assertParsedYamlEquals($expected, $path)

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Tests\TestCase;
+use Statamic\Migrator\Configurator;
 use Illuminate\Filesystem\Filesystem;
 use Tests\Console\Foundation\InteractsWithConsole;
 
@@ -119,6 +120,21 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('users')));
+    }
+
+    /** @test */
+    function it_migrates_settings()
+    {
+        $this->assertCount(1, config('statamic.cp.widgets'));
+        $this->assertCount(0, config('statamic.routes.routes'));
+
+        $this->artisan('statamic:migrate:site');
+
+        Configurator::file('statamic/cp.php')->refresh();
+        Configurator::file('statamic/routes.php')->refresh();
+
+        $this->assertCount(4, config('statamic.cp.widgets'));
+        $this->assertCount(3, config('statamic.routes.routes'));
     }
 
     /** @test */
