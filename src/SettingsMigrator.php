@@ -40,7 +40,7 @@ class SettingsMigrator extends Migrator
 
         Configurator::file('statamic/cp.php')->set('start_page', $cp['start_page'] ?? false);
         Configurator::file('statamic/cp.php')->set('date_format', $cp['date_format'] ?? false);
-        Configurator::file('statamic/cp.php')->set('widgets', $cp['widgets'] ?? false);
+        Configurator::file('statamic/cp.php')->merge('widgets', $cp['widgets'] ?? []);
         // Configurator::file('statamic/cp.php')->set('pagination_size', $cp['pagination_size'] ?? false);
 
         return $this;

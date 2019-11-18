@@ -43,9 +43,9 @@ EOT
 EOT
         );
 
-        // TODO: Merge widgets into existing
         $this->assertConfigFileContains('cp.php', <<<EOT
     'widgets' => [
+        'getting_started',
         [
             'type' => 'collection',
             'collection' => 'blog',
