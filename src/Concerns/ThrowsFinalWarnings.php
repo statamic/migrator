@@ -13,10 +13,13 @@ trait ThrowsFinalWarnings
      *
      * @param string $warning
      * @param null|string $extra
+     * @return $this
      */
     protected function addWarning($warning, $extra = null)
     {
         $this->warnings[] = compact('warning', 'extra');
+
+        return $this;
     }
 
     /**
