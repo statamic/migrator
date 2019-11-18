@@ -75,7 +75,7 @@ class Configurator
 
         switch (true) {
             case $this->attemptToSetArrayValue($key, $value):
-            case $this->attemptToSetStringValue($key, $value):
+            case $this->attemptToSetNonArrayValue($key, $value):
             case $this->attemptToSetNewValue($key, $value):
                 return $this->normalize();
             default:
@@ -152,7 +152,7 @@ class Configurator
 
         $isArrayValue = is_array($this->configGet($key));
 
-        $regex = $this->buildPatternForKey('\X*', $key, $isArrayValue);
+        $regex = $this->buildPatternForKey('\[\X*', $key, $isArrayValue);
 
         preg_match($regex, $config, $matches);
 
@@ -170,13 +170,13 @@ class Configurator
     }
 
     /**
-     * Attempt to set string config value.
+     * Attempt to set non-array config value.
      *
      * @param string $key
      * @param mixed $value
      * @return bool
      */
-    protected function attemptToSetStringValue($key, $value)
+    protected function attemptToSetNonArrayValue($key, $value)
     {
         $config = $this->files->get($this->path());
 
@@ -190,7 +190,7 @@ class Configurator
 
         $value = $this->varExport($value);
 
-        $updatedConfig = preg_replace($regex, "$1{$value}$2", $config);
+        $updatedConfig = preg_replace($regex, '${1}' . $value . '$2', $config);
 
         $this->files->put($this->path(), $updatedConfig);
 

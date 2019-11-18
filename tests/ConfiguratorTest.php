@@ -75,6 +75,23 @@ EOT
     }
 
     /** @test */
+    function it_can_set_integer_value_to_something_new()
+    {
+        $this->assertConfigFileContains(<<<EOT
+    'pagination_size' => 50,
+EOT
+        );
+
+        $this->configurator->set('pagination_size', 12);
+
+        $this->assertConfigFileContains(<<<EOT
+    'pagination_size' => 12,
+EOT
+        );
+    }
+
+
+    /** @test */
     function it_can_set_array_value_to_something_new()
     {
         $this->assertConfigFileContains(<<<EOT

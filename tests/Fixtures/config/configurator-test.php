@@ -125,6 +125,9 @@ return [
 ]
 ],
 
+
+    'pagination_size' => 50,
+
     'extra-config' => [
         'from-some-other-package' => env('THIS_SHOULDNT_GET_TOUCHED'),
     ],
