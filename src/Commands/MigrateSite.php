@@ -284,7 +284,9 @@ class MigrateSite extends Command
      */
     protected function getSetting($dottedPath, $default = null)
     {
-        $file = collect(explode('.', $dottedPath))->first();
+        $pathParts = collect(explode('.', $dottedPath));
+        $file = $pathParts->shift();
+        $dottedPath = $pathParts->implode('.');
 
         $path = base_path("site/settings/{$file}.yaml");
 
