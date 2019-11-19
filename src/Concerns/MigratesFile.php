@@ -88,7 +88,7 @@ trait MigratesFile
         $folder = preg_replace('/(.*)\/[^\/]*/', '$1', $path);
 
         if (! $this->files->exists($folder)) {
-            $this->files->makeDirectory($folder);
+            $this->files->makeDirectory($folder, 0755, true);
         }
 
         $this->files->put($path, $migrated);
