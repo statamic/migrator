@@ -285,7 +285,7 @@ EOT
             'bucket' => 'some-bucket',
             'region' => 'some-region',
             'url' => '/cloud',
-            'path' => 'cloud', // TODO: need to handle subfolder of the bucket?
+            'path' => 'cloud',
             'cache' => 3600, // TODO: need to handle s3 filesystem caching?
         ]));
 
