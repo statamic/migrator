@@ -380,7 +380,7 @@ class Configurator
             : '(,)';
 
         return $isArrayValue
-            ? "\[\X*^\s{{$indentation}}\]{$endingGroup}"
+            ? "\X*^\s{{$indentation}}\]{$endingGroup}"
             : $endingGroup;
     }
 
