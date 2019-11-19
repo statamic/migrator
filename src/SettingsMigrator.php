@@ -76,6 +76,7 @@ class SettingsMigrator extends Migrator
     protected function migrateSystem()
     {
         $this->validateFreshStatamicConfig('system.php');
+        $this->validateFreshStatamicConfig('sites.php');
 
         $system = $this->getSourceYaml('settings/system.yaml');
 
