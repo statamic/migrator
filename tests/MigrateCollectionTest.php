@@ -77,6 +77,21 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_a_draft_entry()
+    {
+        $draftPath = 'blog/_2017-01-19.paperwork-and-snowshoeing.md';
+        $path = 'blog/2017-01-19.paperwork-and-snowshoeing.md';
+
+        $this->assertFileExists($this->sitePath("content/collections/{$draftPath}"));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertFileNotExists($this->path($draftPath));
+        $this->assertFileExists($this->path($path));
+        $this->assertParsedYamlContains(['published' => false], $this->path($path));
+    }
+
+    /** @test */
     function it_migrates_entry_content_as_document_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
