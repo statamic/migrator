@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
@@ -85,7 +86,10 @@ class CollectionMigrator extends Migrator
                 return [$file->getFilename() => $this->getSourceYaml($file)];
             })
             ->each(function ($entry, $filename) {
-                $this->saveMigratedWithYamlFrontMatter($this->migrateEntry($entry), $this->migratePath($filename, $entry));
+                $this->saveMigratedWithYamlFrontMatter(
+                    $this->migrateEntry($entry, $filename),
+                    $this->migratePath($filename, $entry)
+                );
             });
 
         return $this;
@@ -97,8 +101,12 @@ class CollectionMigrator extends Migrator
      * @param array $entry
      * @return string
      */
-    protected function migrateEntry($entry)
+    protected function migrateEntry($entry, $filename)
     {
+        if (Str::startsWith($filename, '_')) {
+            $entry['published'] = false;
+        }
+
         if (isset($entry['fieldset'])) {
             $entry['blueprint'] = $entry['fieldset'];
         }
@@ -144,6 +152,9 @@ class CollectionMigrator extends Migrator
     {
         // Ensure file has .md extension.
         $filename = preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename);
+
+        // Remove `_` draft entry prefix.
+        $filename = preg_replace('/^_(.*)$/', '$1', $filename);
 
         // If filename has order key, store order and remove order key.
         if ($this->config->get('order') === 'number') {
