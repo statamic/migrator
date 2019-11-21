@@ -4,7 +4,6 @@
 
 Make migrating from v2 to v3 all the moar easier 🤘
 
-- [Alpha Prerequisites](#alpha-prerequisites)
 - [Installation](#installation)
 - [Getting started](#getting-started)
 - [Using the site migrator](#using-the-site-migrator)
@@ -20,27 +19,6 @@ Make migrating from v2 to v3 all the moar easier 🤘
     - [Theme migrator](#theme-migrator)
 - [After migration](#after-migration)
 - [Reporting issues](#reporting-issues)
-
-## Alpha Prerequisites
-
-1. Clone the `statamic/migrator` package:
-
-    ```
-    git clone git@github.com:statamic/migrator.git
-    ```
-
-2. Add the package as a global path repository inside `~/.composer/config.json`:
-
-    ```json
-    {
-        "repositories": [
-            {
-                "type": "path",
-                "url": "/path/to/where/you/cloned/the/migrator"
-            }
-        ]
-    }
-    ```
 
 ## Installation
 
