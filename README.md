@@ -2,7 +2,9 @@
 
 ![Statamic 3.0+](https://img.shields.io/badge/Statamic-3.0+-FF269E?style=for-the-badge&link=https://statamic.com)
 
-Make migrating from v2 to v3 all the moar easier 🤘
+Make migrating from v2 to v3 all the moar easier! 🤘
+
+> See the migratior in action in [this screencast](https://youtu.be/OeXbaeuJrws).
 
 - [Installation](#installation)
 - [Getting started](#getting-started)
