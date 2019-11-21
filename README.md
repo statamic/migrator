@@ -2,9 +2,9 @@
 
 ![Statamic 3.0+](https://img.shields.io/badge/Statamic-3.0+-FF269E?style=for-the-badge&link=https://statamic.com)
 
-Make migrating from v2 to v3 all the moar easier! 🤘
+🤘 Make migrating from v2 to v3 all the moar easier!
 
-> See the migratior in action in [this screencast](https://youtu.be/OeXbaeuJrws).
+📺 See the migrator in action [in this screencast](https://youtu.be/OeXbaeuJrws).
 
 - [Installation](#installation)
 - [Getting started](#getting-started)
@@ -35,8 +35,6 @@ composer require statamic/migrator --dev
 All of the migrators assume the presence of your v2 project's `site` folder, as well as any asset container folders.  Be sure to copy these into your v3 project root first.  We also recommend running these commands from a clean `git` state, so that you can see a diff of the changes made, and easily rollback if necessary.
 
 It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
-
-📺 [See a demonstration!](https://www.youtube.com/watch?v=OeXbaeuJrws&feature=youtu.be)
 
 ## Using the site migrator
 
