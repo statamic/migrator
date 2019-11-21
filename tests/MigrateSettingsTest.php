@@ -115,12 +115,6 @@ EOT
     'sites' => [
 
         'default' => [
-            'name' => config('app.name'),
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
-        'en' => [
             'name' => 'English',
             'locale' => 'en_US',
             'url' => '/',
