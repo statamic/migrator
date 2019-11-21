@@ -4,6 +4,7 @@ namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
@@ -419,7 +420,7 @@ class AssetContainerMigrator extends Migrator
      */
     protected function metaPath($file)
     {
-        $path = preg_replace('/(\/*)([^\/]+)$/', '$1.meta/$2.yaml', $file);
+        $path = preg_replace('/(\/*)([^\/]+)$/', '$1.meta/$2.yaml', Path::resolve($file));
         $subFolder = $this->s3Path ? "{$this->s3Path}/" : '';
 
         return $subFolder . $path;

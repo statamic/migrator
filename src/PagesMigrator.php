@@ -4,6 +4,7 @@ namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
@@ -78,7 +79,7 @@ class PagesMigrator extends Migrator
 
         $page['slug'] = $key === 'root'
             ? Str::slug($page['title'])
-            : preg_replace('/.*\/_*[0-9]*\.([^\/]*)$/', '$1', $folder);
+            : preg_replace('/.*\/_*[0-9]*\.([^\/]*)$/', '$1', Path::resolve($folder));
 
         $this->entries[] = $page;
         $this->usedBlueprints[] = $page['fieldset'] ?? null;

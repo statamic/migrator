@@ -2,6 +2,8 @@
 
 namespace Statamic\Migrator\Concerns;
 
+use Statamic\Facades\Path;
+
 trait PreparesPathFolder
 {
     /**
@@ -40,6 +42,6 @@ trait PreparesPathFolder
      */
     protected function getFolderFromPath($path)
     {
-        return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', $path);
+        return preg_replace('/(.*)\/[^\/]+\.[^\/]+/', '$1', Path::resolve($path));
     }
 }
