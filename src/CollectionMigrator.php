@@ -83,7 +83,7 @@ class CollectionMigrator extends Migrator
                 return $file->getFilename() === 'folder.yaml';
             })
             ->mapWithKeys(function ($file) {
-                return [$file->getFilename() => $this->getSourceYaml($file)];
+                return [$file->getFilename() => $this->getSourceYaml($file->getPathname())];
             })
             ->each(function ($entry, $filename) {
                 $this->saveMigratedWithYamlFrontMatter(
