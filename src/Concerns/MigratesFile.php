@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Concerns;
 
 use Statamic\Support\Str;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\NotFoundException;
 
@@ -34,7 +35,7 @@ trait MigratesFile
     {
         $descriptor = static::descriptor();
 
-        $path = Str::startsWith($path, '/')
+        $path = Path::isAbsolute($path)
             ? $path
             : $this->sitePath($path);
 
