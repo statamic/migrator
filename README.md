@@ -46,17 +46,17 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
 3) We recommend clearing your existing site, to ensure a blank slate for your migration:
 
-```
-php please site:clear
-```
+    ```
+    php please site:clear
+    ```
 
 4) We recommend [committing](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository) all your changes up to this point, so that you can view a diff of all the changes performed by the migrator.
 
 5) Run the following command to initiate the migration:
 
-```
-php please migrate:site
-```
+    ```
+    php please migrate:site
+    ```
 
 ## Using individual migrators
 
