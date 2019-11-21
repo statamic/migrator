@@ -3,12 +3,10 @@
 namespace Statamic\Migrator\Exceptions;
 
 use Exception;
-use Statamic\Migrator\Concerns\NormalizesPath;
+use Statamic\Facades\Path;
 
 class MigratorErrorException extends Exception
 {
-    use NormalizesPath;
-
     /**
      * Ensure message is required.
      *
@@ -27,7 +25,7 @@ class MigratorErrorException extends Exception
      */
     protected function ensureRelativePath($path)
     {
-        return str_replace(base_path() . '/', '', $this->normalizePath($path));
+        return str_replace(base_path() . '/', '', Path::resolve($path));
     }
 
     /**

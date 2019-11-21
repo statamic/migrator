@@ -3,14 +3,13 @@
 namespace Statamic\Migrator;
 
 use Statamic\Support\Str;
+use Statamic\Facades\Path;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 abstract class Migrator
 {
-    use Concerns\NormalizesPath;
-
     protected $handle;
     protected $newPath;
     protected $overwrite = false;
@@ -128,7 +127,7 @@ abstract class Migrator
 
         collect($this->uniquePaths())
             ->map(function ($path) {
-                return $this->normalizePath($path);
+                return Path::resolve($path);
             })
             ->filter(function ($path) {
                 return $this->pathExists($path);
