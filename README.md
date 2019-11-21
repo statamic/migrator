@@ -34,6 +34,8 @@ All of the migrators assume the presence of your v2 project's `site` folder, as 
 
 It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
 
+📺 [See a demonstration!](https://www.youtube.com/watch?v=OeXbaeuJrws&feature=youtu.be)
+
 ## Using the site migrator
 
 The site migrator is the recommended way to migrate your site.  To get started, run the following command:
