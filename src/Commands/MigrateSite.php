@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Commands;
 
 use Statamic\Support\Arr;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FormMigrator;
@@ -271,7 +272,7 @@ class MigrateSite extends Command
         }
 
         return collect($this->files->directories($path))->map(function ($path) {
-            return preg_replace('/.*\/([^\/]+)/', '$1', $path);
+            return preg_replace('/.*\/([^\/]+)/', '$1', Path::resolve($path));
         });
     }
 
