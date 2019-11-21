@@ -32,13 +32,27 @@ composer require statamic/migrator --dev
 
 ## Getting started
 
-All of the migrators assume the presence of your v2 project's `site` folder, as well as any asset container folders.  Be sure to copy these into your v3 project root first.  We also recommend running these commands from a clean `git` state, so that you can see a diff of the changes made, and easily rollback if necessary.
+All of the migrators assume the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root first.  We also recommend running these commands from a clean `git` state, so that you can see a diff of the changes made, and easily rollback if necessary.
 
 It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
 
 ## Using the site migrator
 
-The site migrator is the recommended way to migrate your site.  To get started, run the following command:
+The site migrator is the recommended way to migrate your site.  To get started...
+
+1) We recommend creating a new [branch](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), so that you can easily roll back a migration if necessary.
+
+2) The site migrator requires the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root.
+
+3) We recommend clearing your existing site, to ensure a blank slate for your migration:
+
+```
+php please site:clear
+```
+
+4) We recommend [committing](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository) all your changes up to this point, so that you can view a diff of all the changes performed by the migrator.
+
+5) Run the following command to initiate the migration:
 
 ```
 php please migrate:site
