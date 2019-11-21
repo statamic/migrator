@@ -96,7 +96,7 @@ class SettingsMigrator extends Migrator
         $sites = collect($system['locales'])
             ->map(function ($site) {
                 return [
-                    'name' => $site['name'],
+                    'name' => $site['name'] ?? $site['full'],
                     'locale' => $site['full'],
                     'url' => $site['url'],
                 ];
