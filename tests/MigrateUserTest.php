@@ -12,7 +12,8 @@ class MigrateUserTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
-            'old' => base_path('site/users/irmagobb.yaml'),
+            'old_username' => base_path('site/users/irmagobb.yaml'),
+            'old_email' => base_path('site/users/irmagobb@example.com.yaml'),
             'new' => base_path('users/irmagobb@example.com.yaml'),
         ];
 
@@ -21,7 +22,7 @@ class MigrateUserTest extends TestCase
 
     private function migrateUser($userConfig)
     {
-        $this->files->put($this->paths('old'), YAML::dump($userConfig));
+        $this->files->put($this->paths('old_username'), YAML::dump($userConfig));
 
         $this->assertFileNotExists($this->paths('new'));
 
@@ -53,14 +54,30 @@ class MigrateUserTest extends TestCase
     /** @test */
     function it_requires_an_email_for_handle()
     {
-        $this->files->put($this->paths('old'), YAML::dump([
+        $this->files->put($this->paths('old_username'), YAML::dump([
             'first_name' => 'Irma',
         ]));
 
         $this->artisan('statamic:migrate:user', ['handle' => 'irmagobb']);
 
-        $this->assertFileExists($this->paths('old'));
+        $this->assertFileExists($this->paths('old_username'));
         $this->assertFileNotExists($this->paths('new'));
+    }
+
+    /** @test */
+    function it_migrates_email_from_filename()
+    {
+        $this->files->put($this->sitePath('settings/users.yaml'), 'login_type: email');
+
+        $this->files->put($this->paths('old_email'), YAML::dump([
+            'first_name' => 'Irma',
+        ]));
+
+        $this->assertFileNotExists($this->paths('new'));
+
+        $this->artisan('statamic:migrate:user', ['handle' => 'irmagobb@example.com']);
+
+        $this->assertFileExists($this->paths('new'));
     }
 
     /** @test */

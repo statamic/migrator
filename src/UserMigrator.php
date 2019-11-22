@@ -7,7 +7,8 @@ use Statamic\Migrator\Exceptions\InvalidEmailException;
 
 class UserMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\GetsSettings,
+        Concerns\MigratesFile;
 
     protected $user;
 
@@ -33,6 +34,10 @@ class UserMigrator extends Migrator
     protected function parseUser()
     {
         $this->user = $this->getSourceYaml("users/{$this->handle}.yaml");
+
+        if ($this->getSetting('users.login_type') === 'email') {
+            $this->user['email'] = $this->handle;
+        }
 
         return $this;
     }
