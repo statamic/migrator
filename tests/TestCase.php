@@ -115,6 +115,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return $this->assertFalse($parsed->has($key));
     }
 
+    protected function assertContainsIgnoringLineEndings($expected, $actual)
+    {
+        $actual = str_replace("\r\n", "\n", $actual);
+
+        $this->assertContains($expected, $actual);
+    }
+
     protected function sitePath($append = null)
     {
         return collect([base_path('site'), $append])->filter()->implode('/');

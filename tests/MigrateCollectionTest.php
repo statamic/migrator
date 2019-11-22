@@ -102,7 +102,7 @@ id: f5c18e4c-4d51-4fc6-ab52-b7afe5116b3a
 Let me first explain myself. I am not a brave person by nature.
 EOT;
 
-        $this->assertContains($expected, $this->files->get($this->path('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
+        $this->assertContainsIgnoringLineEndings($expected, $this->files->get($this->path('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
     }
 
     /** @test */
