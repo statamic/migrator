@@ -4,6 +4,7 @@ namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
+use Statamic\Facades\Path;
 use Illuminate\Filesystem\Filesystem;
 use Facades\Statamic\Console\Processes\Process;
 
@@ -132,7 +133,7 @@ class Configurator
      */
     public function refresh()
     {
-        $key = str_replace(config_path() . '/', '', $this->path());
+        $key = str_replace(Path::resolve(config_path()) . '/', '', $this->path());
         $key = str_replace('.php', '', $key);
         $key = str_replace('/', '.', $key);
 
@@ -311,7 +312,7 @@ class Configurator
      */
     protected function path()
     {
-        return config_path($this->configFile);
+        return Path::resolve(config_path($this->configFile));
     }
 
     /**
