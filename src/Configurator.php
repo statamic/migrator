@@ -9,6 +9,8 @@ use Facades\Statamic\Console\Processes\Process;
 
 class Configurator
 {
+    use Concerns\PreparesPhpCsFixer;
+
     protected $configFile;
     protected $files;
 
@@ -51,6 +53,8 @@ class Configurator
             'trailing_comma_in_multiline_array' => true,
             'binary_operator_spaces' => true,
         ]);
+
+        $this->preparePhpCsFixer();
 
         Process::run(['vendor/bin/php-cs-fixer', 'fix', $path, '--rules', $rules]);
 
