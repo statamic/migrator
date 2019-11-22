@@ -2,9 +2,7 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Support\Arr;
 use Statamic\Facades\Path;
-use Statamic\Migrator\YAML;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\UserMigrator;
@@ -16,6 +14,7 @@ use Statamic\Migrator\SettingsMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
+use Statamic\Migrator\Concerns\GetsSettings;
 use Statamic\Migrator\AssetContainerMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
@@ -24,7 +23,7 @@ use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class MigrateSite extends Command
 {
-    use RunsInPlease;
+    use GetsSettings, RunsInPlease;
 
     /**
      * The name and signature of the console command.
@@ -274,28 +273,6 @@ class MigrateSite extends Command
         return collect($this->files->directories($path))->map(function ($path) {
             return preg_replace('/.*\/([^\/]+)/', '$1', Path::resolve($path));
         });
-    }
-
-    /**
-     * Get setting.
-     *
-     * @param string $dottedPath
-     * @param mixed $default
-     * @return mixed
-     */
-    protected function getSetting($dottedPath, $default = null)
-    {
-        $pathParts = collect(explode('.', $dottedPath));
-        $file = $pathParts->shift();
-        $dottedPath = $pathParts->implode('.');
-
-        $path = base_path("site/settings/{$file}.yaml");
-
-        $settings = $this->files->exists($path)
-            ? YAML::parse($this->files->get($path))
-            : [];
-
-        return Arr::get($settings, $dottedPath, $default);
     }
 
     /**
