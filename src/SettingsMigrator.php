@@ -93,7 +93,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateLocales($system)
     {
-        $sites = collect($system['locales'])
+        $sites = collect($system['locales'] ?? [])
             ->map(function ($site) {
                 return [
                     'name' => $site['name'] ?? "config('app.name')",
