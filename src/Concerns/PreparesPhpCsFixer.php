@@ -11,7 +11,7 @@ trait PreparesPhpCsFixer
      */
     protected function preparePhpCsFixer()
     {
-        if (! File::exists($batFile = __DIR__.'/../../vendor/bin/php-cs-fixer.bat')) {
+        if (! File::exists($batFile = getcwd().'/vendor/bin/php-cs-fixer.bat')) {
             File::copy(__DIR__.'/../../bin/php-cs-fixer.bat', $batFile);
         }
     }
