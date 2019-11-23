@@ -139,6 +139,16 @@ EOT
     }
 
     /** @test */
+    function it_can_migrate_if_taxonomies_are_missing()
+    {
+        $this->files->deleteDirectory($this->sitePath('content/taxonomies'));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlNotHasKey('taxonomies', $this->path('blog.yaml'));
+    }
+
+    /** @test */
     function it_will_not_migrate_date_settings_if_none_are_referenced()
     {
         $path = $this->sitePath('content/collections/blog/folder.yaml');

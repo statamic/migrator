@@ -61,9 +61,11 @@ class CollectionMigrator extends Migrator
      */
     protected function parseAvailableTaxonomies()
     {
-        $this->availableTaxonomies = collect($this->files->files($this->sitePath('content/taxonomies')))
-            ->map
-            ->getFilenameWithoutExtension();
+        $path = $this->sitePath('content/taxonomies');
+
+        $this->availableTaxonomies = $this->files->exists($path)
+            ? collect($this->files->files($path))->map->getFilenameWithoutExtension()
+            : collect();
 
         return $this;
     }
