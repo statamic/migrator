@@ -110,7 +110,7 @@ class PagesMigrator extends Migrator
             'title' => 'Pages',
             'expects_root' => true,
             'root' => $this->structure['root']['entry'],
-            'tree' => $this->structure['root']['children'],
+            'tree' => $this->structure['root']['children'] ?? [],
         ];
 
         $this->saveMigratedYaml($config, $this->newPath('../../structures/pages.yaml'));

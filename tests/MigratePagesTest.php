@@ -117,6 +117,18 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_structure_if_only_home_page_exists()
+    {
+        collect($this->files->directories($this->sitePath('content/pages')))->each(function ($directory) {
+            $this->files->deleteDirectory($directory);
+        });
+
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertFileExists($this->collectionsPath('../structures/pages.yaml'));
+    }
+
+    /** @test */
     function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
     {
         $this->artisan('statamic:migrate:pages');
