@@ -8,6 +8,9 @@
 
 - [Installation](#installation)
 - [Getting started](#getting-started)
+    - [File prep](#file-prep)
+    - [Git state](#git-state)
+    - [Idempotency](#idempotency)
 - [Using the site migrator](#using-the-site-migrator)
 - [Using individual migrators](#using-individual-migrators)
     - [Fieldset to blueprint migrator](#fieldset-to-blueprint-migrator)
@@ -32,7 +35,15 @@ composer require statamic/migrator --dev
 
 ## Getting started
 
-All of the migrators assume the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root first.  We also recommend running these commands from a clean `git` state, so that you can see a diff of the changes made, and easily rollback if necessary.
+### File prep
+
+All of the migrators assume the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root first.  Also, if you were running above webroot, be sure to copy your `public/themes` folder into `site/themes`.
+
+### Git state
+
+We recommend running these commands from a clean [git](https://git-scm.com/) state, so that you can see a diff of the changes made, and easily rollback if necessary.
+
+### Idempotency
 
 It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
 
@@ -42,7 +53,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
 1) We recommend creating a new [branch](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), so that you can easily roll back a migration if necessary.
 
-2) The site migrator requires the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root.
+2) The site migrator requires the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root.  Also, if you were running above webroot, be sure to copy your `public/themes` folder into `site/themes`.
 
 3) We recommend clearing your existing site, to ensure a blank slate for your migration:
 
@@ -154,7 +165,7 @@ Due to the evolution of antlers templating, we cannot guarantee a complete migra
 
 ## After migration
 
-Be sure to manually test your site, addressing all errors and warnings as you see fit.  When you are finished and happy with your migration, feel free to delete your `site` folder from your v3 project root, and then run the following command:
+Be sure to manually test your site, addressing all errors and warnings as you see fit.  When you are finished and happy with your migration, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
 
 ```
 composer remove statamic/migrator
