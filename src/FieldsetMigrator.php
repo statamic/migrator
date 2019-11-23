@@ -69,7 +69,7 @@ class FieldsetMigrator extends Migrator
     {
         return collect($sections)
             ->map(function ($section) {
-                return Arr::set($section, 'fields', $this->migrateFields($section['fields']));
+                return Arr::set($section, 'fields', $this->migrateFields($section['fields'] ?? []));
             })
             ->all();
     }
