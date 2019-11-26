@@ -11,6 +11,7 @@
     - [File prep](#file-prep)
     - [Git state](#git-state)
     - [Idempotency](#idempotency)
+    - [Upgrade guide](#upgrade-guide)
 - [Using the site migrator](#using-the-site-migrator)
 - [Using individual migrators](#using-individual-migrators)
     - [Fieldset to blueprint migrator](#fieldset-to-blueprint-migrator)
@@ -46,6 +47,10 @@ We recommend running these commands from a clean [git](https://git-scm.com/) sta
 ### Idempotency
 
 It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
+
+### Upgrade guide
+
+While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we still recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't migrate everything, hopefully you have found this package useful in your transition to v3.
 
 ## Using the site migrator
 
