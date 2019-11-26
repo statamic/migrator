@@ -1,0 +1,39 @@
+d32e14fb-08c9-44c2-aaf8-21200852bafd:
+  title: Admin
+  permissions:
+    - super
+e9dd93f8-b83a-426c-8d09-c01acfd269f6:
+  title: Author
+  slug: author
+  permissions:
+    - 'cp:access'
+    - 'content:view_drafts_on_frontend'
+    - resolve_duplicates
+    - 'pages:view'
+    - 'pages:edit'
+    - 'pages:create'
+    - 'pages:delete'
+    - 'collections:blog:view'
+    - 'collections:blog:edit'
+    - 'collections:blog:create'
+    - 'collections:blog:delete'
+    - 'taxonomies:tags:view'
+    - 'taxonomies:tags:edit'
+    - 'taxonomies:tags:create'
+    - 'taxonomies:tags:delete'
+    - 'globals:social:view'
+    - 'globals:social:edit'
+    - 'assets:main:view'
+    - 'assets:main:edit'
+    - 'assets:main:create'
+    - 'assets:main:delete'
+    - forms
+    - updater
+    - 'updater:update'
+    - importer
+    - 'users:view'
+    - 'users:edit'
+    - 'users:create'
+    - 'users:delete'
+    - 'users:edit-passwords'
+    - 'users:edit-roles'
