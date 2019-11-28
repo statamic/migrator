@@ -1,0 +1,39 @@
+title: 'Contact Me'
+store: false
+fields:
+  name:
+    display: Name
+    validate: 'required|min:2'
+  email:
+    display: 'Email Address'
+    validate: required|email
+  number:
+    display: 'Favorite Number'
+    validate: integer
+  comment:
+    display: Comment
+columns:
+  - name
+  - email
+  - number
+  - comment
+metrics:
+  -
+    type: total
+    label: 'Total Responses'
+  -
+    type: sum
+    label: 'Sum of Favorite Number'
+    field: number
+  -
+    type: average
+    label: 'Average Favorite Number'
+    field: number
+    precision: 1
+email:
+  -
+    to: to@example.com
+    from: from@example.com
+    reply_to: replyto@example.com
+    subject: 'Example email subject'
+    template: 'template?'
