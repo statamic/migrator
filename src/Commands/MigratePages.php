@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Commands;
 
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\PagesMigrator;
-use Statamic\Migrator\Exceptions\MigratorErrorException;
 
 class MigratePages extends Command
 {
