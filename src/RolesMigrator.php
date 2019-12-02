@@ -94,11 +94,13 @@ class RolesMigrator extends Migrator
         switch (true) {
             case $permission === 'cp:access':
                 return 'access cp';
-            case preg_match('/^(pages):(view|edit|create|delete)$/', $permission, $matches):
+            case preg_match('/^(pages):(view|edit|create|delete|reorder)$/', $permission, $matches):
             case preg_match('/^collections:(\w+):(view|edit|create|delete)$/', $permission, $matches):
                 return $this->migrateCollectionPermission($matches[1], $matches[2]);
             case preg_match('/^taxonomies:(\w+):(view|edit|create|delete)$/', $permission, $matches):
                 return $this->migrateTaxonomyPermission($matches[1], $matches[2]);
+            case preg_match('/^assets:(\w+):(view|edit|create|delete)$/', $permission, $matches):
+                return $this->migrateAssetContainerPermission($matches[1], $matches[2]);
             case preg_match('/^globals:(\w+):(view|edit)$/', $permission, $matches):
                 return $this->migrateGlobalSetPermission($matches[1], $matches[2]);
             case $permission === 'updater':
@@ -107,6 +109,8 @@ class RolesMigrator extends Migrator
                 return 'perform updates';
             case preg_match('/^users:(view|edit|create|delete|edit-passwords|edit-roles)$/', $permission, $matches):
                 return $this->migrateUserPermission($matches[1]);
+            case $permission === 'forms':
+                return $this->migrateFormPermission();
             default:
                 return $permission;
         }
@@ -117,11 +121,11 @@ class RolesMigrator extends Migrator
      *
      * @param string $collection
      * @param string $action
-     * @return string
+     * @return string|array
      */
     protected function migrateCollectionPermission($collection, $action)
     {
-        if ($action === 'edit') {
+        if ($action === 'edit' && $collection !== 'pages') {
             return [
                 "edit {$collection} entries",
                 "reorder {$collection} entries",
@@ -148,6 +152,30 @@ class RolesMigrator extends Migrator
     protected function migrateTaxonomyPermission($taxonomy, $action)
     {
         return "{$action} {$taxonomy} terms";
+    }
+
+    /**
+     * Migrate asset container permission.
+     *
+     * @param string $container
+     * @param string $action
+     * @return string|array
+     */
+    protected function migrateAssetContainerPermission($container, $action)
+    {
+        if ($action === 'edit') {
+            return [
+                "edit {$container} assets",
+                "move {$container} assets",
+                "rename {$container} assets",
+            ];
+        }
+
+        if ($action === 'create') {
+            return "upload {$container} assets";
+        }
+
+        return "{$action} {$container} assets";
     }
 
     /**
@@ -183,5 +211,24 @@ class RolesMigrator extends Migrator
         }
 
         return "{$action} users";
+    }
+
+    /**
+     * Migrate access form permission.
+     *
+     * @return array
+     */
+    protected function migrateFormPermission()
+    {
+        return collect($this->files->files($this->sitePath('settings/formsets')))
+            ->map
+            ->getFilenameWithoutExtension()
+            ->flatMap(function ($handle) {
+                return [
+                    "view {$handle} form submissions",
+                    "delete {$handle} form submissions",
+                ];
+            })
+            ->all();
     }
 }
