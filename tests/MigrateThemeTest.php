@@ -7,11 +7,9 @@ use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateThemeTest extends TestCase
 {
-    protected function paths()
+    protected function path()
     {
-        return [
-            resource_path('views'),
-        ];
+        return resource_path('views');
     }
 
     protected function viewsPath($append = null)
