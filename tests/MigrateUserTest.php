@@ -118,4 +118,23 @@ class MigrateUserTest extends TestCase
             'name' => 'Irma Gobb',
         ]);
     }
+
+    /** @test */
+    function it_migrates_roles()
+    {
+        $user = $this->migrateUser([
+            'name' => 'Irma Gobb',
+            'email' => 'irmagobb@example.com',
+            'roles' => [
+                'd32e14fb-08c9-44c2-aaf8-21200852bafd'
+            ]
+        ]);
+
+        $this->assertEquals($user, [
+            'name' => 'Irma Gobb',
+            'roles' => [
+                'super_admin'
+            ]
+        ]);
+    }
 }
