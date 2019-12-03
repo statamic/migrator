@@ -9,7 +9,8 @@ use Statamic\Migrator\Exceptions\InvalidEmailException;
 class UserMigrator extends Migrator
 {
     use Concerns\GetsSettings,
-        Concerns\MigratesFile;
+        Concerns\MigratesFile,
+        Concerns\MigratesRoles;
 
     protected $user;
 
@@ -86,37 +87,11 @@ class UserMigrator extends Migrator
         }
 
         if ($user->has('roles')) {
-            $user['roles'] = $this->migrateRoles($user);
+            $user['roles'] = $this->migrateRoles($user['roles']);
         }
 
         $this->user = $user->except('first_name', 'last_name', 'email')->all();
 
         return $this;
-    }
-
-    /**
-     * Migrate roles.
-     *
-     * @param array $user
-     * @return array
-     */
-    protected function migrateRoles($user)
-    {
-        $rolesPath = $this->sitePath('settings/users/roles.yaml');
-
-        if (! $this->files->exists($rolesPath)) {
-            throw new NotFoundException("Roles file cannot be found at path [path].", $rolesPath);
-        }
-
-        return $this
-            ->getSourceYaml($rolesPath, true)
-            ->filter(function ($role, $id) use ($user) {
-                return in_array($id, $user['roles']);
-            })
-            ->map(function ($role) {
-                return (new RolesMigrator(null))->migrateSlug($role);
-            })
-            ->values()
-            ->all();
     }
 }
