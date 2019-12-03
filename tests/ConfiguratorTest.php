@@ -5,7 +5,6 @@ namespace Tests;
 use Tests\TestCase;
 use Statamic\Migrator\Configurator;
 use Facades\Statamic\Console\Processes\Process;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class ConfiguratorTest extends TestCase
 {

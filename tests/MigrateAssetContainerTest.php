@@ -7,7 +7,6 @@ use Statamic\Support\Arr;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Configurator;
 use Facades\Statamic\Console\Processes\Process;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateAssetContainerTest extends TestCase
 {

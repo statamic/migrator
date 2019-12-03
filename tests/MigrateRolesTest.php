@@ -3,7 +3,6 @@
 namespace Tests;
 
 use Tests\TestCase;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateRolesTest extends TestCase
 {

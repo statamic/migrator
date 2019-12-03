@@ -4,7 +4,6 @@ namespace Tests;
 
 use Tests\TestCase;
 use Facades\Statamic\Console\Processes\Process;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateSettingsTest extends TestCase
 {

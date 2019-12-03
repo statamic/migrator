@@ -4,7 +4,6 @@ namespace Tests;
 
 use Tests\TestCase;
 use Statamic\Facades\Entry;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigratePagesTest extends TestCase
 {

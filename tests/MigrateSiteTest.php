@@ -5,7 +5,6 @@ namespace Tests;
 use Tests\TestCase;
 use Statamic\Migrator\Configurator;
 use Illuminate\Filesystem\Filesystem;
-use Tests\Console\Foundation\InteractsWithConsole;
 
 class MigrateSiteTest extends TestCase
 {
