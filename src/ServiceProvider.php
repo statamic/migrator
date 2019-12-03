@@ -13,6 +13,7 @@ class ServiceProvider extends AddonServiceProvider
         Commands\MigrateFieldset::class,
         // Commands\MigrateForm::class,
         Commands\MigrateGlobalSet::class,
+        Commands\MigrateGroups::class,
         Commands\MigratePages::class,
         Commands\MigrateRoles::class,
         Commands\MigrateSettings::class,

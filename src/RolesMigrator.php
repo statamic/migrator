@@ -8,6 +8,8 @@ class RolesMigrator extends Migrator
 {
     use Concerns\MigratesFile;
 
+    protected $roles;
+
     /**
      * Perform migration.
      */
@@ -18,8 +20,7 @@ class RolesMigrator extends Migrator
             // ->validateUnique()
             ->parseRoles()
             ->migrateRoles()
-            ->saveMigratedYaml($this->roles, $this->newPath())
-            ;
+            ->saveMigratedYaml($this->roles, $this->newPath());
     }
 
     /**
