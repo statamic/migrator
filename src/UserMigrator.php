@@ -90,6 +90,10 @@ class UserMigrator extends Migrator
             $user['roles'] = $this->migrateRoles($user['roles']);
         }
 
+        if ($user->has('groups')) {
+            $user['groups'] = $this->migrateGroups($user['groups']);
+        }
+
         $this->user = $user->except('first_name', 'last_name', 'email')->all();
 
         return $this;
