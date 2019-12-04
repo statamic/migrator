@@ -136,4 +136,23 @@ class MigrateUserTest extends TestCase
             ]
         ]);
     }
+
+    /** @test */
+    function it_migrates_groups()
+    {
+        $user = $this->migrateUser([
+            'name' => 'Irma Gobb',
+            'email' => 'irmagobb@example.com',
+            'groups' => [
+                'bc8b131b-4e01-4325-9fbc-598dff152855'
+            ]
+        ]);
+
+        $this->assertEquals($user, [
+            'name' => 'Irma Gobb',
+            'groups' => [
+                'scribblers'
+            ]
+        ]);
+    }
 }
