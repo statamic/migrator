@@ -21,6 +21,8 @@
     - [Asset container migrator](#asset-container-migrator)
     - [Globals migrator](#globals-migrator)
     - [User migrator](#user-migrator)
+    - [Roles migrator](#roles-migrator)
+    - [Groups migrator](#groups-migrator)
     - [Settings migrator](#settings-migrator)
     - [Theme migrator](#theme-migrator)
 - [After migration](#after-migration)
@@ -145,6 +147,22 @@ php please migrate:user hasselhoff
 ```
 
 In this example, `hasselhoff` is the username handle.
+
+### Roles migrator
+
+In v3, roles are mostly plug-and-play.  The most notable change being that roles are keyed by a slug handle, instead of by uuid.  It's worth noting that the user migrator takes care of this relationship on the user end as well.  To migrate your user roles:
+
+```
+php please migrate:roles
+```
+
+### Groups migrator
+
+In v3, groups are mostly plug-and-play.  The most notable change being that groups are keyed by a slug handle, instead of by uuid.  Also, we've removed the `users` array from each group, in favor of storing a `groups` relationship on the user itself.  It's worth noting that the user migrator takes care of this new relationship on the user end.  To migrate your user groups:
+
+```
+php please migrate:groups
+```
 
 ### Settings migrator
 
