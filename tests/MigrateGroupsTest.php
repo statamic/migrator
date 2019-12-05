@@ -4,7 +4,7 @@ namespace Tests;
 
 use Tests\TestCase;
 use Statamic\Support\Arr;
-use Statamic\Facades\YAML;
+use Statamic\Migrator\YAML;
 
 class MigrateGroupsTest extends TestCase
 {

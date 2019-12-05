@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Tests\TestCase;
+use Statamic\Migrator\YAML;
 use Statamic\Migrator\Configurator;
 use Illuminate\Filesystem\Filesystem;
 
@@ -26,6 +27,8 @@ class MigrateSiteTest extends TestCase
             'globals' => base_path('content/globals'),
             'assetContainers' => base_path('content/assets'),
             'views' => resource_path('views'),
+            'roles' => resource_path('users/roles.yaml'),
+            'groups' => resource_path('users/groups.yaml'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -119,6 +122,26 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('users')));
+    }
+
+    /** @test */
+    function it_migrates_roles()
+    {
+        $this->assertFileNotExists($this->paths('roles'));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertCount(2, YAML::parse($this->files->get($this->paths('roles'))));
+    }
+
+    /** @test */
+    function it_migrates_groups()
+    {
+        $this->assertFileNotExists($this->paths('groups'));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertCount(1, YAML::parse($this->files->get($this->paths('groups'))));
     }
 
     /** @test */

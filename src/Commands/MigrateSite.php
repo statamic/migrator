@@ -7,8 +7,10 @@ use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\UserMigrator;
 use Statamic\Migrator\PagesMigrator;
+use Statamic\Migrator\RolesMigrator;
 use Statamic\Migrator\ThemeMigrator;
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Migrator\GroupsMigrator;
 use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\SettingsMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
@@ -93,6 +95,8 @@ class MigrateSite extends Command
             ->migrateGlobalSets()
             // ->migrateForms()
             ->migrateUsers()
+            ->migrateRoles()
+            ->migrateGroups()
             ->migrateSettings()
             ->migrateTheme()
             ->clearCache();
@@ -192,6 +196,30 @@ class MigrateSite extends Command
         $this->getFileHandlesFromPath(base_path('site/users'))->each(function ($handle) {
             $this->runMigratorOnHandle(UserMigrator::class, $handle);
         });
+
+        return $this;
+    }
+
+    /**
+     * Migrate roles.
+     *
+     * @return $this
+     */
+    protected function migrateRoles()
+    {
+        $this->runMigratorWithoutHandle(RolesMigrator::class, 'roles');
+
+        return $this;
+    }
+
+    /**
+     * Migrate groups.
+     *
+     * @return $this
+     */
+    protected function migrateGroups()
+    {
+        $this->runMigratorWithoutHandle(GroupsMigrator::class, 'groups');
 
         return $this;
     }
