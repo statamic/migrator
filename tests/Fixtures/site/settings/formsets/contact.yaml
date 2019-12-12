@@ -35,5 +35,5 @@ email:
     to: to@example.com
     from: from@example.com
     reply_to: replyto@example.com
-    subject: 'Example email subject'
-    template: 'template?'
+    subject: "You've got fan mail"
+    template: 'fan-mail'
