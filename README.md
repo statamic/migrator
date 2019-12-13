@@ -20,6 +20,7 @@
     - [Taxonomy migrator](#taxonomy-migrator)
     - [Asset container migrator](#asset-container-migrator)
     - [Globals migrator](#globals-migrator)
+    - [Form migrator](#form-migrator)
     - [User migrator](#user-migrator)
     - [Roles migrator](#roles-migrator)
     - [Groups migrator](#groups-migrator)
@@ -137,6 +138,16 @@ php please migrate:global-set global
 ```
 
 In this example, `global` is the global set handle.
+
+### Form migrator
+
+In v3, forms fields are now defined in a [blueprint](https://statamic.dev/blueprints).  To migrate a form and it's submissions:
+
+```
+php please migrate:form contact
+```
+
+In this example, `contact` is the form handle.
 
 ### User migrator
 
