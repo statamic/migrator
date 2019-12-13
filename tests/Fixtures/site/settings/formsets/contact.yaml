@@ -16,7 +16,6 @@ columns:
   - name
   - email
   - number
-  - comment
 metrics:
   -
     type: total
