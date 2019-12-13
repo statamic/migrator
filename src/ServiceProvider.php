@@ -11,7 +11,7 @@ class ServiceProvider extends AddonServiceProvider
         Commands\MigrateAssetContainer::class,
         Commands\MigrateCollection::class,
         Commands\MigrateFieldset::class,
-        // Commands\MigrateForm::class,
+        Commands\MigrateForm::class,
         Commands\MigrateGlobalSet::class,
         Commands\MigrateGroups::class,
         Commands\MigratePages::class,
