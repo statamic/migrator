@@ -93,7 +93,7 @@ class MigrateSite extends Command
             ->migrateTaxonomies()
             ->migrateAssetContainers()
             ->migrateGlobalSets()
-            // ->migrateForms()
+            ->migrateForms()
             ->migrateUsers()
             ->migrateRoles()
             ->migrateGroups()
