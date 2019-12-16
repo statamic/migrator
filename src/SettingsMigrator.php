@@ -38,7 +38,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateCp()
     {
-        $this->validateFreshStatamicConfig('cp.php');
+        $this->validate('cp.php');
 
         $cp = $this->getSourceYaml('settings/cp.yaml');
 
@@ -57,7 +57,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateRoutes()
     {
-        $this->validateFreshStatamicConfig('routes.php');
+        $this->validate('routes.php');
 
         $routes = $this->getSourceYaml('settings/routes.yaml');
 
@@ -75,8 +75,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateSystem()
     {
-        $this->validateFreshStatamicConfig('system.php');
-        $this->validateFreshStatamicConfig('sites.php');
+        $this->validate(['system.php', 'sites.php']);
 
         $system = $this->getSourceYaml('settings/system.yaml');
 
@@ -119,6 +118,18 @@ class SettingsMigrator extends Migrator
         $migrateMethod = 'migrate' . ucfirst($this->handle);
 
         return $this->{$migrateMethod}();
+    }
+
+    /**
+     * Validate statamic configs.
+     *
+     * @param string|array $configFiles
+     */
+    protected function validate($configFiles)
+    {
+        collect($configFiles)->each(function ($config) {
+            $this->validateFreshStatamicConfig($config);
+        });
     }
 
     /**
