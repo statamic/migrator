@@ -122,7 +122,7 @@ class FormMigrator extends Migrator
     {
         $handle = $this->migrateBlueprintHandle();
 
-        return resource_path("{$handle}.yaml");
+        return resource_path("blueprints/{$handle}.yaml");
     }
 
     /**
