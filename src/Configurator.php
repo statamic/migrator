@@ -409,6 +409,9 @@ class Configurator
         // Ensure dynamic function stubs are not treated as strings.
         $value = preg_replace("/(.*=> )'([_a-zA-Z]*\()([^()]*)(\))'(.*)/", '$1$2$3$4$5', $value);
 
+        // Ensure env interpolations are converted to PHP helpers.
+        $value = preg_replace("/[\"']\{env:(.*)\}[\"']/", "env('$1')", $value);
+
         // Unescape single quotes.
         $value = str_replace("\'", "'", $value);
 

@@ -6,7 +6,8 @@ use Statamic\Migrator\Exceptions\MigratorSkippedException;
 
 class SettingsMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\MigratesFile,
+        Concerns\ThrowsFinalWarnings;
 
     /**
      * Perform migration.
@@ -14,7 +15,7 @@ class SettingsMigrator extends Migrator
     public function migrate()
     {
         if ($this->handle) {
-            return $this->migrateSingle();
+            return $this->migrateSingle()->throwFinalWarnings();
         }
 
         $this
@@ -28,7 +29,7 @@ class SettingsMigrator extends Migrator
             ->migrateSystem()
             // ->migrateTheming()
             // ->migrateUsers()
-            ;
+            ->throwFinalWarnings();
     }
 
     /**
@@ -40,7 +41,7 @@ class SettingsMigrator extends Migrator
     {
         $this->validate('cp.php');
 
-        $cp = $this->getSourceYaml('settings/cp.yaml');
+        $cp = $this->parseSettingsFile('cp.yaml');
 
         Configurator::file('statamic/cp.php')->set('start_page', $cp['start_page'] ?? false);
         Configurator::file('statamic/cp.php')->set('date_format', $cp['date_format'] ?? false);
@@ -59,7 +60,7 @@ class SettingsMigrator extends Migrator
     {
         $this->validate('routes.php');
 
-        $routes = $this->getSourceYaml('settings/routes.yaml');
+        $routes = $this->parseSettingsFile('routes.yaml');
 
         Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
         Configurator::file('statamic/routes.php')->merge('vanity', $routes['vanity'] ?? []);
@@ -77,7 +78,7 @@ class SettingsMigrator extends Migrator
     {
         $this->validate(['system.php', 'sites.php']);
 
-        $system = $this->getSourceYaml('settings/system.yaml');
+        $system = $this->parseSettingsFile('system.yaml');
 
         Configurator::file('statamic/sites.php')->mergeSpaciously('sites', $this->migrateLocales($system));
 
@@ -150,5 +151,22 @@ class SettingsMigrator extends Migrator
         if ($currentConfig !== $defaultConfig) {
             throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
         }
+    }
+
+    /**
+     * Parse settings file.
+     *
+     * @param string $file
+     * @return $this
+     */
+    protected function parseSettingsFile($file)
+    {
+        $path = $this->sitePath("settings/{$file}");
+
+        if (preg_match("/[\"']\{env:(.*)\}[\"']/", $this->files->get($path))) {
+            $this->addWarning("There were {env:} references in [site/settings/{$file}] that may need to be configured in your new .env file.");
+        }
+
+        return $this->getSourceYaml($path);
     }
 }

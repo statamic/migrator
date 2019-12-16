@@ -124,6 +124,40 @@ EOT
         );
     }
 
+    /** @test */
+    function it_migrates_multiple_locales_with_env_references()
+    {
+        $this->files->put($this->sitePath('settings/system.yaml'), <<<EOT
+locales:
+  en:
+    name: English
+    full: en_US
+    url: "{env:APP_URL}"
+  fr:
+    name: French
+    full: fr_FR
+    url: '{env:APP_URL_FR}'
+EOT
+        );
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
+
+        $this->assertConfigFileContains('sites.php', <<<EOT
+        'en' => [
+            'name' => 'English',
+            'locale' => 'en_US',
+            'url' => env('APP_URL'),
+        ],
+
+        'fr' => [
+            'name' => 'French',
+            'locale' => 'fr_FR',
+            'url' => env('APP_URL_FR'),
+        ],
+EOT
+        );
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *
