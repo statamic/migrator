@@ -92,7 +92,7 @@ class FormMigrator extends Migrator
     {
         $field = array_merge(['type' => 'text'], $field);
 
-        if (! in_array($handle, $this->form['columns'])) {
+        if (isset($this->form['columns']) && ! in_array($handle, $this->form['columns'])) {
             $field['listable'] = false;
         }
 
