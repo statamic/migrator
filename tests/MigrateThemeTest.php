@@ -23,9 +23,12 @@ class MigrateThemeTest extends TestCase
 
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
 
-        $this->assertCount(26, $this->files->allFiles($this->viewsPath()));
-        $this->assertCount(5, $this->files->directories($this->viewsPath()));
+        $this->assertCount(33, $this->files->allFiles($this->viewsPath()));
+        $this->assertCount(7, $this->files->directories($this->viewsPath()));
         $this->assertCount(10, $this->files->files($this->viewsPath()));
+        $this->assertCount(2, $this->files->files($this->viewsPath('layouts')));
+        $this->assertCount(4, $this->files->files($this->viewsPath('partials')));
+        $this->assertCount(1, $this->files->files($this->viewsPath('partials/articles')));
 
         $expectedUserViews = [
             'account.antlers.html',

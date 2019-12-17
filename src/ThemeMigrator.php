@@ -2,7 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use statamic\Support\Str;
+use Statamic\Support\Str;
+use Statamic\Facades\Path;
 
 class ThemeMigrator extends Migrator
 {
@@ -42,12 +43,12 @@ class ThemeMigrator extends Migrator
      */
     protected function parseTheme()
     {
-        $this->templates = collect($this->files->allFiles($this->sitePath("themes/{$this->handle}/templates")))
+        $this->templates = collect()
+            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/layouts")))
+            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/partials")))
+            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/templates")))
             ->filter(function ($template) {
                 return Str::endsWith($template->getFilename(), ['.html', '.blade.php']);
-            })
-            ->keyBy(function ($template) {
-                return $this->newPath($this->convertExtension($template->getRelativePathname()));
             });
 
         return $this;
@@ -60,22 +61,33 @@ class ThemeMigrator extends Migrator
      */
     protected function migrateTemplates()
     {
-        $this->templates->each(function ($template, $path) {
-            $this->files->put($this->migratePath($path), $this->migrateTemplate($template));
+        $this->templates->each(function ($template) {
+            $this->files->put($this->migratePath($template), $this->migrateTemplate($template));
         });
     }
 
     /**
      * Migrate path.
      *
-     * @param string $path
+     * @param \Symfony\Component\Finder\SplFileInfo $template
      * @return string
      */
-    protected function migratePath($path)
+    protected function migratePath($template)
     {
-        $this->prepareFolder($path);
+        $originalPath = Path::resolve($template->getPath());
+        $relativePath = $this->convertExtension($template->getRelativePathname());
 
-        return $this->convertExtension($path);
+        if (Str::contains($originalPath, "themes/{$this->handle}/layouts")) {
+            $relativePath = 'layouts/' . $relativePath;
+        } elseif (Str::contains($originalPath, "themes/{$this->handle}/partials")) {
+            $relativePath = 'partials/' . $relativePath;
+        }
+
+        $absolutePath = $this->newPath($relativePath);
+
+        $this->prepareFolder($absolutePath);
+
+        return $absolutePath;
     }
 
     /**
