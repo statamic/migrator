@@ -147,4 +147,14 @@ class MigratePagesTest extends TestCase
 
         $this->assertEquals($expected, Entry::all()->map->slug()->all());
     }
+
+    /** @test */
+    function it_migrates_pages_without_order()
+    {
+        $this->files->moveDirectory($this->sitePath('content/pages/5.contact'), $this->sitePath('content/pages/contact'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertContains('contact', Entry::all()->map->slug()->all());
+    }
 }

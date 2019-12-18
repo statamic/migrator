@@ -77,9 +77,7 @@ class PagesMigrator extends Migrator
     {
         $page = YAML::parse($this->files->get("{$folder}/index.md"));
 
-        $page['slug'] = $key === 'root'
-            ? Str::slug($page['title'])
-            : preg_replace('/.*\/_*[0-9]*\.([^\/]*)$/', '$1', Path::resolve($folder));
+        $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
         $this->entries[] = $page;
         $this->usedBlueprints[] = $page['fieldset'] ?? null;
@@ -97,6 +95,22 @@ class PagesMigrator extends Migrator
         data_set($this->structure, $key, $data);
 
         return $data;
+    }
+
+    /**
+     * Migrate page slug.
+     *
+     * @param array $page
+     * @param string $key
+     * @param string $folder
+     */
+    protected function migratePageSlug($page, $key, $folder)
+    {
+        if ($key === 'root') {
+            return Str::slug($page['title']);
+        }
+
+        return preg_replace('/.*\/_*[0-9]*\.*([^\/]+)$/', '$1', Path::resolve($folder));
     }
 
     /**
