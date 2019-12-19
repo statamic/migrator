@@ -142,6 +142,7 @@ class ThemeMigrator extends Migrator
      */
     protected function migrateBladeTemplate($template)
     {
+        // Migrate global `modify()` function calls.
         $template = preg_replace('/modify\((.*)\)->/mU', '\Statamic\Modifiers\Modify::value($1)->', $template);
 
         return $template;
