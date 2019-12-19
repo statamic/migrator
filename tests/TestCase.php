@@ -122,6 +122,13 @@ class TestCase extends \Orchestra\Testbench\TestCase
         $this->assertContains($expected, $actual);
     }
 
+    protected function assertFileHasContent($expected, $path)
+    {
+        $this->assertFileExists($path);
+
+        $this->assertContains($expected, $this->files->get($path));
+    }
+
     protected function sitePath($append = null)
     {
         return collect([base_path('site'), $append])->filter()->implode('/');

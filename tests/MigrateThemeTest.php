@@ -16,6 +16,11 @@ class MigrateThemeTest extends TestCase
         return collect([resource_path('views'), $append])->filter()->implode('/');
     }
 
+    protected function redwoodPath($append)
+    {
+        return $this->sitePath("themes/redwood/{$append}");
+    }
+
     /** @test */
     function it_migrates_views()
     {
@@ -50,6 +55,16 @@ class MigrateThemeTest extends TestCase
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
 
         $this->assertFileExists($this->viewsPath('not-antlers.blade.php'));
+    }
+
+    /** @test */
+    function it_migrates_theme_partial_tags()
+    {
+        $this->assertFileHasContent('{{ theme:partial src="nav" }}', $this->redwoodPath('layouts/default.html'));
+
+        $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
+
+        $this->assertFileHasContent('{{ partial:nav }}', $this->viewsPath('layouts/default.antlers.html'));
     }
 
     /** @test */

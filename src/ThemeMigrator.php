@@ -128,6 +128,9 @@ class ThemeMigrator extends Migrator
      */
     protected function migrateAntlersTemplate($template)
     {
+        // Migrate `theme:partial` tags.
+        $template = preg_replace('/theme:partial.*src=[\'"]([^\'"]*)[\'"]/mU', 'partial:$1', $template);
+
         return $template;
     }
 
