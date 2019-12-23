@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator\Commands;
 
+use Statamic\Migrator\Concerns\SubmitsStats;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Console\Command as IlluminateCommand;
@@ -10,6 +11,8 @@ use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class Command extends IlluminateCommand
 {
+    use SubmitsStats;
+
     /**
      * Execute the console command.
      */
@@ -29,6 +32,8 @@ class Command extends IlluminateCommand
 
         $descriptor = $this->migrator::descriptor();
         $handleDescriptor = $handle ? " [{$handle}]" : null;
+
+        $this->submitSuccessful();
 
         $this->info("{$descriptor}{$handleDescriptor} migrated successfully.");
     }
@@ -75,6 +80,14 @@ class Command extends IlluminateCommand
         $this->callSilent('cache:clear');
 
         return $this;
+    }
+
+    /**
+     * Submit stat as successful.
+     */
+    protected function submitSuccessful()
+    {
+        $this->attemptSubmitStats(['command' => $this->name, 'successful' => 1]);
     }
 
     /**

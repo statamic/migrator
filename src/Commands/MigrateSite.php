@@ -17,6 +17,7 @@ use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
 use Statamic\Migrator\Concerns\GetsSettings;
+use Statamic\Migrator\Concerns\SubmitsStats;
 use Statamic\Migrator\AssetContainerMigrator;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
@@ -25,7 +26,7 @@ use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class MigrateSite extends Command
 {
-    use GetsSettings, RunsInPlease;
+    use GetsSettings, RunsInPlease, SubmitsStats;
 
     /**
      * The name and signature of the console command.
@@ -100,6 +101,8 @@ class MigrateSite extends Command
             ->migrateSettings()
             ->migrateTheme()
             ->clearCache();
+
+        $this->submitStats();
 
         $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
     }
@@ -381,6 +384,20 @@ class MigrateSite extends Command
                 $this->line($extra);
             }
         });
+    }
+
+    /**
+     * Submit stats.
+     */
+    protected function submitStats()
+    {
+        $this->attemptSubmitStats([
+            'command' => $this->name,
+            'skipped' => $this->skippedCount,
+            'errors' => $this->errorCount,
+            'warnings' => $this->warningCount,
+            'successful' => $this->successCount,
+        ]);
     }
 
     /**
