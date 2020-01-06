@@ -18,7 +18,7 @@ trait SubmitsStats
         try {
             $stats['command'] = str_replace('statamic:', '', $stats['command']);
 
-            Zttp::timeout(1.5)->post('https://outpost.statamic.com/v3/migrator-stats', array_merge([
+            Zttp::timeout(3)->post('https://outpost.statamic.com/v3/migrator-stats', array_merge([
                 'app' => md5(base_path())
             ], $stats));
         } catch (Exception $exception) {
