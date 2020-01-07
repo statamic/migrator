@@ -4,7 +4,6 @@ namespace Statamic\Migrator\Concerns;
 
 use Exception;
 use Zttp\Zttp;
-use Illuminate\Support\Facades\Validator;
 
 trait SubmitsStats
 {
