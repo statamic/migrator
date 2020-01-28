@@ -69,43 +69,6 @@ EOT
     }
 
     /** @test */
-    function it_migrates_routes()
-    {
-        $this->artisan('statamic:migrate:settings', ['handle' => 'routes']);
-
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'routes' => [
-        // '/' => 'home'
-        '/search' => 'search',
-        '/blog/tags' => 'blog/taxonomies',
-        '/blog/feed' => [
-            'layout' => 'feed',
-            'template' => 'feeds/blog',
-            'content_type' => 'atom',
-        ],
-    ],
-EOT
-        );
-
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'vanity' => [
-        // '/promo' => '/blog/2019/09/big-sale-on-hot-dogs',
-        '/products' => '/products-old',
-    ],
-EOT
-        );
-
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'redirect' => [
-        // '/here' => '/there',
-        '/articles' => '/',
-        '/blog/posts' => '/blog',
-    ],
-EOT
-        );
-    }
-
-    /** @test */
     function it_migrates_system_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);

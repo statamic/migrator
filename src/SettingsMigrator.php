@@ -24,7 +24,6 @@ class SettingsMigrator extends Migrator
             ->migrateCp()
             // ->migrateDebug()
             // ->migrateEmail()
-            ->migrateRoutes()
             // ->migrateSearch()
             ->migrateSystem()
             // ->migrateTheming()
@@ -47,24 +46,6 @@ class SettingsMigrator extends Migrator
         Configurator::file('statamic/cp.php')->set('date_format', $cp['date_format'] ?? false);
         Configurator::file('statamic/cp.php')->merge('widgets', $cp['widgets'] ?? []);
         Configurator::file('statamic/cp.php')->set('pagination_size', $cp['pagination_size'] ?? false);
-
-        return $this;
-    }
-
-    /**
-     * Perform migration on routes.
-     *
-     * @return $this
-     */
-    protected function migrateRoutes()
-    {
-        $this->validate('routes.php');
-
-        $routes = $this->parseSettingsFile('routes.yaml');
-
-        Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('vanity', $routes['vanity'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('redirect', $routes['redirect'] ?? []);
 
         return $this;
     }

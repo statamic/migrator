@@ -5,7 +5,8 @@ taxonomies:
   tags: '/blog/tags/{slug}'
 routes:
   /search: search
-  /blog/tags: blog/taxonomies
+  /route-with-no-template:
+    foo: bar
   /blog/feed:
     layout: feed
     template: feeds/blog
