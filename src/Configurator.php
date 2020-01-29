@@ -6,6 +6,7 @@ use Statamic\Support\Arr;
 use Statamic\Support\Str;
 use Statamic\Facades\Path;
 use Illuminate\Filesystem\Filesystem;
+use Symfony\Component\VarExporter\VarExporter;
 use Facades\Statamic\Console\Processes\Process;
 
 class Configurator
@@ -397,11 +398,7 @@ class Configurator
      */
     protected function varExport($value)
     {
-        // Utilize PHP's var_export.
-        $value = var_export($value, true);
-
-        // Ensure array starting bracket stays on same line as => operator.
-        $value = str_replace("=> \n", '=> ', $value);
+        $value = VarExporter::export($value);
 
         // Remove numeric keys.
         $value = preg_replace("/(\s*)[0-9]+\s=>\s(.*)/", '$1$2', $value);
