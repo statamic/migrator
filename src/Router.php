@@ -81,8 +81,8 @@ class Router
         $config = collect($routeConfig);
 
         $route = $this->normalizeRoute($route);
-        $template = $this->normalizeTemplate($config->get('template'));
-        $data = VarExporter::export($config->forget('template')->all());
+        $template = $this->normalizeTemplate($config->pull('template'));
+        $data = VarExporter::export($config->all());
 
         $this->append("Route::statamic('{$route}', '{$template}', {$data});");
     }
