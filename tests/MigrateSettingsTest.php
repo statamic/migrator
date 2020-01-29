@@ -7,11 +7,22 @@ use Facades\Statamic\Console\Processes\Process;
 
 class MigrateSettingsTest extends TestCase
 {
+    protected function paths($key = null)
+    {
+        $paths = [
+            'routesFile' => base_path('routes/web.php'),
+        ];
+
+        return $key ? $paths[$key] : $paths;
+    }
+
     public function setUp(): void
     {
         parent::setUp();
 
         Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
+
+        $this->files->copy(__DIR__ . '/Fixtures/routes/web.php', $this->paths('routesFile'));
     }
 
     /** @test */
@@ -73,34 +84,19 @@ EOT
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'routes']);
 
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'routes' => [
-        // '/' => 'home'
-        '/search' => 'search',
-        '/blog/tags' => 'blog/taxonomies',
-        '/blog/feed' => [
-            'layout' => 'feed',
-            'template' => 'feeds/blog',
-            'content_type' => 'atom',
-        ],
-    ],
-EOT
-        );
+        $this->assertRoutesFileContains(<<<EOT
+Route::statamic('search', 'search');
+Route::statamic('blog/tags', 'blog.taxonomies');
+Route::statamic('blog/feed', 'feeds.blog', [
+    'layout' => 'feed',
+    'content_type' => 'atom',
+]);
+Route::statamic('complicated/stuff', 'ComplicatedController@stuff');
 
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'vanity' => [
-        // '/promo' => '/blog/2019/09/big-sale-on-hot-dogs',
-        '/products' => '/products-old',
-    ],
-EOT
-        );
+Route::redirect('products', 'products-old');
 
-        $this->assertConfigFileContains('routes.php', <<<EOT
-    'redirect' => [
-        // '/here' => '/there',
-        '/articles' => '/',
-        '/blog/posts' => '/blog',
-    ],
+Route::permanentRedirect('articles', '/');
+Route::permanentRedirect('blog/posts', 'blog');
 EOT
         );
     }
@@ -185,5 +181,29 @@ EOT;
 
         // Assert config file contains specific content.
         return $this->assertContains($content, $this->files->get($config));
+    }
+
+    /**
+     * Assert routes file contains specific content.
+     *
+     * @param string $content
+     */
+    protected function assertRoutesFileContains($content)
+    {
+        $contents = $this->files->get($this->paths('routesFile'));
+
+        $beginning = <<<EOT
+// Route::get('/', function () {
+//     return view('welcome');
+// });
+EOT;
+
+        $end = '];';
+
+        // Assert begining of routes file is untouched.
+        $this->assertContains($beginning, $contents);
+
+        // Assert routes file contains specific content.
+        return $this->assertContains($content, $contents);
     }
 }

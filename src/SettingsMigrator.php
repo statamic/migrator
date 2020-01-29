@@ -58,13 +58,11 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateRoutes()
     {
-        $this->validate('routes.php');
-
         $routes = $this->parseSettingsFile('routes.yaml');
 
-        Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('vanity', $routes['vanity'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('redirect', $routes['redirect'] ?? []);
+        Router::file('web.php')->appendRoutes($routes['routes'] ?? []);
+        Router::file('web.php')->appendRedirects($routes['vanity'] ?? []);
+        Router::file('web.php')->appendPermanentRedirects($routes['redirect'] ?? []);
 
         return $this;
     }

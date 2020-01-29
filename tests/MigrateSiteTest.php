@@ -29,6 +29,7 @@ class MigrateSiteTest extends TestCase
             'views' => resource_path('views'),
             'roles' => resource_path('users/roles.yaml'),
             'groups' => resource_path('users/groups.yaml'),
+            'routesFile' => base_path('routes/web.php'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -148,15 +149,12 @@ class MigrateSiteTest extends TestCase
     function it_migrates_settings()
     {
         $this->assertCount(1, config('statamic.cp.widgets'));
-        $this->assertCount(0, config('statamic.routes.routes'));
 
         $this->artisan('statamic:migrate:site');
 
         Configurator::file('statamic/cp.php')->refresh();
-        Configurator::file('statamic/routes.php')->refresh();
 
         $this->assertCount(4, config('statamic.cp.widgets'));
-        $this->assertCount(3, config('statamic.routes.routes'));
     }
 
     /** @test */

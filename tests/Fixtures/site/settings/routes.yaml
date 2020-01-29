@@ -10,6 +10,7 @@ routes:
     layout: feed
     template: feeds/blog
     content_type: atom
+  /complicated/stuff: ComplicatedController@stuff
 redirect:
   /articles: /
   /blog/posts: /blog
