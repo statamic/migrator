@@ -19,6 +19,7 @@ use Statamic\Migrator\CollectionMigrator;
 use Statamic\Migrator\Concerns\GetsSettings;
 use Statamic\Migrator\Concerns\SubmitsStats;
 use Statamic\Migrator\AssetContainerMigrator;
+use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
@@ -102,7 +103,9 @@ class MigrateSite extends Command
             ->migrateTheme()
             ->clearCache();
 
-        $this->submitStats();
+        if (! $this->option('without-stats-submission')) {
+            $this->submitStats();
+        }
 
         $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
     }
@@ -423,5 +426,17 @@ class MigrateSite extends Command
     protected function getArguments()
     {
         return [];
+    }
+
+    /**
+     * Get the console command options.
+     *
+     * @return array
+     */
+    protected function getOptions()
+    {
+        return array_merge(parent::getOptions(), [
+            ['without-stats-submission', null, InputOption::VALUE_NONE, 'Do not submit anonymous migration statistics to statamic.com'],
+        ]);
     }
 }
