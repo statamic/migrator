@@ -4,6 +4,7 @@ namespace Statamic\Migrator\Concerns;
 
 use Exception;
 use Zttp\Zttp;
+use Statamic\Support\Str;
 
 trait SubmitsStats
 {
@@ -14,6 +15,10 @@ trait SubmitsStats
      */
     protected function attemptSubmitStats($stats)
     {
+        if (Str::contains(base_path(), 'orchestra/testbench-core')) {
+            return;
+        }
+
         try {
             $stats['command'] = str_replace('statamic:', '', $stats['command']);
 
