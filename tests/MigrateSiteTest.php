@@ -41,6 +41,7 @@ class MigrateSiteTest extends TestCase
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+        $this->files->copy(__DIR__ . '/Fixtures/routes/web.php', $this->paths('routesFile'));
     }
 
     /** @test */
