@@ -159,7 +159,7 @@ class Router
                 return preg_quote($this->normalizeRoute($route), '/');
             })
             ->filter(function ($route) use ($routeMethod) {
-                return preg_match("/^Route::{$routeMethod}\(['\"]{$route}/m", $this->getRoutesFileContents());
+                return preg_match("/^Route::{$routeMethod}\(['\"]{$route}['\"]/m", $this->getRoutesFileContents());
             })
             ->isNotEmpty();
     }
