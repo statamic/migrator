@@ -60,6 +60,10 @@ class SettingsMigrator extends Migrator
     {
         $routes = $this->parseSettingsFile('routes.yaml');
 
+        if (Router::file('web.php')->has($routes) && ! $this->overwrite) {
+            throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
+        }
+
         Router::file('web.php')->appendRoutes($routes['routes'] ?? []);
         Router::file('web.php')->appendRedirects($routes['vanity'] ?? []);
         Router::file('web.php')->appendPermanentRedirects($routes['redirect'] ?? []);

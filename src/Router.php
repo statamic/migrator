@@ -134,6 +134,37 @@ class Router
     }
 
     /**
+     * Has if routes file has any of the given route definitions from v2 routes array.
+     *
+     * @param mixed $routes
+     */
+    public function has($routes)
+    {
+        return $this->hasAnyRouteDefinitions('statamic', $routes['routes'] ?? [])
+            || $this->hasAnyRouteDefinitions('redirect', $routes['vanity'] ?? [])
+            || $this->hasAnyRouteDefinitions('permanentRedirect', $routes['redirect'] ?? []);
+    }
+
+    /**
+     * Check if routes file has any of the given route definitions.
+     *
+     * @param string $routeMethod
+     * @param array $routes
+     */
+    protected function hasAnyRouteDefinitions($routeMethod, $routes)
+    {
+        return collect($routes)
+            ->keys()
+            ->map(function ($route) {
+                return preg_quote($this->normalizeRoute($route), '/');
+            })
+            ->filter(function ($route) use ($routeMethod) {
+                return preg_match("/^Route::{$routeMethod}\(['\"]{$route}/m", $this->getRoutesFileContents());
+            })
+            ->isNotEmpty();
+    }
+
+    /**
      * Get routes file path.
      *
      * @return string
@@ -162,6 +193,16 @@ class Router
     }
 
     /**
+     * Get routes file contents.
+     *
+     * @return string
+     */
+    protected function getRoutesFileContents()
+    {
+        return $this->files->get($this->path());
+    }
+
+    /**
      * Normalize route.
      *
      * @param string $route
@@ -171,9 +212,7 @@ class Router
     {
         $route = Str::removeLeft($route, '/');
 
-        return $route === ''
-            ? '/'
-            : $route;
+        return $route === '' ? '/' : $route;
     }
 
     /**

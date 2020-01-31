@@ -64,6 +64,36 @@ EOT
         );
     }
 
+    /** @test */
+    function it_detects_if_routes_file_already_has_any_of_the_given_routes()
+    {
+        $this->assertFalse($this->router->has($this->oldRoutes));
+
+        $this->router->appendRoutes($this->oldRoutes['routes']);
+
+        $this->assertTrue($this->router->has($this->oldRoutes));
+    }
+
+    /** @test */
+    function it_detects_if_routes_file_already_has_any_of_the_given_redirects()
+    {
+        $this->assertFalse($this->router->has($this->oldRoutes));
+
+        $this->router->appendRedirects($this->oldRoutes['vanity']);
+
+        $this->assertTrue($this->router->has($this->oldRoutes));
+    }
+
+    /** @test */
+    function it_detects_if_routes_file_already_has_any_of_the_given_permanent_redirects()
+    {
+        $this->assertFalse($this->router->has($this->oldRoutes));
+
+        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+
+        $this->assertTrue($this->router->has($this->oldRoutes));
+    }
+
     /**
      * Assert routes file contains specific content.
      *
