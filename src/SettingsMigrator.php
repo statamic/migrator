@@ -60,19 +60,13 @@ class SettingsMigrator extends Migrator
     {
         $routes = $this->parseSettingsFile('routes.yaml');
 
-        // Temporarily migrate routes to config file, until new route changes get tagged in core...
-        $this->validate('routes.php');
-        Configurator::file('statamic/routes.php')->merge('routes', $routes['routes'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('vanity', $routes['vanity'] ?? []);
-        Configurator::file('statamic/routes.php')->merge('redirect', $routes['redirect'] ?? []);
+        if (Router::file('web.php')->has($routes) && ! $this->overwrite) {
+            throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
+        }
 
-        // if (Router::file('web.php')->has($routes) && ! $this->overwrite) {
-        //     throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
-        // }
-
-        // Router::file('web.php')->appendRoutes($routes['routes'] ?? []);
-        // Router::file('web.php')->appendRedirects($routes['vanity'] ?? []);
-        // Router::file('web.php')->appendPermanentRedirects($routes['redirect'] ?? []);
+        Router::file('web.php')->appendRoutes($routes['routes'] ?? []);
+        Router::file('web.php')->appendRedirects($routes['vanity'] ?? []);
+        Router::file('web.php')->appendPermanentRedirects($routes['redirect'] ?? []);
 
         return $this;
     }
