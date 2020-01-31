@@ -94,6 +94,26 @@ EOT
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
 
+    /** @test */
+    function it_wont_append_the_same_route_twice()
+    {
+        $this->router->appendRoutes($this->oldRoutes['routes']);
+        $this->router->appendRoutes($this->oldRoutes['routes']);
+        $this->router->appendRoutes($this->oldRoutes['routes']);
+
+        $this->router->appendRedirects($this->oldRoutes['vanity']);
+        $this->router->appendRedirects($this->oldRoutes['vanity']);
+        $this->router->appendRedirects($this->oldRoutes['vanity']);
+
+        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+
+        $this->assertRoutesFileContainsOnlyOnce("Route::statamic('search', 'search');");
+        $this->assertRoutesFileContainsOnlyOnce("Route::redirect('products', 'products-old');");
+        $this->assertRoutesFileContainsOnlyOnce("Route::permanentRedirect('blog/posts', 'blog');");
+    }
+
     /**
      * Assert routes file contains specific content.
      *
@@ -127,5 +147,21 @@ EOT;
 
         // Assert routes file contains specific content.
         return $this->assertContains($content, $contents);
+    }
+
+    /**
+     * Assert routes file contains specific content.
+     *
+     * @param string $content
+     */
+    protected function assertRoutesFileContainsOnlyOnce($content)
+    {
+        $contents = $this->files->get($this->path());
+
+        $pattern = preg_quote($content, '/');
+
+        preg_match_all("/{$pattern}/", $contents, $matches);
+
+        return $this->assertCount(1, $matches[0]);
     }
 }

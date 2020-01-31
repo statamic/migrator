@@ -181,6 +181,10 @@ class Router
      */
     protected function append($content)
     {
+        if ($this->routeContentAlreadyExists($content)) {
+            return;
+        }
+
         $this->files->append($this->path(), "\n{$content}");
     }
 
@@ -200,6 +204,19 @@ class Router
     protected function getRoutesFileContents()
     {
         return $this->files->get($this->path());
+    }
+
+    /**
+     * Check if routes file already contains the given content.
+     *
+     * @param string $content
+     * @return bool
+     */
+    protected function routeContentAlreadyExists($content)
+    {
+        $pattern = '/' . preg_quote($content, '/') . '/m';
+
+        return preg_match($pattern, $this->getRoutesFileContents());
     }
 
     /**
