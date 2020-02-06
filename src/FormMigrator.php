@@ -19,13 +19,27 @@ class FormMigrator extends Migrator
     {
         $this
             ->setNewPath(resource_path("forms/{$this->handle}.yaml"))
-            // ->validateUnique()
+            ->validateUnique()
             ->parseForm()
             ->migrateFieldsToBlueprint()
             ->migrateFormSchema()
-            ->saveMigratedYaml($this->blueprint, $this->migrateBlueprintPath())
+            ->saveMigratedYaml($this->blueprint, $this->blueprintPath())
             ->saveMigratedYaml($this->form)
             ->migrateSubmissions();
+    }
+
+    /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            $this->newPath(),
+            $this->blueprintPath(),
+            $this->submissionsPath(),
+        ];
     }
 
     /**
@@ -114,11 +128,11 @@ class FormMigrator extends Migrator
     }
 
     /**
-     * Migrate blueprint path.
+     * Get blueprint path.
      *
      * @return string
      */
-    protected function migrateBlueprintPath()
+    protected function blueprintPath()
     {
         $handle = $this->migrateBlueprintHandle();
 
@@ -132,10 +146,20 @@ class FormMigrator extends Migrator
      */
     protected function migrateSubmissions()
     {
-        $this->prepareFolder($newPath = storage_path("forms/{$this->handle}"));
+        $this->prepareFolder($newPath = $this->submissionsPath());
 
         $this->files->copyDirectory($this->sitePath("storage/forms/{$this->handle}"), $newPath);
 
         return $this;
+    }
+
+    /**
+     * Get submissions path.
+     *
+     * @return string
+     */
+    protected function submissionsPath()
+    {
+        return storage_path("forms/{$this->handle}");
     }
 }
