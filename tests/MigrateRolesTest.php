@@ -127,7 +127,7 @@ d32e14fb-08c9-44c2-aaf8-21200852bafd:
 EOT
         );
 
-        $this->artisan('statamic:migrate:roles');
+        $this->artisan('statamic:migrate:roles', ['--force' => true]);
 
         $this->assertParsedYamlNotHasKey('d32e14fb-08c9-44c2-aaf8-21200852bafd', $this->path());
 
