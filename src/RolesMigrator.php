@@ -32,7 +32,7 @@ class RolesMigrator extends Migrator
      */
     protected function validate()
     {
-        if ($this->overwrite) {
+        if ($this->overwrite || ! $this->files->exists($this->newPath())) {
             return $this;
         }
 
