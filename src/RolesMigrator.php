@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Support\Str;
+use Statamic\Migrator\Exceptions\MigratorSkippedException;
 
 class RolesMigrator extends Migrator
 {
@@ -17,10 +18,32 @@ class RolesMigrator extends Migrator
     {
         $this
             ->setNewPath(resource_path('users/roles.yaml'))
-            // ->validateUnique()
+            ->validate()
             ->parseRoles()
             ->migrateRoles()
             ->saveMigratedYaml($this->roles, $this->newPath());
+    }
+
+    /**
+     * Validate whether roles file has been modified.
+     *
+     * @throws MigratorSkippedException
+     * @return $this
+     */
+    protected function validate()
+    {
+        if ($this->overwrite) {
+            return $this;
+        }
+
+        $currentRoles = $this->files->get($this->newPath());
+        $defaultRoles = $this->files->get("vendor/statamic/cms/resources/users/roles.yaml");
+
+        if ($currentRoles !== $defaultRoles) {
+            throw new MigratorSkippedException("Roles file [resources/users/roles.yaml] has already been modified.");
+        }
+
+        return $this;
     }
 
     /**
