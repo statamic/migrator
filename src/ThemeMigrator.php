@@ -33,7 +33,9 @@ class ThemeMigrator extends Migrator
      */
     protected function uniquePaths()
     {
-        return $this->templates->keys()->all();
+        return $this->templates->map(function ($template) {
+            return $this->migratePath($template, false);
+        })->all();
     }
 
     /**
@@ -70,9 +72,10 @@ class ThemeMigrator extends Migrator
      * Migrate path.
      *
      * @param \Symfony\Component\Finder\SplFileInfo $template
+     * @param bool $prepareFolder
      * @return string
      */
-    protected function migratePath($template)
+    protected function migratePath($template, $prepareFolder = true)
     {
         $originalPath = Path::resolve($template->getPath());
         $relativePath = $this->convertExtension($template->getRelativePathname());
@@ -85,7 +88,9 @@ class ThemeMigrator extends Migrator
 
         $absolutePath = $this->newPath($relativePath);
 
-        $this->prepareFolder($absolutePath);
+        if ($prepareFolder) {
+            $this->prepareFolder($absolutePath);
+        }
 
         return $absolutePath;
     }
