@@ -2,11 +2,13 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Arr;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 
 class SettingsMigrator extends Migrator
 {
     use Concerns\MigratesFile,
+        Concerns\MigratesRoles,
         Concerns\ThrowsFinalWarnings;
 
     /**
@@ -28,7 +30,7 @@ class SettingsMigrator extends Migrator
             // ->migrateSearch()
             ->migrateSystem()
             // ->migrateTheming()
-            // ->migrateUsers()
+            ->migrateUsers()
             ->throwFinalWarnings();
     }
 
@@ -109,6 +111,24 @@ class SettingsMigrator extends Migrator
         }
 
         return $sites->all();
+    }
+
+    /**
+     * Migrate user settings.
+     *
+     * @return $this
+     */
+    protected function migrateUsers()
+    {
+        $this->validate('users.php');
+
+        $users = $this->parseSettingsFile('users.yaml');
+
+        Configurator::file('statamic/users.php')
+            ->set('avatars', Arr::get($users, 'enable_gravatar', false) ? 'gravatar' : 'initials')
+            ->set('new_user_roles', $this->migrateRoles(Arr::get($users, 'new_user_roles', [])) ?: false);
+
+        return $this;
     }
 
     /**

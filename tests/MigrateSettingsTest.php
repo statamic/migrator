@@ -154,6 +154,47 @@ EOT
         );
     }
 
+    /** @test */
+    function it_migrates_user_settings()
+    {
+        $this->artisan('statamic:migrate:settings', ['handle' => 'users']);
+
+        $this->assertConfigFileContains('users.php', <<<EOT
+    'avatars' => 'gravatar',
+EOT
+        );
+
+        $this->assertConfigFileContains('users.php', <<<EOT
+    'new_user_roles' => [
+        'author',
+    ],
+EOT
+        );
+    }
+
+    /** @test */
+    function it_migrates_empty_user_settings()
+    {
+        $this->files->put($this->sitePath('settings/users.yaml'), <<<EOT
+nothing_relevant: true
+EOT
+        );
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'users']);
+
+        $this->assertConfigFileContains('users.php', <<<EOT
+    'avatars' => 'initials',
+EOT
+        );
+
+        $this->assertConfigFileContains('users.php', <<<EOT
+    'new_user_roles' => [
+        //
+    ],
+EOT
+        );
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *
