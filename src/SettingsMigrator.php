@@ -35,7 +35,7 @@ class SettingsMigrator extends Migrator
     }
 
     /**
-     * Perform migration on routes.
+     * Migrate cp settings.
      *
      * @return $this
      */
@@ -45,16 +45,17 @@ class SettingsMigrator extends Migrator
 
         $cp = $this->parseSettingsFile('cp.yaml');
 
-        Configurator::file('statamic/cp.php')->set('start_page', $cp['start_page'] ?? false);
-        Configurator::file('statamic/cp.php')->set('date_format', $cp['date_format'] ?? false);
-        Configurator::file('statamic/cp.php')->merge('widgets', $cp['widgets'] ?? []);
-        Configurator::file('statamic/cp.php')->set('pagination_size', $cp['pagination_size'] ?? false);
+        Configurator::file('statamic/cp.php')
+            ->set('start_page', $cp['start_page'] ?? false)
+            ->set('date_format', $cp['date_format'] ?? false)
+            ->merge('widgets', $cp['widgets'] ?? [])
+            ->set('pagination_size', $cp['pagination_size'] ?? false);
 
         return $this;
     }
 
     /**
-     * Perform migration on routes.
+     * Migrate routes.
      *
      * @return $this
      */
@@ -66,15 +67,16 @@ class SettingsMigrator extends Migrator
             throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
         }
 
-        Router::file('web.php')->appendRoutes($routes['routes'] ?? []);
-        Router::file('web.php')->appendRedirects($routes['vanity'] ?? []);
-        Router::file('web.php')->appendPermanentRedirects($routes['redirect'] ?? []);
+        Router::file('web.php')
+            ->appendRoutes($routes['routes'] ?? [])
+            ->appendRedirects($routes['vanity'] ?? [])
+            ->appendPermanentRedirects($routes['redirect'] ?? []);
 
         return $this;
     }
 
     /**
-     * Perform migration on system.
+     * Migrate system settings.
      *
      * @return $this
      */
