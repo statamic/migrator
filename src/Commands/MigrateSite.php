@@ -254,7 +254,7 @@ class MigrateSite extends Command
         $this->runMigratorOnHandle(SettingsMigrator::class, 'cp');
         $this->runMigratorOnHandle(SettingsMigrator::class, 'routes');
         $this->runMigratorOnHandle(SettingsMigrator::class, 'system');
-        $this->runMigratorOnHandle(SettingsMigrator::class, 'users');
+        // $this->runMigratorOnHandle(SettingsMigrator::class, 'users'); // Enable this when new_user_roles make it into config
 
         // TODO: Run this once each settings migration is 'complete'
         // $this->getFileHandlesFromPath(base_path('site/settings'))->each(function ($handle) {
