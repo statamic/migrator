@@ -41,7 +41,7 @@ class Router
     public function appendRoutes($routes)
     {
         if (! $routes) {
-            return;
+            return $this;
         }
 
         $this->appendBlankLine();
@@ -55,6 +55,8 @@ class Router
                 return $this->appendTemplateRoute($from, $to);
             }
         });
+
+        return $this;
     }
 
     /**
@@ -67,7 +69,7 @@ class Router
     {
         $route = $this->normalizeRoute($route);
 
-        $this->append("Route::statamic('{$route}', '{$controllerAction}');");
+        return $this->append("Route::statamic('{$route}', '{$controllerAction}');");
     }
 
     /**
@@ -84,7 +86,7 @@ class Router
         $template = $this->normalizeTemplate($config->pull('template'));
         $data = VarExporter::export($config->all());
 
-        $this->append("Route::statamic('{$route}', '{$template}', {$data});");
+        return $this->append("Route::statamic('{$route}', '{$template}', {$data});");
     }
 
     /**
@@ -98,7 +100,7 @@ class Router
         $route = $this->normalizeRoute($route);
         $template = $this->normalizeTemplate($template);
 
-        $this->append("Route::statamic('{$route}', '{$template}');");
+        return $this->append("Route::statamic('{$route}', '{$template}');");
     }
 
     /**
@@ -109,7 +111,7 @@ class Router
     public function appendRedirects($redirects, $routeMethod = 'redirect')
     {
         if (! $redirects) {
-            return;
+            return $this;
         }
 
         $this->appendBlankLine();
@@ -121,6 +123,8 @@ class Router
             ->each(function ($to, $from) use ($routeMethod) {
                 $this->append("Route::{$routeMethod}('{$from}', '{$to}');");
             });
+
+        return $this;
     }
 
     /**
@@ -130,7 +134,7 @@ class Router
      */
     public function appendPermanentRedirects($redirects)
     {
-        $this->appendRedirects($redirects, 'permanentRedirect');
+        return $this->appendRedirects($redirects, 'permanentRedirect');
     }
 
     /**
@@ -178,6 +182,7 @@ class Router
      * Append content to routes file.
      *
      * @param string $content
+     * @return $this
      */
     protected function append($content)
     {
@@ -186,6 +191,8 @@ class Router
         }
 
         $this->files->append($this->path(), "\n{$content}");
+
+        return $this;
     }
 
     /**

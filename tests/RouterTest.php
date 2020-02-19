@@ -27,7 +27,9 @@ class RouterTest extends TestCase
     /** @test */
     function it_appends_routes()
     {
-        $this->router->appendRoutes($this->oldRoutes['routes']);
+        $router = $this->router->appendRoutes($this->oldRoutes['routes']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertRoutesFileContains(<<<EOT
 Route::statamic('search', 'search');
@@ -44,7 +46,9 @@ EOT
     /** @test */
     function it_appends_redirects()
     {
-        $this->router->appendRedirects($this->oldRoutes['vanity']);
+        $router = $this->router->appendRedirects($this->oldRoutes['vanity']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertRoutesFileContains(<<<EOT
 Route::redirect('products', 'products-old');
@@ -55,7 +59,9 @@ EOT
     /** @test */
     function it_appends_permanent_redirects()
     {
-        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+        $router = $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertRoutesFileContains(<<<EOT
 Route::permanentRedirect('articles', '/');
@@ -69,7 +75,9 @@ EOT
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
-        $this->router->appendRoutes($this->oldRoutes['routes']);
+        $router = $this->router->appendRoutes($this->oldRoutes['routes']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
@@ -79,7 +87,9 @@ EOT
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
-        $this->router->appendRedirects($this->oldRoutes['vanity']);
+        $router = $this->router->appendRedirects($this->oldRoutes['vanity']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
@@ -89,7 +99,9 @@ EOT
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
-        $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+        $router = $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
+
+        $this->assertInstanceOf(Router::class, $router);
 
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
