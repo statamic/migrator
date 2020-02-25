@@ -48,8 +48,7 @@ class MigratePagesTest extends TestCase
                 'gallery',
             ],
             'structure' => [
-                'expects_root' => true,
-                'root' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7',
+                'root' => true,
                 'tree' => [
                     [
                         'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
@@ -108,8 +107,7 @@ class MigratePagesTest extends TestCase
 
         $expected = [
             'structure' => [
-                'expects_root' => true,
-                'root' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7',
+                'root' => true,
                 'tree' => []
             ]
         ];

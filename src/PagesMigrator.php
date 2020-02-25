@@ -160,8 +160,7 @@ class PagesMigrator extends Migrator
     protected function migrateStructure()
     {
         return [
-            'expects_root' => true,
-            'root' => $this->structure['root']['entry'],
+            'root' => true,
             'tree' => $this->structure['root']['children'] ?? [],
         ];
     }
