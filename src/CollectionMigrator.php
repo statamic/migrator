@@ -202,12 +202,28 @@ class CollectionMigrator extends Migrator
         $this->config->forget('order');
 
         if ($this->entryOrder) {
-            $this->config->put('entry_order', collect($this->entryOrder)->sortKeys()->values()->all());
+            $this->config->put('tree', $this->migrateEntryOrderToTree());
         }
 
         $this->saveMigratedYaml($this->config, $this->newPath("../{$this->handle}.yaml"));
 
         return $this;
+    }
+
+    /**
+     * Migrate entry order to tree structure.
+     *
+     * @return array
+     */
+    protected function migrateEntryOrderToTree()
+    {
+        return collect($this->entryOrder)
+            ->sortKeys()
+            ->values()
+            ->map(function ($id) {
+                return ['entry' => $id];
+            })
+            ->all();
     }
 
     /**
