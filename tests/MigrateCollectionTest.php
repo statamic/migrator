@@ -172,9 +172,11 @@ EOT
             ],
             'template' => 'blog/post',
             'orderable' => true,
-            'tree' => [
-                ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
-                ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
+            'structure' => [
+                'tree' => [
+                    ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
+                    ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
+                ]
             ]
         ];
 
