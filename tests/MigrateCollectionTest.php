@@ -171,7 +171,6 @@ EOT
                 'post',
             ],
             'template' => 'blog/post',
-            'orderable' => true,
             'structure' => [
                 'max_depth' => 1,
                 'tree' => [

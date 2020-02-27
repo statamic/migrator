@@ -188,15 +188,10 @@ class CollectionMigrator extends Migrator
             $this->config->put('taxonomies', $taxonomies->all());
         }
 
-        switch ($this->config->get('order')) {
-            case 'date':
-                $this->config->put('date', true);
-                $this->config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
-                $this->config->put('sort_dir', 'desc');
-                break;
-            case 'number':
-                $this->config->put('orderable', true);
-                break;
+        if ($this->config->get('order') === 'date') {
+            $this->config->put('date', true);
+            $this->config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
+            $this->config->put('sort_dir', 'desc');
         }
 
         $this->config->forget('order');
