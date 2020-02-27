@@ -225,7 +225,10 @@ class CollectionMigrator extends Migrator
             })
             ->all();
 
-        return compact('tree');
+        return [
+            'max_depth' => 1,
+            'tree' => $tree,
+        ];
     }
 
     /**

@@ -173,6 +173,7 @@ EOT
             'template' => 'blog/post',
             'orderable' => true,
             'structure' => [
+                'max_depth' => 1,
                 'tree' => [
                     ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
                     ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
