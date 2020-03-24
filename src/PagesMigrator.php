@@ -25,7 +25,6 @@ class PagesMigrator extends Migrator
             ->setNewPath(base_path("content/collections/pages"))
             ->validateUnique()
             ->parseTree()
-            ->createStructure()
             ->createYamlConfig()
             ->migratePagesToEntries();
     }
@@ -114,25 +113,6 @@ class PagesMigrator extends Migrator
     }
 
     /**
-     * Create structure.
-     *
-     * @return $this
-     */
-    protected function createStructure()
-    {
-        $config = [
-            'title' => 'Pages',
-            'expects_root' => true,
-            'root' => $this->structure['root']['entry'],
-            'tree' => $this->structure['root']['children'] ?? [],
-        ];
-
-        $this->saveMigratedYaml($config, $this->newPath('../../structures/pages.yaml'));
-
-        return $this;
-    }
-
-    /**
      * Create yaml config.
      *
      * @return $this
@@ -143,7 +123,7 @@ class PagesMigrator extends Migrator
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
             'blueprints' => $this->migrateConfiguredBlueprints(),
-            'structure' => 'pages',
+            'structure' => $this->migrateStructure(),
         ];
 
         $this->saveMigratedYaml($config, $this->newPath('../pages.yaml'));
@@ -170,6 +150,19 @@ class PagesMigrator extends Migrator
         }
 
         return collect($blueprints)->values()->all();
+    }
+
+    /**
+     * Migrate structure.
+     *
+     * @return $this
+     */
+    protected function migrateStructure()
+    {
+        return [
+            'root' => true,
+            'tree' => $this->structure['root']['children'] ?? [],
+        ];
     }
 
     /**

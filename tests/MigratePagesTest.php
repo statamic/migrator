@@ -7,12 +7,9 @@ use Statamic\Facades\Entry;
 
 class MigratePagesTest extends TestCase
 {
-    protected function paths()
+    protected function path()
     {
-        return [
-            base_path('content/collections'),
-            base_path('content/structures'),
-        ];
+        return base_path('content/collections');
     }
 
     protected function collectionsPath($append = null)
@@ -33,7 +30,6 @@ class MigratePagesTest extends TestCase
 
         $this->artisan('statamic:migrate:pages');
 
-        $this->assertFileExists($this->collectionsPath('../structures/pages.yaml'));
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
         $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
         $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
@@ -51,7 +47,32 @@ class MigratePagesTest extends TestCase
                 'diary_entry',
                 'gallery',
             ],
-            'structure' => 'pages',
+            'structure' => [
+                'root' => true,
+                'tree' => [
+                    [
+                        'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
+                        'children' => [
+                            ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                            ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
+                        ]
+                    ],
+                    ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
+                    [
+                        'entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc',
+                        'children' => [
+                            [
+                                'entry' => '1a45dfed-9d06-4493-83b1-dffe2522cbe7',
+                                'children' => [
+                                    ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b']
+                                ]
+                            ]
+                        ]
+                    ],
+                    ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
+                    ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7']
+                ]
+            ],
         ];
 
         $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
@@ -65,54 +86,14 @@ class MigratePagesTest extends TestCase
         $this->artisan('statamic:migrate:pages');
 
         $expected = [
-            'title' => 'Pages',
-            'route' => '{{ parent_uri }}/{{ slug }}',
             'blueprints' => [
                 'home',
                 'about',
                 'gallery',
-            ],
-            'structure' => 'pages',
-        ];
-
-        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
-    }
-
-    /** @test */
-    function it_migrates_structure()
-    {
-        $this->artisan('statamic:migrate:pages');
-
-        $expected = [
-            'title' => 'Pages',
-            'expects_root' => true,
-            'root' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7',
-            'tree' => [
-                [
-                    'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
-                    'children' => [
-                        ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
-                        ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
-                    ]
-                ],
-                ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
-                [
-                    'entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc',
-                    'children' => [
-                        [
-                            'entry' => '1a45dfed-9d06-4493-83b1-dffe2522cbe7',
-                            'children' => [
-                                ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b']
-                            ]
-                        ]
-                    ]
-                ],
-                ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
-                ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7']
             ]
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->collectionsPath('../structures/pages.yaml'));
+        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
     }
 
     /** @test */
@@ -124,7 +105,14 @@ class MigratePagesTest extends TestCase
 
         $this->artisan('statamic:migrate:pages');
 
-        $this->assertFileExists($this->collectionsPath('../structures/pages.yaml'));
+        $expected = [
+            'structure' => [
+                'root' => true,
+                'tree' => []
+            ]
+        ];
+
+        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
     }
 
     /** @test */

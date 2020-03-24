@@ -21,7 +21,6 @@ class MigrateSiteTest extends TestCase
             'thingsCollectionConfig' => base_path('content/collections/things.yaml'),
             'pages' => base_path('content/collections/pages'),
             'pagesCollectionConfig' => base_path('content/collections/pages.yaml'),
-            'pagesStructureConfig' => base_path('content/structures/pages.yaml'),
             'tags' => base_path('content/taxonomies/tags'),
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
@@ -71,16 +70,14 @@ class MigrateSiteTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_pages_to_a_collection_with_structure()
+    function it_migrates_pages_to_a_collection()
     {
         $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
-        $this->assertFileNotExists($this->paths('pagesStructureConfig'));
         $this->assertFileNotExists($this->paths('pages'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
-        $this->assertFileExists($this->paths('pagesStructureConfig'));
         $this->assertCount(10, $this->files->files($this->paths('pages')));
     }
 
