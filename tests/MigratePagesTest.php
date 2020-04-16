@@ -50,6 +50,7 @@ class MigratePagesTest extends TestCase
             'structure' => [
                 'root' => true,
                 'tree' => [
+                    ['entry' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
                     [
                         'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
                         'children' => [
@@ -97,6 +98,23 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_structure_if_there_are_no_pages()
+    {
+        $this->files->cleanDirectory(base_path('site/content/pages'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $expected = [
+            'structure' => [
+                'root' => true,
+                'tree' => []
+            ],
+        ];
+
+        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
+    }
+
+    /** @test */
     function it_migrates_structure_if_only_home_page_exists()
     {
         collect($this->files->directories($this->sitePath('content/pages')))->each(function ($directory) {
@@ -108,7 +126,9 @@ class MigratePagesTest extends TestCase
         $expected = [
             'structure' => [
                 'root' => true,
-                'tree' => []
+                'tree' => [
+                    ['entry' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
+                ]
             ]
         ];
 

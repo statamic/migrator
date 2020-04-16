@@ -74,7 +74,11 @@ class PagesMigrator extends Migrator
      */
     protected function parsePageFolder($folder, $key = 'root')
     {
-        $page = YAML::parse($this->files->get("{$folder}/index.md"));
+        if (! $this->files->exists($path = "{$folder}/index.md")) {
+            return [];
+        }
+
+        $page = YAML::parse($this->files->get($path));
 
         $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
@@ -159,9 +163,13 @@ class PagesMigrator extends Migrator
      */
     protected function migrateStructure()
     {
+        if ($home = $this->structure['root']['entry'] ?? false) {
+            $tree = collect($this->structure['root']['children'] ?? [])->prepend(['entry' => $home])->all();
+        }
+
         return [
             'root' => true,
-            'tree' => $this->structure['root']['children'] ?? [],
+            'tree' => $tree ?? [],
         ];
     }
 
