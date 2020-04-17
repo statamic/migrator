@@ -18,6 +18,10 @@ fields:
     container: main
     folder: img
     max_files: 1
+  alternate_images:
+    type: assets
+    container: main
+    max_files: 5
   hero_image:
     type: assets
     display: Hero Image
