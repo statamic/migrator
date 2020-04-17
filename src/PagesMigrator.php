@@ -10,7 +10,8 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\MigratesContent,
+        Concerns\MigratesFile;
 
     protected $entries = [];
     protected $structure = [];
@@ -182,13 +183,12 @@ class PagesMigrator extends Migrator
     {
         $this->files->cleanDirectory($this->newPath());
 
-        collect($this->entries)
-            ->map(function ($entry) {
-                return $this->migrateFieldsetToBlueprint($entry);
-            })
-            ->map(function ($entry) {
-                $this->saveMigratedWithYamlFrontMatter($entry, $this->generateEntryPath($entry));
-            });
+        collect($this->entries)->each(function ($entry) {
+            $this->saveMigratedWithYamlFrontMatter(
+                $this->migrateContent($entry, $entry['fieldset'] ?? null),
+                $this->generateEntryPath($entry)
+            );
+        });
 
         return $this;
     }
@@ -213,22 +213,5 @@ class PagesMigrator extends Migrator
         }
 
         return $path;
-    }
-
-    /**
-     * Migrate fieldset to blueprint.
-     *
-     * @param array $entry
-     * @return array
-     */
-    protected function migrateFieldsetToBlueprint($entry)
-    {
-        if (isset($entry['fieldset'])) {
-            $entry['blueprint'] = $entry['fieldset'];
-        }
-
-        unset($entry['fieldset']);
-
-        return $entry;
     }
 }

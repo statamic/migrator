@@ -7,9 +7,11 @@ use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesFile,
-        Concerns\MigratesRoute;
+    use Concerns\MigratesContent,
+        Concerns\MigratesRoute,
+        Concerns\MigratesFile;
 
+    protected $defaultFieldset;
     protected $availableTaxonomies;
     protected $usedTaxonomies;
     protected $entryOrder;
@@ -109,15 +111,9 @@ class CollectionMigrator extends Migrator
             $entry['published'] = false;
         }
 
-        if (isset($entry['fieldset'])) {
-            $entry['blueprint'] = $entry['fieldset'];
-        }
-
-        unset($entry['fieldset']);
-
         $this->migrateUsedTaxonomies($entry);
 
-        return $entry;
+        return $this->migrateContent($entry, $entry['fieldset'] ?? $this->config['fieldset']);
     }
 
     /**
