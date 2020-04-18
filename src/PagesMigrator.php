@@ -10,7 +10,8 @@ use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
-    use Concerns\MigratesContent,
+    use Concerns\GetsSettings,
+        Concerns\MigratesContent,
         Concerns\MigratesFile;
 
     protected $entries = [];
@@ -185,12 +186,25 @@ class PagesMigrator extends Migrator
 
         collect($this->entries)->each(function ($entry) {
             $this->saveMigratedWithYamlFrontMatter(
-                $this->migrateContent($entry, $entry['fieldset'] ?? null),
+                $this->migrateContent($entry, $this->getPageFieldset($entry)),
                 $this->generateEntryPath($entry)
             );
         });
 
         return $this;
+    }
+
+    /**
+     * Get page fieldset.
+     *
+     * @param array $page
+     * @return string
+     */
+    protected function getPageFieldset($page)
+    {
+        return $page['fieldset']
+            ?? $this->getSetting('theming.default_page_fieldset')
+            ?? $this->getSetting('theming.default_fieldset');
     }
 
     /**
