@@ -113,7 +113,21 @@ class CollectionMigrator extends Migrator
 
         $this->migrateUsedTaxonomies($entry);
 
-        return $this->migrateContent($entry, $entry['fieldset'] ?? $this->config['fieldset']);
+        return $this->migrateContent($entry, $this->getEntryFieldset($entry));
+    }
+
+    /**
+     * Get entry fieldset.
+     *
+     * @param array $entry
+     * @return string
+     */
+    protected function getEntryFieldset($entry)
+    {
+        return $entry['fieldset']
+            ?? $this->config['fieldset']
+            ?? $this->getSetting('theming.default_entry_fieldset')
+            ?? $this->getSetting('theming.default_fieldset');
     }
 
     /**
