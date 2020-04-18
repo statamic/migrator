@@ -2,6 +2,8 @@
 
 namespace Statamic\Migrator\Concerns;
 
+use Statamic\Migrator\ContentMigrator;
+
 trait MigratesContent
 {
     /**
@@ -13,25 +15,11 @@ trait MigratesContent
      */
     protected function migrateContent($content, $fieldset)
     {
-        $content = $this->migrateFieldsetToBlueprint($content);
-
-        return $content;
-    }
-
-    /**
-     * Migrate fieldset to blueprint.
-     *
-     * @param array $entry
-     * @return array
-     */
-    protected function migrateFieldsetToBlueprint($content)
-    {
-        if (isset($content['fieldset'])) {
-            $content['blueprint'] = $content['fieldset'];
+        // TODO: Throw warning?
+        if (! $fieldset) {
+            return $content;
         }
 
-        unset($content['fieldset']);
-
-        return $content;
+        return ContentMigrator::usingFieldset($fieldset)->migrateContent($content);
     }
 }
