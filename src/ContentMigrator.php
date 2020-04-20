@@ -67,9 +67,17 @@ class ContentMigrator
             // throw new \Exception("Cannot find fieldset [{$this->fieldset}]");
         }
 
-        $this->fieldConfigs = $this->files->exists($fieldsetPath)
-            ? Arr::get(YAML::parse($this->files->get($fieldsetPath)), 'fields', [])
+        $fieldset = $this->files->exists($fieldsetPath)
+            ? YAML::parse($this->files->get($fieldsetPath))
             : [];
+
+        $topLevelFields = Arr::get($fieldset, 'fields', []);
+
+        $fieldsInSections = collect(Arr::get($fieldset, 'sections', []))->flatMap(function ($section) {
+            return $section['fields'] ?? [];
+        })->all();
+
+        $this->fieldConfigs = array_merge($topLevelFields, $fieldsInSections);
 
         return $this;
     }
