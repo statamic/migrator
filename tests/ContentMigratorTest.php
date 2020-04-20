@@ -137,7 +137,7 @@ class ContentMigratorTest extends TestCase
     }
 
     /** @test */
-    public function it_can_migrate_fields_within_a_replicator()
+    public function it_can_migrate_fields_within_replicators()
     {
         $content = $this
             ->setFields([
@@ -155,11 +155,20 @@ class ContentMigratorTest extends TestCase
                         ],
                         'set_2' => [
                             'fields' => [
-                                'image_within_replicator_set_2' => [
-                                    'type' => 'assets',
-                                    'container' => 'main',
-                                    'max_files' => 1,
-                                ],
+                                'nested_replicator' => [
+                                    'type' => 'replicator',
+                                    'sets' => [
+                                        'nested_set' => [
+                                            'fields' => [
+                                                'image_within_replicator_set_2' => [
+                                                    'type' => 'assets',
+                                                    'container' => 'main',
+                                                    'max_files' => 1,
+                                                ],
+                                            ],
+                                        ],
+                                    ]
+                                ]
                             ],
                         ],
                     ],
@@ -173,9 +182,14 @@ class ContentMigratorTest extends TestCase
                     ],
                     [
                         'type' => 'set_2',
-                        'image_within_replicator_set_2' => '/assets/img/stetson.jpg',
+                        'nested_replicator' => [
+                            [
+                                'type' => 'nested_set',
+                                'image_within_replicator_set_2' => '/assets/img/stetson.jpg',
+                            ],
+                        ],
                     ],
-                ]
+                ],
             ]);
 
         $expected = [
@@ -186,7 +200,12 @@ class ContentMigratorTest extends TestCase
                 ],
                 [
                     'type' => 'set_2',
-                    'image_within_replicator_set_2' => 'img/stetson.jpg',
+                    'nested_replicator' => [
+                        [
+                            'type' => 'nested_set',
+                            'image_within_replicator_set_2' => 'img/stetson.jpg',
+                        ],
+                    ],
                 ],
             ]
         ];
