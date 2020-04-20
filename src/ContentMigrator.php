@@ -179,6 +179,37 @@ class ContentMigrator
     }
 
     /**
+     * Migrate grid field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateGridField($handle, $value, $config)
+    {
+        $fieldConfigs = $config['fields'] ?? [];
+
+        return collect($value)->map(function ($row) use ($fieldConfigs) {
+            return $this->migrateGridRow($row, $fieldConfigs);
+        })->all();
+    }
+
+    /**
+     * Migrate grid row.
+     *
+     * @param array $row
+     * @param array $fieldConfigs
+     * @return array
+     */
+    protected function migrateGridRow($row, $fieldConfigs)
+    {
+        return collect($row)->map(function ($fieldValue, $fieldHandle) use ($fieldConfigs) {
+            return $this->migrateField($fieldHandle, $fieldValue, Arr::get($fieldConfigs, $fieldHandle, []));
+        })->all();
+    }
+
+    /**
      * Migrate fieldset to blueprint.
      *
      * @return $this

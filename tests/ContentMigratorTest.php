@@ -212,4 +212,63 @@ class ContentMigratorTest extends TestCase
 
         $this->assertEquals($expected, $content);
     }
+
+    /** @test */
+    public function it_can_migrate_fields_within_grids()
+    {
+        $content = $this
+            ->setFields([
+                'some_grid' => [
+                    'type' => 'grid',
+                    'fields' => [
+                        'image_within_grid' => [
+                            'type' => 'assets',
+                            'container' => 'main',
+                            'max_files' => 1,
+                        ],
+                        'nested_grid' => [
+                            'type' => 'grid',
+                            'fields' => [
+                                'image_within_nested_grid' => [
+                                    'type' => 'assets',
+                                    'container' => 'main',
+                                    'max_files' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_grid' => [
+                    [
+                        'image_within_grid' => '/assets/img/coffee-mug.jpg',
+                    ],
+                    [
+                        'nested_grid' => [
+                            [
+                                'image_within_nested_grid' => '/assets/img/stetson.jpg',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $expected = [
+            'some_grid' => [
+                [
+                    'image_within_grid' => 'img/coffee-mug.jpg',
+                ],
+                [
+                    'nested_grid' => [
+                        [
+                            'image_within_nested_grid' => 'img/stetson.jpg',
+                        ],
+                    ],
+                ],
+            ]
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
 }
