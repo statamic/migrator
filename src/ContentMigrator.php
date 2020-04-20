@@ -109,6 +109,32 @@ class ContentMigrator
     }
 
     /**
+     * Migrate assets field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateAssetsField($handle, $value, $config)
+    {
+        $containerHandle = $config['container'];
+        $container = YAML::parse($this->files->get($this->sitePath("content/assets/{$containerHandle}.yaml")));
+
+        $url = $container['url'];
+        $url = Str::ensureLeft($url, '/');
+        $url = Str::ensureRight($url, '/');
+
+        if (is_string($value)) {
+            return str_replace($url, '', $value);
+        }
+
+        return collect($value)->map(function ($asset) use ($url) {
+            return str_replace($url, '', $asset);
+        })->all();
+    }
+
+    /**
      * Migrate fieldset to blueprint.
      *
      * @return $this
