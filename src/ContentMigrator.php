@@ -103,14 +103,15 @@ class ContentMigrator
      * @param mixed $value
      * @return mixed
      */
-    protected function migrateField($handle, $value)
+    protected function migrateField($handle, $value, $config = null)
     {
-        $fieldtype = $this->getFieldtype($handle);
+        $config = $config ?? $this->getFieldConfig($handle);
+        $fieldtype = $this->getFieldtype($config);
 
         $migrateMethod = 'migrate' . ucfirst(strtolower($fieldtype)) . 'Field';
 
         if (method_exists($this, $migrateMethod)) {
-            return $this->{$migrateMethod}($handle, $value, $this->getFieldConfig($handle));
+            return $this->{$migrateMethod}($handle, $value, $config);
         }
 
         return $value;
@@ -143,6 +144,41 @@ class ContentMigrator
     }
 
     /**
+     * Migrate replicator field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateReplicatorField($handle, $value, $config)
+    {
+        $fieldConfigs = collect($config['sets'] ?? [])->map(function ($set) {
+            return $set['fields'] ?? [];
+        })->all();
+
+        return collect($value)->map(function ($set) use ($fieldConfigs) {
+            return $this->migrateReplicatorSet($set, $fieldConfigs);
+        })->all();
+    }
+
+    /**
+     * Migrate replicator set.
+     *
+     * @param array $set
+     * @param array $fieldConfigs
+     * @return array
+     */
+    protected function migrateReplicatorSet($set, $fieldConfigs)
+    {
+        $setHandle = $set['type'];
+
+        return collect($set)->map(function ($fieldValue, $fieldHandle) use ($setHandle, $fieldConfigs) {
+            return $this->migrateField($fieldHandle, $fieldValue, Arr::get($fieldConfigs, "{$setHandle}.{$fieldHandle}", []));
+        })->all();
+    }
+
+    /**
      * Migrate fieldset to blueprint.
      *
      * @return $this
@@ -170,16 +206,6 @@ class ContentMigrator
     }
 
     /**
-     * Get fieldtype.
-     *
-     * @param string $handle
-     */
-    protected function getFieldtype($handle)
-    {
-        return $this->fieldConfigs[$handle]['type'] ?? 'text';
-    }
-
-    /**
      * Get field config.
      *
      * @param string $handle
@@ -187,5 +213,15 @@ class ContentMigrator
     protected function getFieldConfig($handle)
     {
         return $this->fieldConfigs[$handle] ?? [];
+    }
+
+    /**
+     * Get fieldtype from config.
+     *
+     * @param array $config
+     */
+    protected function getFieldtype($config)
+    {
+        return $config['type'] ?? 'text';
     }
 }

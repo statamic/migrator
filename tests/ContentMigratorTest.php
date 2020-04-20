@@ -101,12 +101,12 @@ class ContentMigratorTest extends TestCase
             ], true)
             ->migrateContent([
                 'image_in_section_one' => '/assets/img/coffee-mug.jpg',
-                'image_in_section_two' => '/assets/img/coffee-mug.jpg',
+                'image_in_section_two' => '/assets/img/stetson.jpg',
             ]);
 
         $expected = [
             'image_in_section_one' => 'img/coffee-mug.jpg',
-            'image_in_section_two' => 'img/coffee-mug.jpg',
+            'image_in_section_two' => 'img/stetson.jpg',
         ];
 
         $this->assertEquals($expected, $content);
@@ -131,6 +131,64 @@ class ContentMigratorTest extends TestCase
 
         $expected = [
             'image_at_top_level' => 'img/coffee-mug.jpg',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_can_migrate_fields_within_a_replicator()
+    {
+        $content = $this
+            ->setFields([
+                'some_replicator' => [
+                    'type' => 'replicator',
+                    'sets' => [
+                        'set_1' => [
+                            'fields' => [
+                                'image_within_replicator_set_1' => [
+                                    'type' => 'assets',
+                                    'container' => 'main',
+                                    'max_files' => 1,
+                                ],
+                            ],
+                        ],
+                        'set_2' => [
+                            'fields' => [
+                                'image_within_replicator_set_2' => [
+                                    'type' => 'assets',
+                                    'container' => 'main',
+                                    'max_files' => 1,
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_replicator' => [
+                    [
+                        'type' => 'set_1',
+                        'image_within_replicator_set_1' => '/assets/img/coffee-mug.jpg',
+                    ],
+                    [
+                        'type' => 'set_2',
+                        'image_within_replicator_set_2' => '/assets/img/stetson.jpg',
+                    ],
+                ]
+            ]);
+
+        $expected = [
+            'some_replicator' => [
+                [
+                    'type' => 'set_1',
+                    'image_within_replicator_set_1' => 'img/coffee-mug.jpg',
+                ],
+                [
+                    'type' => 'set_2',
+                    'image_within_replicator_set_2' => 'img/stetson.jpg',
+                ],
+            ]
         ];
 
         $this->assertEquals($expected, $content);
