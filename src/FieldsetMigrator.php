@@ -128,9 +128,12 @@ class FieldsetMigrator extends Migrator
             $config = $this->migrateFieldConditions($config);
         }
 
-        switch ($config['type'] ?? 'text') {
-            case 'redactor':
-                $config = $this->migrateRedactorField($config, $handle);
+        $fieldtype = $config['type'] ?? 'text';
+
+        $migrateMethod = 'migrate' . ucfirst(strtolower($fieldtype)) . 'Field';
+
+        if (method_exists($this, $migrateMethod)) {
+            $config = $this->{$migrateMethod}($config, $handle);
         }
 
         return $this->normalizeConfigToArray($config);
@@ -186,9 +189,9 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate redactor field.
      *
-     * @param array $config
+     * @param \Illuminate\Support\Collection $config
      * @param string $handle
-     * @return array
+     * @return \Illuminate\Support\Collection
      */
     protected function migrateRedactorField($config, $handle)
     {
@@ -208,7 +211,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate redactor buttons.
      *
-     * @param array $config
+     * @param \Illuminate\Support\Collection $config
      * @return array
      */
     protected function migrateRedactorButtons($config)
@@ -235,8 +238,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Get redactor buttons from system config.
      *
-     * @param array $config
-     * @return array
+     * @param \Illuminate\Support\Collection $config
+     * @return \Illuminate\Support\Collection
      */
     protected function getRedactorButtons($config)
     {
