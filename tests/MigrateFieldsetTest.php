@@ -369,4 +369,36 @@ class MigrateFieldsetTest extends TestCase
             ]
         ]);
     }
+
+    /** @test */
+    function it_migrates_pages_to_entries()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'related' => [
+                    'type' => 'pages',
+                    'max_items' => 1,
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'related',
+                    'field' => [
+                        'type' => 'entries',
+                        'max_items' => 1,
+                        'collections' => [
+                            'pages',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $blueprint);
+    }
 }

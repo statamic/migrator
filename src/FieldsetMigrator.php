@@ -273,6 +273,26 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate pages field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migratePagesField($config, $handle)
+    {
+        $this->addWarning(
+            "Pages field [{$handle}] has been migrated to an entries field.",
+            "Not all config features and settings are compatible.\n" .
+            "Please revise your entries field configuration as necessary."
+        );
+
+        return $config
+            ->put('type', 'entries')
+            ->put('collections', ['pages']);
+    }
+
+    /**
      * Normalize config and cast back to array.
      *
      * @param \Illuminate\Support\Collection $config
