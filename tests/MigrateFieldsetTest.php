@@ -401,4 +401,41 @@ class MigrateFieldsetTest extends TestCase
 
         $this->assertEquals($expected, $blueprint);
     }
+
+    /** @test */
+    function it_migrates_collection_to_entries()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'related' => [
+                    'type' => 'collection',
+                    'max_items' => 1,
+                    'collection' => [
+                        'blog',
+                        'products',
+                    ],
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'related',
+                    'field' => [
+                        'type' => 'entries',
+                        'max_items' => 1,
+                        'collections' => [
+                            'blog',
+                            'products',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $blueprint);
+    }
 }
