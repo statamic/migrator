@@ -102,6 +102,10 @@ class FieldsetMigrator extends Migrator
         $handle = $field['handle'] ?? $handle;
         $field = $field['field'] ?? $this->migrateFieldConfig($field, $handle);
 
+        if ($this->getFieldtype($field) === 'partial') {
+            return $this->convertPartialFieldToImport($field);
+        }
+
         return compact('handle', 'field');
     }
 
@@ -314,6 +318,19 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Convert partial field to import.
+     *
+     * @param array $config
+     * @return array
+     */
+    protected function convertPartialFieldToImport($config)
+    {
+        return [
+            'import' => $config['fieldset']
+        ];
+    }
+
+    /**
      * Normalize config and cast back to array.
      *
      * @param \Illuminate\Support\Collection $config
@@ -323,7 +340,18 @@ class FieldsetMigrator extends Migrator
     {
         return $config
             ->except('type')
-            ->prepend(Arr::get($config, 'type', 'text'), 'type')
+            ->prepend($this->getFieldtype($config), 'type')
             ->all();
+    }
+
+    /**
+     * Get fieldtype.
+     *
+     * @param array $config
+     * @return string
+     */
+    protected function getFieldtype($config)
+    {
+        return Arr::get($config, 'type', 'text');
     }
 }
