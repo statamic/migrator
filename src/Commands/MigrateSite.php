@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Commands;
 
 use Statamic\Facades\Path;
+use Statamic\Migrator\Concerns;
 use Statamic\Console\RunsInPlease;
 use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\UserMigrator;
@@ -16,8 +17,6 @@ use Statamic\Migrator\SettingsMigrator;
 use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
-use Statamic\Migrator\Concerns\GetsSettings;
-use Statamic\Migrator\Concerns\SubmitsStats;
 use Statamic\Migrator\AssetContainerMigrator;
 use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
@@ -27,7 +26,10 @@ use Statamic\Migrator\Exceptions\MigratorWarningsException;
 
 class MigrateSite extends Command
 {
-    use GetsSettings, RunsInPlease, SubmitsStats;
+    use Concerns\GetsFieldsetHandles,
+        Concerns\GetsSettings,
+        Concerns\SubmitsStats,
+        RunsInPlease;
 
     /**
      * The name and signature of the console command.
@@ -117,7 +119,13 @@ class MigrateSite extends Command
      */
     protected function migrateFieldsets()
     {
-        $this->getFileHandlesFromPath(base_path('site/settings/fieldsets'))->each(function ($handle) {
+        $fieldsetHandles = $this->getFieldsetHandles();
+
+        $fieldsetHandles->imported->each(function ($handle) {
+            // $this->runMigratorOnHandle(ImportedFieldsetMigrator::class, $handle);
+        });
+
+        $fieldsetHandles->nonImported->each(function ($handle) {
             $this->runMigratorOnHandle(FieldsetMigrator::class, $handle);
         });
 
