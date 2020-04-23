@@ -15,6 +15,7 @@ class MigrateSiteTest extends TestCase
             'site' => base_path('site'),
             'users' => base_path('users'),
             'blueprints' => resource_path('blueprints'),
+            'fieldsets' => resource_path('fieldsets'),
             'blog' => base_path('content/collections/blog'),
             'blogCollectionConfig' => base_path('content/collections/blog.yaml'),
             'things' => base_path('content/collections/things'),
@@ -52,7 +53,19 @@ class MigrateSiteTest extends TestCase
 
         $this->artisan('statamic:migrate:site');
 
-        $this->assertCount(13, $this->files->files($this->paths('blueprints')));
+        $this->assertCount(14, $this->files->files($this->paths('blueprints')));
+    }
+
+    /** @test */
+    function it_migrates_fieldset_partials()
+    {
+        $this->assertCount(0, $this->files->files($this->paths('blueprints')));
+        $this->assertCount(0, $this->files->files($this->paths('fieldsets')));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertFileExists($this->paths('blueprints') . '/address.yaml');
+        $this->assertFileExists($this->paths('fieldsets') . '/address.yaml');
     }
 
     /** @test */
