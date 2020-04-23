@@ -18,6 +18,7 @@ use Statamic\Migrator\TaxonomyMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\CollectionMigrator;
 use Statamic\Migrator\AssetContainerMigrator;
+use Statamic\Migrator\FieldsetPartialMigrator;
 use Symfony\Component\Console\Input\InputOption;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
@@ -121,12 +122,12 @@ class MigrateSite extends Command
     {
         $fieldsetHandles = $this->getFieldsetHandles();
 
-        $fieldsetHandles->imported->each(function ($handle) {
-            // $this->runMigratorOnHandle(ImportedFieldsetMigrator::class, $handle);
+        $fieldsetHandles->standard->each(function ($handle) {
+            $this->runMigratorOnHandle(FieldsetMigrator::class, $handle);
         });
 
-        $fieldsetHandles->nonImported->each(function ($handle) {
-            $this->runMigratorOnHandle(FieldsetMigrator::class, $handle);
+        $fieldsetHandles->partial->each(function ($handle) {
+            $this->runMigratorOnHandle(FieldsetPartialMigrator::class, $handle);
         });
 
         return $this;

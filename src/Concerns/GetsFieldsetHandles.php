@@ -17,32 +17,33 @@ trait GetsFieldsetHandles
     protected function getFieldsetHandles()
     {
         $fieldsets = collect(File::files(base_path('site/settings/fieldsets')))
-            ->keyBy->getFilenameWithoutExtension()
+            ->keyBy
+            ->getFilenameWithoutExtension()
             ->map(function ($file) {
                 return YAML::parse($file->getContents());
             });
 
-        $imported = $fieldsets
+        $partial = $fieldsets
             ->flatMap(function ($fieldset) {
-                return $this->getImportedFieldsetHandles($fieldset);
+                return $this->getPartialFieldsetHandles($fieldset);
             })
             ->values();
 
-        $nonImported = $fieldsets
+        $standard = $fieldsets
             ->keys()
-            ->diff($imported)
+            ->diff($partial)
             ->values();
 
-        return (object) compact('imported', 'nonImported');
+        return (object) compact('standard', 'partial');
     }
 
     /**
-     * Get imported fieldset handles.
+     * Get partial fieldset handles.
      *
      * @param array $fieldset
      * @return array
      */
-    protected function getImportedFieldsetHandles($fieldset)
+    protected function getPartialFieldsetHandles($fieldset)
     {
         $flattened = Arr::dot($fieldset);
 
