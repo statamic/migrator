@@ -12,10 +12,18 @@ class MigrateFieldsetTest extends TestCase
         $paths = [
             'new' => resource_path('blueprints/post.yaml'),
             'old' => $this->sitePath('settings/fieldsets/post.yaml'),
+            'fieldsets' => $this->sitePath('settings/fieldsets'),
             'system' => $this->sitePath('settings/system.yaml'),
         ];
 
         return $key ? $paths[$key] : $paths;
+    }
+
+    private function addFieldset($handle, $fieldsetConfig)
+    {
+        $this->files->put($this->paths('fieldsets') . "{$handle}.yaml", YAML::dump($fieldsetConfig));
+
+        return $this;
     }
 
     private function migrateFieldsetToBlueprint($fieldsetConfig)
@@ -432,6 +440,57 @@ class MigrateFieldsetTest extends TestCase
                             'products',
                         ],
                     ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $blueprint);
+    }
+
+    /** @test */
+    function it_migrates_partial_to_import()
+    {
+        $blueprint = $this
+            ->addFieldset('address', [
+                'title' => 'Address',
+                'fields' => [
+                    'street' => [
+                        'type' => 'text',
+                    ],
+                    'province' => [
+                        'type' => 'text',
+                        'width' => 50,
+                    ],
+                    'country' => [
+                        'type' => 'text',
+                        'width' => 50,
+                    ],
+                ],
+            ])
+            ->migrateFieldsetToBlueprint([
+                'title' => 'Posts',
+                'fields' => [
+                    'name' => [
+                        'type' => 'text',
+                    ],
+                    'address' => [
+                        'type' => 'partial',
+                        'fieldset' => 'address',
+                    ],
+                ],
+            ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'name',
+                    'field' => [
+                        'type' => 'text',
+                    ],
+                ],
+                [
+                    'import' => 'address',
                 ],
             ],
         ];
