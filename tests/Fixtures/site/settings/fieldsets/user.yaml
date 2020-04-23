@@ -22,3 +22,6 @@ fields:
   content:
     type: textarea
     display: Biography
+  address:
+    type: partial
+    fieldset: address

@@ -1,0 +1,13 @@
+title: Address
+fields:
+  street:
+    type: text
+    display: 'Street'
+  province:
+    type: text
+    display: 'Province'
+    width: 50
+  country:
+    type: text
+    display: 'Country'
+    width: 50
