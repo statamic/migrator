@@ -19,13 +19,6 @@ class MigrateFieldsetTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
-    private function addFieldset($handle, $fieldsetConfig)
-    {
-        $this->files->put($this->paths('fieldsets') . "{$handle}.yaml", YAML::dump($fieldsetConfig));
-
-        return $this;
-    }
-
     private function migrateFieldsetToBlueprint($fieldsetConfig)
     {
         $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
@@ -450,35 +443,18 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     function it_migrates_partial_to_import()
     {
-        $blueprint = $this
-            ->addFieldset('address', [
-                'title' => 'Address',
-                'fields' => [
-                    'street' => [
-                        'type' => 'text',
-                    ],
-                    'province' => [
-                        'type' => 'text',
-                        'width' => 50,
-                    ],
-                    'country' => [
-                        'type' => 'text',
-                        'width' => 50,
-                    ],
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'name' => [
+                    'type' => 'text',
                 ],
-            ])
-            ->migrateFieldsetToBlueprint([
-                'title' => 'Posts',
-                'fields' => [
-                    'name' => [
-                        'type' => 'text',
-                    ],
-                    'address' => [
-                        'type' => 'partial',
-                        'fieldset' => 'address',
-                    ],
+                'address' => [
+                    'type' => 'partial',
+                    'fieldset' => 'address',
                 ],
-            ]);
+            ],
+        ]);
 
         $expected = [
             'title' => 'Posts',
