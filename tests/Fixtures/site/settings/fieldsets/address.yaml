@@ -1,4 +1,5 @@
 title: Address
+hide: true
 fields:
   street:
     type: text
