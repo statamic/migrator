@@ -15,6 +15,7 @@
 - [Using the site migrator](#using-the-site-migrator)
 - [Using individual migrators](#using-individual-migrators)
     - [Fieldset to blueprint migrator](#fieldset-to-blueprint-migrator)
+    - [Fieldset partial migrator](#fieldset-partial-migrator)
     - [Collection migrator](#collection-migrator)
     - [Pages migrator](#pages-migrator)
     - [Taxonomy migrator](#taxonomy-migrator)
@@ -90,6 +91,16 @@ php please migrate:fieldset post
 ```
 
 In this example, `post` is the fieldset handle.
+
+### Fieldset partial migrator
+
+In v3, [reusable fields](https://statamic.dev/blueprints#reusable-fields) are stored in [fieldsets](https://statamic.dev/blueprints#importing-fieldsets) instead of blueprints.  If you have a fieldset that was previously imported using the `partial` fieldtype, use this migrator to ensure it is migrated to an importable fieldset, as well as a standalone blueprint.  It's worth noting that the [site migrator](#using-the-site-migrator) automatically detects the use of partials, and will run the appropriate migration for you.  To migrate a fieldset partial:
+
+```
+php please migrate:fieldset-partial address
+```
+
+In this example, `address` is the fieldset handle.
 
 ### Collection migrator
 
