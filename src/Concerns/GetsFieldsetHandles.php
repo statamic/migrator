@@ -52,7 +52,7 @@ trait GetsFieldsetHandles
                 return preg_match('/fields.*type$/', $key) && $value === 'partial';
             })
             ->map(function ($value, $key) {
-                return preg_replace('/(.*)\.type$/', "$1.fieldset", $key);
+                return preg_replace('/(.*)\.type$/', '$1.fieldset', $key);
             })
             ->map(function ($fieldsetKey) use ($flattened) {
                 return $flattened[$fieldsetKey];

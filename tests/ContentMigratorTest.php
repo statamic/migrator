@@ -9,14 +9,26 @@ use Statamic\Migrator\FieldsetMigrator;
 
 class ContentMigratorTest extends TestCase
 {
-    protected function path()
+    protected function paths($key = null)
     {
-        return base_path('site/settings/fieldsets/test_fieldset.yaml');
+        $paths = [
+            'speaker' => $this->sitePath('settings/fieldsets/speaker.yaml'),
+            'fieldsets' => $this->sitePath('settings/fieldsets'),
+        ];
+
+        return $key ? $paths[$key] : $paths;
+    }
+
+    private function addFieldset($handle, $fieldsetConfig)
+    {
+        $this->files->put($this->paths('fieldsets') . "/{$handle}.yaml", YAML::dump($fieldsetConfig));
+
+        return $this;
     }
 
     private function setFields($fields, $rawFieldset = false)
     {
-        $this->assertFileNotExists($this->path());
+        $this->assertFileNotExists($this->paths('speaker'));
 
         $fieldset = $rawFieldset ? $fields : [
             'sections' => [
@@ -26,16 +38,16 @@ class ContentMigratorTest extends TestCase
             ]
         ];
 
-        $this->files->put($this->path(), YAML::dump($fieldset));
+        $this->files->put($this->paths('speaker'), YAML::dump($fieldset));
 
-        $this->assertFileExists($this->path());
+        $this->assertFileExists($this->paths('speaker'));
 
         return $this;
     }
 
     private function migrateContent($content)
     {
-        return ContentMigrator::usingFieldset('test_fieldset')->migrateContent($content);
+        return ContentMigrator::usingFieldset('speaker')->migrateContent($content);
     }
 
     /** @test */
@@ -267,6 +279,85 @@ class ContentMigratorTest extends TestCase
                     ],
                 ],
             ]
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_can_migrate_fields_within_partials()
+    {
+        $content = $this
+            ->addFieldset('country', [
+                'title' => 'Country',
+                'fields' => [
+                    'country' => [
+                        'type' => 'text',
+                    ],
+                    'flag' => [
+                        'type' => 'assets',
+                        'container' => 'main',
+                        'max_files' => 1,
+                    ],
+                ],
+            ])
+            ->addFieldset('allegiances', [
+                'title' => 'Allegiances',
+                'fields' => [
+                    'allegiances' => [
+                        'type' => 'grid',
+                        'fields' => [
+                            'country' => [
+                                'type' => 'partial',
+                                'fieldset' => 'country',
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->addFieldset('profile', [
+                'title' => 'Profile',
+                'fields' => [
+                    'avatar' => [
+                        'type' => 'assets',
+                        'container' => 'main',
+                        'max_files' => 1,
+                    ],
+                    'hails_from' => [
+                        'type' => 'partial',
+                        'fieldset' => 'allegiances',
+                    ],
+                ],
+            ])
+            ->setFields([
+                'name' => [
+                    'type' => 'text',
+                ],
+                'address' => [
+                    'type' => 'partial',
+                    'fieldset' => 'profile',
+                ],
+            ])
+            ->migrateContent([
+                'name' => 'Joey Landreth',
+                'avatar' => '/assets/img/stetson.jpg',
+                'allegiances' => [
+                    [
+                        'country' => 'Canada',
+                        'flag' => '/assets/img/canada.jpg',
+                    ],
+                ],
+            ]);
+
+        $expected = [
+            'name' => 'Joey Landreth',
+            'avatar' => 'img/stetson.jpg',
+            'allegiances' => [
+                [
+                    'country' => 'Canada',
+                    'flag' => 'img/canada.jpg',
+                ],
+            ],
         ];
 
         $this->assertEquals($expected, $content);

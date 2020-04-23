@@ -56,13 +56,15 @@ class ContentMigrator
     /**
      * Get flattened field configs from fieldset.
      *
+     * @param string|null $fieldsetPartialHandle
      * @return $this
      */
-    protected function getFieldConfigs()
+    protected function getFieldConfigs($fieldsetPartialHandle = null)
     {
-        $fieldsetPath = $this->sitePath("settings/fieldsets/{$this->fieldset}.yaml");
+        $fieldsetHandle = $fieldsetPartialHandle ?? $this->fieldset;
+        $fieldsetPath = $this->sitePath("settings/fieldsets/{$fieldsetHandle}.yaml");
 
-        if ($this->fieldset !== 'default' && ! $this->files->exists($fieldsetPath)) {
+        if ($fieldsetHandle !== 'default' && ! $this->files->exists($fieldsetPath)) {
             // TODO: throw exception and/or handle warning?
             // throw new \Exception("Cannot find fieldset [{$this->fieldset}]");
         }
@@ -73,13 +75,76 @@ class ContentMigrator
 
         $topLevelFields = Arr::get($fieldset, 'fields', []);
 
-        $fieldsInSections = collect(Arr::get($fieldset, 'sections', []))->flatMap(function ($section) {
-            return $section['fields'] ?? [];
-        })->all();
+        $fieldsInSections = collect(Arr::get($fieldset, 'sections', []))
+            ->flatMap(function ($section) {
+                return $section['fields'] ?? [];
+            })
+            ->all();
 
-        $this->fieldConfigs = array_merge($topLevelFields, $fieldsInSections);
+        $fieldConfigs = $this->ensurePartialsAreImported(array_merge($topLevelFields, $fieldsInSections));
+
+        if ($fieldsetPartialHandle) {
+            return $fieldConfigs;
+        }
+
+        $this->fieldConfigs = $fieldConfigs;
 
         return $this;
+    }
+
+    /**
+     * Ensure partials are imported.
+     *
+     * @param array $fieldConfigs
+     * @return array
+     */
+    protected function ensurePartialsAreImported($fieldConfigs)
+    {
+        $flattened = Arr::dot($fieldConfigs);
+
+        collect($flattened)
+            ->filter(function ($value, $key) {
+                return preg_match('/.*type$/', $key) && $value === 'partial';
+            })
+            ->map(function ($value, $key) {
+                return preg_replace('/(.*)\.type$/', '$1.fieldset', $key);
+            })
+            ->each(function ($key) use (&$fieldConfigs) {
+                $fieldConfigs = $this->importPartial(
+                    Arr::get($fieldConfigs, $key),
+                    $fieldConfigs,
+                    preg_replace('/(.*)\.fieldset$/', '$1', $key),
+                );
+            });
+
+        return $fieldConfigs;
+    }
+
+    /**
+     * Import partial.
+     *
+     * @param string $partialHandle
+     * @param array $fieldConfigs
+     * @param string $originalKey
+     * @return array
+     */
+    protected function importPartial($partialHandle, $fieldConfigs, $originalKey)
+    {
+        $partialFieldConfigs = $this->getFieldConfigs($partialHandle);
+
+        Arr::forget($fieldConfigs, $originalKey);
+
+        if (! Str::contains($originalKey, '.')) {
+            return array_merge($fieldConfigs, $partialFieldConfigs);
+        }
+
+        $keyAtPartialLevel = preg_replace('/(.*)\..*$/', "$1", $originalKey);
+        $configsAtPartialLevel = Arr::get($fieldConfigs, $keyAtPartialLevel, []);
+        $configsAtPartialLevel = array_merge($configsAtPartialLevel, $partialFieldConfigs);
+
+        Arr::set($fieldConfigs, $keyAtPartialLevel, $configsAtPartialLevel);
+
+        return $fieldConfigs;
     }
 
     /**
