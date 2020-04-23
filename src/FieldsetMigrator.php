@@ -10,7 +10,7 @@ class FieldsetMigrator extends Migrator
     use Concerns\MigratesFile,
         Concerns\ThrowsFinalWarnings;
 
-    protected $blueprint;
+    protected $schema;
 
     /**
      * Perform migration.
@@ -20,12 +20,11 @@ class FieldsetMigrator extends Migrator
     public function migrate()
     {
         $this
-            ->parseBlueprint()
-            ->setNewPath(resource_path("blueprints/{$this->handle}.yaml"))
+            ->parseFieldset()
             ->validateUnique()
             ->migrateToBlueprintSchema()
             ->removeOldFunctionality()
-            ->saveMigratedYaml($this->blueprint)
+            ->saveMigratedSchema()
             ->throwFinalWarnings();
     }
 
@@ -34,9 +33,9 @@ class FieldsetMigrator extends Migrator
      *
      * @return $this
      */
-    protected function parseBlueprint()
+    protected function parseFieldset()
     {
-        $this->blueprint = $this->getSourceYaml("settings/fieldsets/{$this->handle}.yaml");
+        $this->schema = $this->getSourceYaml("settings/fieldsets/{$this->handle}.yaml");
 
         return $this;
     }
@@ -48,12 +47,12 @@ class FieldsetMigrator extends Migrator
      */
     protected function migrateToBlueprintSchema()
     {
-        if (isset($this->blueprint['fields'])) {
-            $this->blueprint['fields'] = $this->migrateFields($this->blueprint['fields']);
+        if (isset($this->schema['fields'])) {
+            $this->schema['fields'] = $this->migrateFields($this->schema['fields']);
         }
 
-        if (isset($this->blueprint['sections'])) {
-            $this->blueprint['sections'] = $this->migrateSections($this->blueprint['sections']);
+        if (isset($this->schema['sections'])) {
+            $this->schema['sections'] = $this->migrateSections($this->schema['sections']);
         }
 
         return $this;
@@ -265,18 +264,6 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
-     * Remove old fieldset functionality that doesn't apply to blueprints.
-     *
-     * @return $this
-     */
-    protected function removeOldFunctionality()
-    {
-        unset($this->blueprint['hide']);
-
-        return $this;
-    }
-
-    /**
      * Migrate pages field.
      *
      * @param \Illuminate\Support\Collection $config
@@ -342,6 +329,28 @@ class FieldsetMigrator extends Migrator
             ->except('type')
             ->prepend($this->getFieldtype($config), 'type')
             ->all();
+    }
+
+    /**
+     * Remove old fieldset functionality that doesn't apply to blueprints.
+     *
+     * @return $this
+     */
+    protected function removeOldFunctionality()
+    {
+        unset($this->schema['hide']);
+
+        return $this;
+    }
+
+    /**
+     * Save migrated schema.
+     *
+     * @return $this
+     */
+    protected function saveMigratedSchema()
+    {
+        return $this->saveMigratedYaml($this->schema, resource_path("blueprints/{$this->handle}.yaml"));
     }
 
     /**
