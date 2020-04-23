@@ -25,6 +25,8 @@ class MigrateSiteTest extends TestCase
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
             'assetContainers' => base_path('content/assets'),
+            'forms' => resource_path('forms'),
+            'submissions' => storage_path('forms'),
             'views' => resource_path('views'),
             'roles' => resource_path('users/roles.yaml'),
             'groups' => resource_path('users/groups.yaml'),
