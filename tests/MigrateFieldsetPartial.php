@@ -5,7 +5,7 @@ namespace Tests;
 use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
-class MigrateFieldsetPartialtest extends TestCase
+class MigrateFieldsetPartialTest extends TestCase
 {
     protected function paths($key = null)
     {
