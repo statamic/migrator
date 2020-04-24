@@ -240,7 +240,7 @@ class MigrateFieldsetTest extends TestCase
                 'author_explain_yourself' => [
                     'type' => 'text',
                     'hide_when' => [
-                        'favourite_food' => 'lasagna',
+                        'favourite_food' => ['lasagna', 'pizza'],
                         'or_favourite_colour' => 'red'
                     ]
                 ]
@@ -271,7 +271,7 @@ class MigrateFieldsetTest extends TestCase
                     'field' => [
                         'type' => 'text',
                         'hide_when_any' => [
-                            'favourite_food' => 'lasagna',
+                            'favourite_food' => 'contains_any lasagna, pizza',
                             'favourite_colour' => 'red'
                         ]
                     ]

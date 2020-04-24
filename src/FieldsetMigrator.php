@@ -179,6 +179,11 @@ class FieldsetMigrator extends Migrator
                 return [preg_replace('/^or_/', '', $field) => $condition];
             })
             ->map(function ($condition) {
+                return is_array($condition)
+                    ? 'contains_any ' . collect($condition)->implode(', ')
+                    : $condition;
+            })
+            ->map(function ($condition) {
                 return str_replace('not null', 'not empty', Str::lower($condition));
             })
             ->all();
