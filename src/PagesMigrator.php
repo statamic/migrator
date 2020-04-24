@@ -76,11 +76,9 @@ class PagesMigrator extends Migrator
      */
     protected function parsePageFolder($folder, $key = 'root')
     {
-        if (! $this->files->exists($path = "{$folder}/index.md")) {
+        if (! $page = $this->getPageInFolder($folder)) {
             return [];
         }
-
-        $page = YAML::parse($this->files->get($path));
 
         $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
@@ -100,6 +98,27 @@ class PagesMigrator extends Migrator
         data_set($this->structure, $key, $data);
 
         return $data;
+    }
+
+    /**
+     * Get page in folder.
+     *
+     * @param string $folder
+     * @return string|bool
+     */
+    protected function getPageInFolder($folder)
+    {
+        $page = collect($this->files->files($folder))
+            ->filter(function ($file) {
+                return $file->getFilenameWithoutExtension() === 'index';
+            })
+            ->first();
+
+        if (! $page) {
+            return false;
+        }
+
+        return YAML::parse($page->getContents());
     }
 
     /**

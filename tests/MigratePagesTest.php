@@ -7,32 +7,22 @@ use Statamic\Facades\Entry;
 
 class MigratePagesTest extends TestCase
 {
-    protected function path()
-    {
-        return base_path('content/collections');
-    }
-
-    protected function collectionsPath($append = null)
+    protected function path($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
-    }
-
-    protected function originalPath($append = null)
-    {
-        return collect([base_path('site/content/pages'), $append])->filter()->implode('/');
     }
 
     /** @test */
     function it_migrates_correct_collection_and_structure_files()
     {
-        $this->assertCount(1, $this->files->files($this->originalPath()));
-        $this->assertCount(5, $this->files->directories($this->originalPath()));
+        $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
+        $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
 
         $this->artisan('statamic:migrate:pages');
 
-        $this->assertFileExists($this->collectionsPath('pages.yaml'));
-        $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
-        $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
+        $this->assertFileExists($this->path('pages.yaml'));
+        $this->assertCount(10, $this->files->files($this->path('pages')));
+        $this->assertCount(0, $this->files->directories($this->path('pages')));
     }
 
     /** @test */
@@ -76,7 +66,7 @@ class MigratePagesTest extends TestCase
             ],
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlEquals($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
@@ -94,7 +84,7 @@ class MigratePagesTest extends TestCase
             ]
         ];
 
-        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlContains($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
@@ -111,7 +101,7 @@ class MigratePagesTest extends TestCase
             ],
         ];
 
-        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlContains($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
@@ -132,7 +122,7 @@ class MigratePagesTest extends TestCase
             ]
         ];
 
-        $this->assertParsedYamlContains($expected, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlContains($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
@@ -164,5 +154,26 @@ class MigratePagesTest extends TestCase
         $this->artisan('statamic:migrate:pages');
 
         $this->assertContains('contact', Entry::all()->map->slug()->all());
+    }
+
+    /** @test */
+    function it_migrates_textile_and_html_extensions()
+    {
+        $this->files->move(
+            $this->sitePath('content/pages/2.blog/index.md'),
+            $this->sitePath('content/pages/2.blog/index.textile'),
+        );
+
+        $this->files->move(
+            $this->sitePath('content/pages/3.gallery/index.md'),
+            $this->sitePath('content/pages/3.gallery/index.html'),
+        );
+
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertFileNotExists($this->path('pages/blog.textile'));
+        $this->assertFileNotExists($this->path('pages/gallery.html'));
+        $this->assertFileExists($this->path('pages/blog.md'));
+        $this->assertFileExists($this->path('pages/gallery.md'));
     }
 }

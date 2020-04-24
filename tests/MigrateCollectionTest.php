@@ -234,4 +234,25 @@ EOT
         $this->assertFileExists($this->path('favs/red-shirt.md'));
         $this->assertFileExists($this->path('favs/blue-shirt.md'));
     }
+
+    /** @test */
+    function it_migrates_textile_and_html_extensions()
+    {
+        $this->files->move(
+            $this->sitePath('content/collections/blog/2017-01-18.my-first-day.md'),
+            $this->sitePath('content/collections/blog/2017-01-18.my-first-day.textile')
+        );
+
+        $this->files->move(
+            $this->sitePath('content/collections/blog/_2017-01-19.paperwork-and-snowshoeing.md'),
+            $this->sitePath('content/collections/blog/_2017-01-19.paperwork-and-snowshoeing.html')
+        );
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertFileNotExists($this->path('blog/2017-01-18.my-first-day.textile'));
+        $this->assertFileNotExists($this->path('blog/2017-01-19.paperwork-and-snowshoeing.html'));
+        $this->assertFileExists($this->path('blog/2017-01-18.my-first-day.md'));
+        $this->assertFileExists($this->path('blog/2017-01-19.paperwork-and-snowshoeing.md'));
+    }
 }
