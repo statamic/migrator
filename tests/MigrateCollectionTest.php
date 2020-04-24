@@ -12,6 +12,19 @@ class MigrateCollectionTest extends TestCase
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
     }
 
+    private function migrateCollection($config)
+    {
+        $path = $this->sitePath('content/collections/test/folder.yaml');
+
+        $this->prepareFolder($path);
+
+        $this->files->put($path, YAML::dump($config));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'test']);
+
+        return YAML::parse($this->files->get($this->path('test.yaml')));
+    }
+
     /** @test */
     function it_can_migrate_a_collection()
     {
@@ -35,9 +48,6 @@ class MigrateCollectionTest extends TestCase
                 'post',
             ],
             'template' => 'blog/post',
-            'seo' => [
-                'description' => '@seo:content'
-            ],
             'route' => '/blog/{year}/{month}/{day}/{slug}',
             'taxonomies' => [
                 'tags',
@@ -61,6 +71,46 @@ class MigrateCollectionTest extends TestCase
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
         $this->assertParsedYamlNotHasKey('route', $this->path('blog.yaml'));
+    }
+
+    /** @test */
+    function it_wraps_non_reserved_config_with_inject()
+    {
+        $collection = $this->migrateCollection([
+            'title' => 'Blog',
+            'seo' => false,
+            'loller' => 'baller',
+        ]);
+
+        $expected = [
+            'title' => 'Blog',
+            'inject' => [
+                'seo' => false,
+                'loller' => 'baller',
+            ],
+        ];
+
+        $this->assertEquals($expected, $collection);
+    }
+
+    /** @test */
+    function it_migrates_spicey_yaml()
+    {
+        $collection = $this->migrateCollection([
+            'seo' => [
+                'description' => '@seo:content'
+            ],
+        ]);
+
+        $expected = [
+            'inject' => [
+                'seo' => [
+                    'description' => '@seo:content'
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $collection);
     }
 
     /** @test */

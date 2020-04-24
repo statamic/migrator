@@ -11,6 +11,7 @@ class CollectionMigrator extends Migrator
         Concerns\MigratesRoute,
         Concerns\MigratesFile;
 
+    protected $config;
     protected $defaultFieldset;
     protected $availableTaxonomies;
     protected $usedTaxonomies;
@@ -185,29 +186,43 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateYamlConfig()
     {
+        $reservedKeys = collect(['title', 'template']);
+
         if ($fieldset = $this->config->get('fieldset')) {
-            $this->config->put('blueprints', [$fieldset]);
             $this->config->forget('fieldset');
+            $this->config->put('blueprints', [$fieldset]);
+            $reservedKeys->push('blueprints');
         }
 
         if ($route = $this->migrateRoute("collections.{$this->handle}")) {
             $this->config->put('route', $route);
+            $reservedKeys->push('route');
         }
 
         if ($taxonomies = $this->usedTaxonomies) {
             $this->config->put('taxonomies', $taxonomies->all());
+            $reservedKeys->push('taxonomies');
         }
 
         if ($this->config->get('order') === 'date') {
             $this->config->put('date', true);
             $this->config->put('date_behavior', ['past' => 'public', 'future' => 'unlisted']);
             $this->config->put('sort_dir', 'desc');
+            $reservedKeys->push('date');
+            $reservedKeys->push('date_behavior');
+            $reservedKeys->push('sort_dir');
         }
 
         $this->config->forget('order');
 
         if ($this->entryOrder) {
             $this->config->put('structure', $this->migrateEntryOrderToStructure());
+            $reservedKeys->push('structure');
+        }
+
+        if ($injectable = $this->config->except($reservedKeys)->all()) {
+            $this->config->put('inject', $injectable);
+            $this->config->forget(array_keys($injectable));
         }
 
         $this->saveMigratedYaml($this->config, $this->newPath("../{$this->handle}.yaml"));
