@@ -7,7 +7,8 @@ use Statamic\Facades\Path;
 
 class ThemeMigrator extends Migrator
 {
-    use Concerns\MigratesFile,
+    use Concerns\GetsSettings,
+        Concerns\MigratesFile,
         Concerns\PreparesPathFolder;
 
     protected $templates;
@@ -81,7 +82,7 @@ class ThemeMigrator extends Migrator
         $relativePath = $this->convertExtension($template->getRelativePathname());
 
         if (Str::contains($originalPath, "themes/{$this->handle}/layouts")) {
-            $relativePath = 'layouts/' . $relativePath;
+            $relativePath = 'layouts/' . $this->migrateLayoutFilename($relativePath);
         } elseif (Str::contains($originalPath, "themes/{$this->handle}/partials")) {
             $relativePath = 'partials/' . $relativePath;
         }
@@ -93,6 +94,29 @@ class ThemeMigrator extends Migrator
         }
 
         return $absolutePath;
+    }
+
+    /**
+     * Attempt changing `default` layout to `layout`, if possible.
+     *
+     * @param string $filename
+     * @return string
+     */
+    protected function migrateLayoutFilename($filename)
+    {
+        if ($this->files->exists($this->sitePath("themes/{$this->handle}/layouts/layout.html"))) {
+            return $filename;
+        }
+
+        $defaultLayout = $this->getSetting('theming.default_layout', 'default');
+
+        $parts = collect(explode('.', $filename));
+
+        if ($parts->get(0) === $defaultLayout) {
+            $parts->put(0, 'layout');
+        }
+
+        return $parts->implode('.');
     }
 
     /**
