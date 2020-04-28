@@ -1,0 +1,43 @@
+name: Tests
+
+on:
+  push:
+  pull_request:
+  schedule:
+      - cron: '0 0 * * *'
+
+jobs:
+    php-tests:
+        runs-on: ${{ matrix.os }}
+
+        strategy:
+            matrix:
+                php: [7.4, 7.3, 7.2]
+                laravel: [7.*, 6.*]
+                dependency-version: [prefer-lowest, prefer-stable]
+                os: [ubuntu-latest]
+                include:
+                    - laravel: 7.*
+                      testbench: 5.*
+                    - laravel: 6.*
+                      testbench: 4.*
+
+        name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v1
+
+            - name: Setup PHP
+              uses: shivammathur/setup-php@v1
+              with:
+                  php-version: ${{ matrix.php }}
+                  coverage: none
+
+            - name: Install dependencies
+              run: |
+                  composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" ${{ matrix.additional-deps }} --no-interaction --no-update
+                  composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+
+            - name: Execute tests
+              run: vendor/bin/phpunit
