@@ -113,7 +113,7 @@ class ContentMigrator
                 $fieldConfigs = $this->importPartial(
                     Arr::get($fieldConfigs, $key),
                     $fieldConfigs,
-                    preg_replace('/(.*)\.fieldset$/', '$1', $key),
+                    preg_replace('/(.*)\.fieldset$/', '$1', $key)
                 );
             });
 
