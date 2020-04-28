@@ -4,6 +4,7 @@ namespace Tests;
 
 use Tests\TestCase;
 use Statamic\Support\Arr;
+use Statamic\Support\Str;
 use Statamic\Migrator\YAML;
 use Statamic\Migrator\Configurator;
 use Facades\Statamic\Console\Processes\Process;
@@ -563,7 +564,9 @@ EOT
      */
     protected function assertFilesystemConfigFileContains($content)
     {
-        $config = config_path('filesystems.php');
+        $configPath = config_path('filesystems.php');
+
+        $config = $this->normalizeS3Config($this->files->get($configPath));
 
         $beginning = <<<EOT
 <?php
@@ -576,17 +579,17 @@ EOT;
         $irrelevantConfig = "'default' => env('FILESYSTEM_DRIVER', 'local'),";
 
         // Assert valid PHP array.
-        $this->assertEquals('array', gettype(include $config));
+        $this->assertEquals('array', gettype(include $configPath));
 
         // Assert begining and end of config is untouched.
-        $this->assertStringContainsString($beginning, $this->files->get($config));
-        $this->assertStringContainsString($end, $this->files->get($config));
+        $this->assertStringContainsString($beginning, $config);
+        $this->assertStringContainsString($end, $config);
 
         // Assert irrelevant config is untouched.
-        $this->assertStringContainsString($irrelevantConfig, $this->files->get($config));
+        $this->assertStringContainsString($irrelevantConfig, $config);
 
         // Assert config file contains specific content.
-        return $this->assertStringContainsString($content, $this->files->get($config));
+        return $this->assertStringContainsString($content, $config);
     }
 
     /**
@@ -607,5 +610,56 @@ EOT;
     protected function assertFilesystemDiskNotExists($disk)
     {
         return $this->assertFalse(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
+    }
+
+    /**
+     * Normalize s3 config for test assertions, since there are minor variations between laravel versions.
+     *
+     * @param string $config
+     */
+    protected function normalizeS3Config($config)
+    {
+        // Laravel 7.0
+        $variants[] = <<<EOT
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+        ],
+EOT;
+
+        // Laravel 7.3
+        $variants[] = <<<EOT
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'endpoint' => env('AWS_URL'),
+        ],
+EOT;
+
+        // Current version
+        $current = <<<EOT
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+        ],
+EOT;
+
+        foreach ($variants as $variant) {
+            $config = str_replace($variant, $current, $config);
+        }
+
+        return $config;
     }
 }
