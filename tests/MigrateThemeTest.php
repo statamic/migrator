@@ -67,7 +67,7 @@ class MigrateThemeTest extends TestCase
 
         $this->files->move(
             $this->sitePath('themes/redwood/layouts/default.html'),
-            $this->sitePath('themes/redwood/layouts/custom.html'),
+            $this->sitePath('themes/redwood/layouts/custom.html')
         );
 
         $this->assertCount(0, $this->files->allFiles($this->viewsPath()));

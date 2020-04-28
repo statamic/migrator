@@ -161,12 +161,12 @@ class MigratePagesTest extends TestCase
     {
         $this->files->move(
             $this->sitePath('content/pages/2.blog/index.md'),
-            $this->sitePath('content/pages/2.blog/index.textile'),
+            $this->sitePath('content/pages/2.blog/index.textile')
         );
 
         $this->files->move(
             $this->sitePath('content/pages/3.gallery/index.md'),
-            $this->sitePath('content/pages/3.gallery/index.html'),
+            $this->sitePath('content/pages/3.gallery/index.html')
         );
 
         $this->artisan('statamic:migrate:pages');
