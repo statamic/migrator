@@ -133,4 +133,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return collect([base_path('site'), $append])->filter()->implode('/');
     }
+
+    /**
+     * @deprecated
+     */
+    public static function assertFileNotExists(string $filename, string $message = '') : void
+    {
+        method_exists(static::class, 'assertFileDoesNotExist')
+            ? static::assertFileDoesNotExist($filename, $message)
+            : parent::assertFileNotExists($filename, $message);
+    }
 }
