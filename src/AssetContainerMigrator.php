@@ -387,13 +387,15 @@ class AssetContainerMigrator extends Migrator
     {
         $this->configurator->refresh();
 
+        $envNote = $this->driver === 's3' ? ' and [.env]' : '';
+
         try {
             $this->migrateExplicitMetaData();
             $this->migrateBlankMeta();
         } catch (\Exception $exception) {
             $this->addWarning(
                 'Could not generate asset meta.',
-                "Please ensure proper configuration on [{$this->disk}] disk in [config/filesystems.php],\n" .
+                "Please ensure proper configuration on your [{$this->disk}] disk in [config/filesystems.php]{$envNote},\n" .
                 "Then run `php please migrate:asset-container {$this->handle} --meta-only` to complete meta migration."
             );
         }
