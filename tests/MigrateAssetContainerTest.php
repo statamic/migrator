@@ -571,14 +571,14 @@ EOT;
         $this->assertEquals('array', gettype(include $config));
 
         // Assert begining and end of config is untouched.
-        $this->assertContains($beginning, $this->files->get($config));
-        $this->assertContains($end, $this->files->get($config));
+        $this->assertStringContainsString($beginning, $this->files->get($config));
+        $this->assertStringContainsString($end, $this->files->get($config));
 
         // Assert irrelevant config is untouched.
-        $this->assertContains($irrelevantConfig, $this->files->get($config));
+        $this->assertStringContainsString($irrelevantConfig, $this->files->get($config));
 
         // Assert config file contains specific content.
-        return $this->assertContains($content, $this->files->get($config));
+        return $this->assertStringContainsString($content, $this->files->get($config));
     }
 
     /**

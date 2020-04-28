@@ -119,14 +119,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $actual = str_replace("\r\n", "\n", $actual);
 
-        $this->assertContains($expected, $actual);
+        $this->assertStringContainsString($expected, $actual);
     }
 
     protected function assertFileHasContent($expected, $path)
     {
         $this->assertFileExists($path);
 
-        $this->assertContains($expected, $this->files->get($path));
+        $this->assertStringContainsString($expected, $this->files->get($path));
     }
 
     protected function sitePath($append = null)

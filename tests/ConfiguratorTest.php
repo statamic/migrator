@@ -506,13 +506,13 @@ EOT;
         $this->assertEquals('array', gettype(include $path));
 
         // Assert begining and end of config is untouched.
-        $this->assertContains($beginning, $contents);
-        $this->assertContains($end, $contents);
+        $this->assertStringContainsString($beginning, $contents);
+        $this->assertStringContainsString($end, $contents);
 
         // Assert irrelevant config is untouched.
-        $this->assertContains($extraConfig, $contents);
+        $this->assertStringContainsString($extraConfig, $contents);
 
         // Assert config file contains specific content.
-        return $this->assertContains($content, $contents);
+        return $this->assertStringContainsString($content, $contents);
     }
 }

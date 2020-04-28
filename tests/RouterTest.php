@@ -155,10 +155,10 @@ EOT
 EOT;
 
         // Assert begining of routes file is untouched.
-        $this->assertContains($beginning, $contents);
+        $this->assertStringContainsString($beginning, $contents);
 
         // Assert routes file contains specific content.
-        return $this->assertContains($content, $contents);
+        return $this->assertStringContainsString($content, $contents);
     }
 
     /**
