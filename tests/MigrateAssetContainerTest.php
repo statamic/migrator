@@ -254,6 +254,7 @@ class MigrateAssetContainerTest extends TestCase
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
         'assets' => [
@@ -312,6 +313,7 @@ EOT
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
         'assets' => [
@@ -321,6 +323,7 @@ EOT
             'region' => env('ASSETS_AWS_DEFAULT_REGION'),
             'bucket' => env('ASSETS_AWS_BUCKET'),
             'url' => env('ASSETS_AWS_URL'),
+            'endpoint' => env('ASSETS_AWS_ENDPOINT'),
         ],
 
     ],
@@ -367,6 +370,7 @@ EOT
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
         'assets' => [
@@ -430,6 +434,7 @@ EOT
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
         'assets_main' => [
@@ -446,6 +451,7 @@ EOT
             'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
             'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
             'url' => env('ASSETS_CLOUD_AWS_URL'),
+            'endpoint' => env('ASSETS_CLOUD_AWS_ENDPOINT'),
         ],
 
     ],
@@ -518,6 +524,7 @@ EOT
             'region' => env('AWS_DEFAULT_REGION'),
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
         ],
 
         'assets_main' => [
@@ -534,6 +541,7 @@ EOT
             'region' => env('ASSETS_CLOUD_AWS_DEFAULT_REGION'),
             'bucket' => env('ASSETS_CLOUD_AWS_BUCKET'),
             'url' => env('ASSETS_CLOUD_AWS_URL'),
+            'endpoint' => env('ASSETS_CLOUD_AWS_ENDPOINT'),
         ],
 
     ],

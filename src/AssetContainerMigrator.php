@@ -318,6 +318,7 @@ class AssetContainerMigrator extends Migrator
             'region' => "env('{$envPrefix}_AWS_DEFAULT_REGION')",
             'bucket' => "env('{$envPrefix}_AWS_BUCKET')",
             'url' => "env('{$envPrefix}_AWS_URL')",
+            'endpoint' => "env('{$envPrefix}_AWS_ENDPOINT')",
         ];
     }
 
