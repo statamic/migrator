@@ -350,6 +350,43 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate suggest field with mode.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateSuggestFieldWithMode($config, $handle)
+    {
+        $mode = $config->get('mode');
+
+        switch (Str::snake($mode)) {
+            case 'collections':
+                return $config->put('type', 'collections')->forget('mode');
+            case 'collection':
+                return $config->put('type', 'entries')->forget('mode');
+            case 'pages':
+                return $config->put('type', 'entries')->put('collections', ['pages'])->forget('mode');
+            case 'taxonomy':
+                return $config->put('type', 'taxonomy')->forget('mode');
+            case 'form':
+                return $config->put('type', 'form')->forget('mode');
+            case 'users':
+                return $config->put('type', 'users')->forget('mode');
+            case 'user_groups':
+                return $config->put('type', 'user_groups')->forget('mode');
+        }
+
+        $this->addWarning(
+            "Suggest field [{$handle}] cannot be migrated to a relationship field!",
+            "This suggest field uses a custom [{$mode}] suggest mode.\n" .
+            "Please revise your suggest field configuration as necessary."
+        );
+
+        return $config;
+    }
+
+    /**
      * Convert partial field to import.
      *
      * @param array $config

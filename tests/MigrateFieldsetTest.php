@@ -19,15 +19,6 @@ class MigrateFieldsetTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
-    private function migrateFieldsetToBlueprint($fieldsetConfig)
-    {
-        $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
-
-        $this->artisan('statamic:migrate:fieldset', ['handle' => 'post']);
-
-        return YAML::parse($this->files->get($this->paths('new')));
-    }
-
     /** @test */
     function it_can_migrate_a_fieldset_to_a_blueprint()
     {
@@ -518,6 +509,25 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_native_mode_based_suggests_to_appropriate_relationship_fields()
+    {
+        $this->assertEquals(['type' => 'collections'], $this->migrateSuggestField(['mode' => 'collections']));
+        $this->assertEquals(['type' => 'entries'], $this->migrateSuggestField(['mode' => 'collection']));
+        $this->assertEquals(['type' => 'entries', 'collections' => ['pages']], $this->migrateSuggestField(['mode' => 'pages']));
+        $this->assertEquals(['type' => 'taxonomy'], $this->migrateSuggestField(['mode' => 'taxonomy']));
+        $this->assertEquals(['type' => 'form'], $this->migrateSuggestField(['mode' => 'form']));
+        $this->assertEquals(['type' => 'users'], $this->migrateSuggestField(['mode' => 'users']));
+        $this->assertEquals(['type' => 'user_groups'], $this->migrateSuggestField(['mode' => 'user_groups']));
+
+        // And if they referenced using studly case...
+        $this->assertEquals(['type' => 'collections'], $this->migrateSuggestField(['mode' => 'Collections']));
+        $this->assertEquals(['type' => 'user_groups'], $this->migrateSuggestField(['mode' => 'UserGroups']));
+
+        // And if it's a custom suggest mode, we'll leave it and throw a warning instead...
+        $this->assertEquals(['type' => 'suggest', 'mode' => 'colours'], $this->migrateSuggestField(['mode' => 'colours']));
+    }
+
+    /** @test */
     function it_migrates_partial_to_import()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
@@ -549,5 +559,26 @@ class MigrateFieldsetTest extends TestCase
         ];
 
         $this->assertEquals($expected, $blueprint);
+    }
+
+    private function migrateFieldsetToBlueprint($fieldsetConfig)
+    {
+        $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
+
+        $this->artisan('statamic:migrate:fieldset', ['handle' => 'post', '--force' => true]);
+
+        return YAML::parse($this->files->get($this->paths('new')));
+    }
+
+    private function migrateSuggestField($suggestConfig)
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'test_suggest' => array_merge(['type' => 'suggest'], $suggestConfig),
+            ],
+        ]);
+
+        return collect($blueprint['fields'])->first()['field'];
     }
 }
