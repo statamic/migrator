@@ -322,6 +322,34 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate suggest field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateSuggestField($config, $handle)
+    {
+        if ($config->has('mode')) {
+            return $this->migrateSuggestFieldWithMode($config, $handle);
+        }
+
+        $config->put('type', 'select');
+
+        if ($config->get('create') === true) {
+            $config
+                ->put('taggable', true)
+                ->forget('create');
+        }
+
+        if ($config->get('max_items') > 1) {
+            $config->put('multiple', true);
+        }
+
+        return $config;
+    }
+
+    /**
      * Convert partial field to import.
      *
      * @param array $config

@@ -441,6 +441,83 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_option_based_suggest_to_select()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'colours' => [
+                    'type' => 'suggest',
+                    'max_items' => 1,
+                    'create' => true,
+                    'options' => [
+                        'red' => 'Red',
+                        'blue' => 'Blue',
+                    ],
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'colours',
+                    'field' => [
+                        'type' => 'select',
+                        'max_items' => 1,
+                        'taggable' => true,
+                        'options' => [
+                            'red' => 'Red',
+                            'blue' => 'Blue',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $blueprint);
+    }
+
+    /** @test */
+    function it_migrates_option_based_suggest_to_multiple_select()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Posts',
+            'fields' => [
+                'colours' => [
+                    'type' => 'suggest',
+                    'max_items' => 3,
+                    'options' => [
+                        'red' => 'Red',
+                        'blue' => 'Blue',
+                    ],
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'colours',
+                    'field' => [
+                        'type' => 'select',
+                        'max_items' => 3,
+                        'multiple' => true,
+                        'options' => [
+                            'red' => 'Red',
+                            'blue' => 'Blue',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $blueprint);
+    }
+
+    /** @test */
     function it_migrates_partial_to_import()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
