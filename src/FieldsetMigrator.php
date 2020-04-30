@@ -344,6 +344,7 @@ class FieldsetMigrator extends Migrator
     protected function removeOldFunctionality()
     {
         unset($this->schema['hide']);
+        unset($this->schema['create_title']);
 
         return $this;
     }
