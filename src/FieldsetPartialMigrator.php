@@ -46,7 +46,7 @@ class FieldsetPartialMigrator extends FieldsetMigrator
     protected function migrateSchema()
     {
         if (! isset($this->schema['sections'])) {
-            return parent::migrateToBlueprintSchema();
+            return parent::migrateSchema();
         }
 
         $flattenedFields = collect($this->schema['sections'])->flatMap(function ($section) {
