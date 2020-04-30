@@ -29,6 +29,18 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            resource_path("blueprints/{$this->handle}.yaml")
+        ];
+    }
+
+    /**
      * Parse blueprint.
      *
      * @return $this
