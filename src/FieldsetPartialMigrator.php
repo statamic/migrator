@@ -37,4 +37,26 @@ class FieldsetPartialMigrator extends FieldsetMigrator
 
         return $this;
     }
+
+    /**
+     * Migrate v2 fieldset schema to v3 fieldset schema.
+     *
+     * @return $this
+     */
+    protected function migrateSchema()
+    {
+        if (! isset($this->schema['sections'])) {
+            return parent::migrateToBlueprintSchema();
+        }
+
+        $flattenedFields = collect($this->schema['sections'])->flatMap(function ($section) {
+            return $section['fields'] ?? [];
+        })->all();
+
+        $this->schema['fields'] = $this->migrateFields($flattenedFields);
+
+        unset($this->schema['sections']);
+
+        return $this;
+    }
 }

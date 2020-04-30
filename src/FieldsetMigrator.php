@@ -22,7 +22,7 @@ class FieldsetMigrator extends Migrator
         $this
             ->parseFieldset()
             ->validateUnique()
-            ->migrateToBlueprintSchema()
+            ->migrateSchema()
             ->removeOldFunctionality()
             ->saveMigratedSchema()
             ->throwFinalWarnings();
@@ -45,7 +45,7 @@ class FieldsetMigrator extends Migrator
      *
      * @return $this
      */
-    protected function migrateToBlueprintSchema()
+    protected function migrateSchema()
     {
         if (isset($this->schema['fields'])) {
             $this->schema['fields'] = $this->migrateFields($this->schema['fields']);

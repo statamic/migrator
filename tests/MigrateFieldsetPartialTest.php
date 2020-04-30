@@ -60,6 +60,35 @@ class MigrateFieldsetPartialTest extends TestCase
     }
 
     /** @test */
+    function it_migrates_fieldset_partial_with_sections_to_v3_fieldset()
+    {
+        $this->files->put($this->paths('old'), <<<EOT
+title: Address
+sections:
+  main:
+    display: Main
+    fields:
+      street:
+        type: text
+        display: 'Street'
+      province:
+        type: text
+        display: 'Province'
+        width: 50
+  secondary:
+    display: Secondary
+    fields:
+      country:
+        type: text
+        display: 'Country'
+        width: 50
+EOT
+);
+
+        $this->it_migrates_fieldset_partial_to_v3_fieldset();
+    }
+
+    /** @test */
     function it_migrates_fieldset_partial_to_blueprint_wrapper()
     {
         $this->assertFileNotExists($this->paths('new_blueprint'));
