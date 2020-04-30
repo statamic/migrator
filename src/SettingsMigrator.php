@@ -99,20 +99,20 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateLocales($system)
     {
-        $sites = collect($system['locales'] ?? [])
-            ->map(function ($site) {
+        $locales = $system['locales'] ?? [];
+        $defaultLocale = collect($locales)->keys()->first();
+
+        return collect($locales)
+            ->mapWithKeys(function ($site, $handle) use ($defaultLocale) {
                 return [
-                    'name' => $site['name'] ?? "config('app.name')",
-                    'locale' => $site['full'] ?? 'en_US',
-                    'url' => $site['url'],
+                    $handle === $defaultLocale ? 'default' : $handle => [
+                        'name' => $site['name'] ?? "config('app.name')",
+                        'locale' => $site['full'] ?? 'en_US',
+                        'url' => $site['url'],
+                    ]
                 ];
-            });
-
-        if ($sites->count() === 1) {
-            return ['default' => $sites->first()];
-        }
-
-        return $sites->all();
+            })
+            ->all();
     }
 
     /**
