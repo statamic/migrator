@@ -29,6 +29,18 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            resource_path("blueprints/{$this->handle}.yaml")
+        ];
+    }
+
+    /**
      * Parse blueprint.
      *
      * @return $this
@@ -307,6 +319,71 @@ class FieldsetMigrator extends Migrator
             ->put('type', 'entries')
             ->put('collections', $config->get('collection'))
             ->forget('collection');
+    }
+
+    /**
+     * Migrate suggest field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateSuggestField($config, $handle)
+    {
+        if ($config->has('mode')) {
+            return $this->migrateSuggestFieldWithMode($config, $handle);
+        }
+
+        $config->put('type', 'select');
+
+        if ($config->get('create') === true) {
+            $config
+                ->put('taggable', true)
+                ->forget('create');
+        }
+
+        if ($config->get('max_items') > 1) {
+            $config->put('multiple', true);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Migrate suggest field with mode.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateSuggestFieldWithMode($config, $handle)
+    {
+        $mode = $config->get('mode');
+
+        switch (Str::snake($mode)) {
+            case 'collections':
+                return $config->put('type', 'collections')->forget('mode');
+            case 'collection':
+                return $config->put('type', 'entries')->forget('mode');
+            case 'pages':
+                return $config->put('type', 'entries')->put('collections', ['pages'])->forget('mode');
+            case 'taxonomy':
+                return $config->put('type', 'taxonomy')->forget('mode');
+            case 'form':
+                return $config->put('type', 'form')->forget('mode');
+            case 'users':
+                return $config->put('type', 'users')->forget('mode');
+            case 'user_groups':
+                return $config->put('type', 'user_groups')->forget('mode');
+        }
+
+        $this->addWarning(
+            "Suggest field [{$handle}] cannot be migrated to a relationship field!",
+            "This suggest field uses a custom [{$mode}] suggest mode.\n" .
+            "Please revise your suggest field configuration as necessary."
+        );
+
+        return $config;
     }
 
     /**

@@ -7,6 +7,19 @@ class FieldsetPartialMigrator extends FieldsetMigrator
     protected $blueprint;
 
     /**
+     * Specify unique paths that shouldn't be overwritten.
+     *
+     * @return array
+     */
+    protected function uniquePaths()
+    {
+        return [
+            resource_path("fieldsets/{$this->handle}.yaml"),
+            resource_path("blueprints/{$this->handle}.yaml"),
+        ];
+    }
+
+    /**
      * Save migrated schema.
      *
      * @return $this
@@ -46,7 +59,7 @@ class FieldsetPartialMigrator extends FieldsetMigrator
     protected function migrateSchema()
     {
         if (! isset($this->schema['sections'])) {
-            return parent::migrateToBlueprintSchema();
+            return parent::migrateSchema();
         }
 
         $flattenedFields = collect($this->schema['sections'])->flatMap(function ($section) {
