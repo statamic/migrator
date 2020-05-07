@@ -4,3 +4,7 @@ locales:
     name: English
     full: en_US
     url: /
+  fr:
+    name: French
+    full: fr_CA
+    url: /fr/
