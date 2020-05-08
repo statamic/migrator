@@ -115,40 +115,6 @@ EOT
             'url' => '/',
         ],
 
-        'fr' => [
-            'name' => 'French',
-            'locale' => 'fr_CA',
-            'url' => '/fr/',
-        ],
-
-    ],
-EOT
-        );
-    }
-
-    /** @test */
-    function it_migrates_single_locale_to_default_site()
-    {
-        $this->files->put($this->sitePath('settings/system.yaml'), <<<EOT
-locales:
-  en:
-    name: English
-    full: en_US
-    url: /
-EOT
-        );
-
-        $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
-
-        $this->assertConfigFileContains('sites.php', <<<EOT
-    'sites' => [
-
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
     ],
 EOT
         );
