@@ -10,6 +10,8 @@ class TestCase extends \Orchestra\Testbench\TestCase
 {
     use PreparesPathFolder;
 
+    protected $siteFixture = 'site';
+
     protected function getPackageProviders($app)
     {
         return [
@@ -34,7 +36,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
             $this->prepareFolder($path);
         });
 
-        $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
+        $this->files->copyDirectory(__DIR__.'/Fixtures/'.$this->siteFixture, base_path('site'));
 
         if (! $this->files->exists(config_path('filesystems-original.php'))) {
             $this->files->copy(config_path('filesystems.php'), config_path('filesystems-original.php'));
