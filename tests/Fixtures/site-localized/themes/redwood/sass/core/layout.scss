@@ -1,0 +1,159 @@
+.regular {
+	padding: ($gap * 2) $gap / 2;
+	max-width: 700px + $gap;
+	margin: 0 auto;
+}
+
+@media all and (max-width: 700px + $gap) {
+    .regular { padding: $gap $gap/2; }
+}
+
+.hero {
+	padding-bottom: ($gap * 2);
+	position: relative;
+	margin-top: -21px;
+
+	.hero-background {
+		background-size: cover;
+		background-repeat: no-repeat;
+		height: 700px;
+		position: relative;
+
+		.overlay {
+			height: 700px;
+			width: 100%;
+			position: absolute;
+			background: rgba(0,0,0,.55);
+			z-index: 1;
+		}
+	}
+
+	header,
+	article {
+		padding: ($gap * 2) $gap / 2;
+		max-width: 700px + $gap;
+		margin: 0 auto;
+		z-index: 2;
+	}
+
+	header {
+		color: #fff;
+		position: relative;
+		text-align: center;
+		h1 {
+			margin-top: 200px;
+		}
+		h2 {
+			font-family: $font_serif;
+			font-style: italic;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+
+	.meta {
+		position: absolute;
+		width: 700px;
+		left: 50%;
+		margin: 0 0 0 -350px;
+		bottom: $gap;
+		z-index: 5;
+		text-align: center;
+
+		.avatar, .name, .length, .date {
+			display: block;
+			text-align: center;
+		}
+
+		.name {
+			color: #fff;
+			margin: 5px 0;
+			font-family: $font_serif;
+			font-style: italic;
+			font-size: 18px;
+			text-transform: normal;
+			-webkit-font-smoothing: antialiased;
+		}
+
+		img {
+			display: inline-block;
+		}
+
+		.date {
+			color: #fff;
+			margin-top: 10px;
+			-webkit-font-smoothing: antialiased;
+		}
+	}
+}
+
+section header {
+	.meta .author {
+		float: left;
+	}
+
+	.meta img {
+		float: left;
+		margin-right: 12px;
+	}
+
+	.meta a {
+		display: block;
+	}
+
+	.meta .date {
+		margin-top: 8px;
+		float: right;
+	}
+}
+
+footer.article-footer {
+	background: #fafafa;
+	padding: $gap 0;
+}
+
+.block .meta {
+	margin: 5px 0 0;
+}
+
+footer.page {
+    background: #fff;
+	padding: ($gap * 2) 0;
+	text-align: center;
+	p.copyright {
+		font-family: $font_sans;
+		font-weight: 900;
+		font-size: 14px;
+	}
+	p.tribute {
+		color: $color_light;
+		font-size: 13px;
+		text-transform: uppercase;
+		letter-spacing: .5em;
+	}
+}
+
+.section-things {
+    background: #f2f2f2;
+
+    section header {
+		padding: ($gap * 2) 0 $gap;
+		text-align: center;
+		max-width: 700px;
+		margin: 0 auto;
+		z-index: 2;
+	}
+}
+
+.read-more {
+    margin-top: $gap * 3;
+    font-family: $font_sans;
+    text-align: center;
+    display: block;
+    font-family: $font_sans;
+    color: $color_light;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .5em;
+
+    a { color: $color_mid; }
+}

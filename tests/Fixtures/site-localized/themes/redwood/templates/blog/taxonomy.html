@@ -1,0 +1,22 @@
+<section class="regular">
+
+    <header>
+        <h1>{{ title }}</h1>
+        <h2>{{ content }}</h2>
+    </header>
+
+    <article class="list">
+        {{ collection:blog taxonomy="true" paginate="true" as="posts" limit="10" }}
+            {{ if no_results }}
+                <p>No "{{ title }}" posts.</p>
+            {{ /if }}
+
+            {{ posts scope="tag" }}
+                {{ partial:block }}
+            {{ /posts }}
+
+            {{ partial:pagination }}
+        {{ /collection:blog }}
+    </article>
+
+</section>

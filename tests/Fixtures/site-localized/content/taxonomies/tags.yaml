@@ -1,0 +1,5 @@
+title: Tags
+template: blog/taxonomy
+slugs:
+  fr:
+    coffee: le-coffvefe-les-slug

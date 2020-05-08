@@ -1,0 +1,16 @@
+<section class="regular">
+
+    <header>
+        <h1>Tags</h1>
+        <h2>Blog posts filed under:</h2>
+    </header>
+
+    <article class="list">
+        <ul>
+        {{ taxonomy:tags sort="title" }}
+            <li><a href="{{ url }}">{{ title }}</a></li>
+        {{ /taxonomy:tags }}
+        </ul>
+    </article>
+
+</section>

@@ -1,0 +1,3 @@
+order: date
+fieldset: content
+template: blog/post

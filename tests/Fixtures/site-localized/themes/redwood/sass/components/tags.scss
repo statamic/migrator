@@ -1,0 +1,22 @@
+.tags {
+	display: block;
+	margin: 0 0 $gap;
+	padding: $gap 0 0;
+	list-style: none;
+}
+
+.tags li {
+	display: inline-block;
+	margin-right: 10px;
+}
+
+.tags a {
+	display: inline-block;
+	background: rgba(0,0,0,.05);
+	color: $color_mid;
+	cursor: pointer;
+	font-family: $font_sans;
+	font-size: 12px;
+	padding: 6px 10px;
+	border-radius: 2px;
+}

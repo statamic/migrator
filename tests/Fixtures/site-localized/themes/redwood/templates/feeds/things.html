@@ -1,0 +1,22 @@
+<rss version="2.0">
+    <channel>
+    {{ get_content from="/things" }}
+        <title>{{ title | cdata }}</title>
+        <link>{{ site_url }}</link>
+        <description>{{ content | cdata }}</description>
+    {{ /get_content }}
+    <lastBuildDate>{{ collection:blog limit="1" }}{{ date format="r" }}{{ /collection:blog }}</lastBuildDate>
+    <language>en-us</language>
+    <copyright>Copyright {{ current_date format='Y' }}</copyright>
+    <ttl>3600</ttl>
+    {{ collection:things }}
+    <item>
+        <title>{{ title | cdata }}</title>
+        <link>http://amzn.com/{{ amazon_id }}</link>
+        <guid>http://amzn.com/{{ amazon_id }}</guid>
+        <pubDate>{{ date format="r" }}</pubDate>
+        <description>{{ content | full_urls | cdata }}</description>
+    </item>
+    {{ /collection:things }}
+    </channel>
+</rss>

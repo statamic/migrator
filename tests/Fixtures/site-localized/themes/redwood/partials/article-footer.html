@@ -1,0 +1,12 @@
+{{ collection:next in="blog" limit="2" as="next_posts" }}
+	{{ unless no_results }}
+		<footer class="list article-footer">
+			<div class="regular">
+				<h6>Next Up <em>on the</em> Blog</h6>
+				{{ next_posts scope="tag" }}
+					{{ partial:block }}
+				{{ /next_posts }}
+			</div>
+		</footer>
+	{{ /unless }}
+{{ /collection:next }}

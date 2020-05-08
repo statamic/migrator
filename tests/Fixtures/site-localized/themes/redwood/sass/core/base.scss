@@ -1,0 +1,15 @@
+body {
+	background: #fff;
+	color: $color_dark;
+	font-family: $font_serif;
+	font-size: 18px;
+}
+
+.inline { display: inline; }
+.inline-block { display: inline-block; }
+.block { display: block; }
+
+.col-centered {
+    float: none;
+    margin: 0 auto;
+}

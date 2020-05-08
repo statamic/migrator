@@ -1,0 +1,8 @@
+{{ if paginate:total_pages > 1 }}
+    {{ paginate }}
+        <hr>
+        <p>Page {{ current_page }} of {{ total_pages }} ({{ total_results }} total entries)</p>
+    {{ /paginate }}
+
+    {{ paginate:auto_links }}
+{{ /if }}
