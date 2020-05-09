@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Arr;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
+use Statamic\Support\Arr;
 
 class SettingsMigrator extends Migrator
 {
@@ -64,7 +64,7 @@ class SettingsMigrator extends Migrator
         $routes = $this->parseSettingsFile('routes.yaml');
 
         if (Router::file('web.php')->has($routes) && ! $this->overwrite) {
-            throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
+            throw new MigratorSkippedException('Routes file [routes/web.php] has already been modified.');
         }
 
         Router::file('web.php')
@@ -109,7 +109,7 @@ class SettingsMigrator extends Migrator
                         'name' => $site['name'] ?? "config('app.name')",
                         'locale' => $site['full'] ?? 'en_US',
                         'url' => $site['url'],
-                    ]
+                    ],
                 ];
             })
             ->all();
@@ -140,7 +140,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateSingle()
     {
-        $migrateMethod = 'migrate' . ucfirst($this->handle);
+        $migrateMethod = 'migrate'.ucfirst($this->handle);
 
         return $this->{$migrateMethod}();
     }

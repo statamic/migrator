@@ -2,10 +2,8 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\YAML;
 use Statamic\Migrator\ContentMigrator;
-use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\YAML;
 
 class ContentMigratorTest extends TestCase
 {
@@ -21,7 +19,7 @@ class ContentMigratorTest extends TestCase
 
     private function addFieldset($handle, $fieldsetConfig)
     {
-        $this->files->put($this->paths('fieldsets') . "/{$handle}.yaml", YAML::dump($fieldsetConfig));
+        $this->files->put($this->paths('fieldsets')."/{$handle}.yaml", YAML::dump($fieldsetConfig));
 
         return $this;
     }
@@ -33,9 +31,9 @@ class ContentMigratorTest extends TestCase
         $fieldset = $rawFieldset ? $fields : [
             'sections' => [
                 'main' => [
-                    'fields' => $fields
-                ]
-            ]
+                    'fields' => $fields,
+                ],
+            ],
         ];
 
         $this->files->put($this->paths('speaker'), YAML::dump($fieldset));
@@ -179,8 +177,8 @@ class ContentMigratorTest extends TestCase
                                                 ],
                                             ],
                                         ],
-                                    ]
-                                ]
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -219,7 +217,7 @@ class ContentMigratorTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $content);
@@ -278,7 +276,7 @@ class ContentMigratorTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
         ];
 
         $this->assertEquals($expected, $content);

@@ -25,7 +25,7 @@ class MigratorErrorException extends Exception
      */
     protected function ensureRelativePath($path)
     {
-        return str_replace(base_path() . '/', '', Path::resolve($path));
+        return str_replace(base_path().'/', '', Path::resolve($path));
     }
 
     /**
@@ -37,6 +37,6 @@ class MigratorErrorException extends Exception
      */
     protected function injectPathInMessage($message, $path)
     {
-        return str_replace('[path]', '[' . $this->ensureRelativePath($path) . ']', $message);
+        return str_replace('[path]', '['.$this->ensureRelativePath($path).']', $message);
     }
 }

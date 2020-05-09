@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
 class MigrateFieldsetTest extends TestCase
@@ -20,20 +19,20 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_fieldset_to_a_blueprint()
+    public function it_can_migrate_a_fieldset_to_a_blueprint()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
                     'type' => 'text',
-                    'width' => 50
+                    'width' => 50,
                 ],
                 'slug' => [
                     'type' => 'text',
-                    'width' => 50
-                ]
-            ]
+                    'width' => 50,
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -43,30 +42,30 @@ class MigrateFieldsetTest extends TestCase
                     'handle' => 'title',
                     'field' => [
                         'type' => 'text',
-                        'width' => 50
-                    ]
+                        'width' => 50,
+                    ],
                 ],
                 [
                     'handle' => 'slug',
                     'field' => [
                         'type' => 'text',
-                        'width' => 50
-                    ]
-                ]
-            ]
+                        'width' => 50,
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_assumes_type_text()
+    public function it_assumes_type_text()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
-                    'width' => 50
-                ]
-            ]
+                    'width' => 50,
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -76,15 +75,15 @@ class MigrateFieldsetTest extends TestCase
                     'handle' => 'title',
                     'field' => [
                         'type' => 'text',
-                        'width' => 50
-                    ]
-                ]
-            ]
+                        'width' => 50,
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_can_migrate_nested_fields()
+    public function it_can_migrate_nested_fields()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
@@ -93,14 +92,14 @@ class MigrateFieldsetTest extends TestCase
                     'type' => 'grid',
                     'fields' => [
                         'label' => [
-                            'type' => 'text'
+                            'type' => 'text',
                         ],
                         'cost' => [
-                            'type' => 'currency'
-                        ]
-                    ]
-                ]
-            ]
+                            'type' => 'currency',
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -114,24 +113,24 @@ class MigrateFieldsetTest extends TestCase
                             [
                                 'handle' => 'label',
                                 'field' => [
-                                    'type' => 'text'
-                                ]
+                                    'type' => 'text',
+                                ],
                             ],
                             [
                                 'handle' => 'cost',
                                 'field' => [
-                                    'type' => 'currency'
-                                ]
+                                    'type' => 'currency',
+                                ],
                             ],
-                        ]
-                    ]
-                ]
-            ]
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_can_migrate_nested_sets_of_fields()
+    public function it_can_migrate_nested_sets_of_fields()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
@@ -142,16 +141,16 @@ class MigrateFieldsetTest extends TestCase
                         'main' => [
                             'fields' => [
                                 'label' => [
-                                    'type' => 'text'
+                                    'type' => 'text',
                                 ],
                                 'cost' => [
-                                    'type' => 'currency'
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                    'type' => 'currency',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -167,35 +166,35 @@ class MigrateFieldsetTest extends TestCase
                                     [
                                         'handle' => 'label',
                                         'field' => [
-                                            'type' => 'text'
-                                        ]
+                                            'type' => 'text',
+                                        ],
                                     ],
                                     [
                                         'handle' => 'cost',
                                         'field' => [
-                                            'type' => 'currency'
-                                        ]
+                                            'type' => 'currency',
+                                        ],
                                     ],
-                                ]
-                            ]
-                        ]
-                    ]
-                ]
-            ]
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_field_type_first()
+    public function it_migrates_field_type_first()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
                     'width' => 50,
-                    'type' => 'text'
-                ]
-            ]
+                    'type' => 'text',
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -205,15 +204,15 @@ class MigrateFieldsetTest extends TestCase
                     'handle' => 'title',
                     'field' => [
                         'type' => 'text',
-                        'width' => 50
-                    ]
-                ]
-            ]
+                        'width' => 50,
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_field_conditions()
+    public function it_migrates_field_conditions()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Post',
@@ -221,21 +220,21 @@ class MigrateFieldsetTest extends TestCase
                 'author_name' => [
                     'type' => 'text',
                     'show_when' => [
-                        'has_author' => 'not null'
+                        'has_author' => 'not null',
                     ],
                 ],
                 'author_address' => [
                     'type' => 'text',
-                    'show_when' => 'myCustomConditionMethod'
+                    'show_when' => 'myCustomConditionMethod',
                 ],
                 'author_explain_yourself' => [
                     'type' => 'text',
                     'hide_when' => [
                         'favourite_food' => ['lasagna', 'pizza'],
-                        'or_favourite_colour' => 'red'
-                    ]
-                ]
-            ]
+                        'or_favourite_colour' => 'red',
+                    ],
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -246,16 +245,16 @@ class MigrateFieldsetTest extends TestCase
                     'field' => [
                         'type' => 'text',
                         'show_when' => [
-                            'has_author' => 'not empty'
-                        ]
-                    ]
+                            'has_author' => 'not empty',
+                        ],
+                    ],
                 ],
                 [
                     'handle' => 'author_address',
                     'field' => [
                         'type' => 'text',
-                        'show_when' => 'myCustomConditionMethod'
-                    ]
+                        'show_when' => 'myCustomConditionMethod',
+                    ],
                 ],
                 [
                     'handle' => 'author_explain_yourself',
@@ -263,16 +262,16 @@ class MigrateFieldsetTest extends TestCase
                         'type' => 'text',
                         'hide_when_any' => [
                             'favourite_food' => 'contains_any lasagna, pizza',
-                            'favourite_colour' => 'red'
-                        ]
-                    ]
-                ]
-            ]
+                            'favourite_colour' => 'red',
+                        ],
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_removes_hide_setting()
+    public function it_removes_hide_setting()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Gallery',
@@ -280,9 +279,9 @@ class MigrateFieldsetTest extends TestCase
             'fields' => [
                 'title' => [
                     'type' => 'text',
-                    'width' => 50
-                ]
-            ]
+                    'width' => 50,
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -292,23 +291,23 @@ class MigrateFieldsetTest extends TestCase
                     'handle' => 'title',
                     'field' => [
                         'type' => 'text',
-                        'width' => 50
-                    ]
-                ]
-            ]
+                        'width' => 50,
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_redactor_to_bard()
+    public function it_migrates_redactor_to_bard()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',
             'fields' => [
                 'content' => [
                     'type' => 'redactor',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -320,19 +319,19 @@ class MigrateFieldsetTest extends TestCase
                         'type' => 'bard',
                         'save_html' => true,
                         'buttons' => ['bold', 'italic', 'unorderedlist', 'orderedlist', 'html', 'quote', 'codeblock', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'anchor'],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_redactor_with_custom_settings_to_bard()
+    public function it_migrates_redactor_with_custom_settings_to_bard()
     {
         $this->files->put($this->paths('system'), YAML::dump([
             'redactor' => [
                 ['name' => 'Custom', 'settings' => ['buttons' => ['unorderedlist', 'orderedlist', 'h1']]],
-            ]
+            ],
         ]));
 
         $blueprint = $this->migrateFieldsetToBlueprint([
@@ -342,8 +341,8 @@ class MigrateFieldsetTest extends TestCase
                     'type' => 'redactor',
                     'settings' => 'Custom',
                     'container' => 'main',
-                ]
-            ]
+                ],
+            ],
         ]);
 
         $this->assertEquals($blueprint, [
@@ -356,14 +355,14 @@ class MigrateFieldsetTest extends TestCase
                         'save_html' => true,
                         'container' => 'main',
                         'buttons' => ['unorderedlist', 'orderedlist', 'h1', 'image'],
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_pages_to_entries()
+    public function it_migrates_pages_to_entries()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',
@@ -395,7 +394,7 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_collection_to_entries()
+    public function it_migrates_collection_to_entries()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',
@@ -432,7 +431,7 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_option_based_suggest_to_select()
+    public function it_migrates_option_based_suggest_to_select()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',
@@ -471,7 +470,7 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_option_based_suggest_to_multiple_select()
+    public function it_migrates_option_based_suggest_to_multiple_select()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',
@@ -509,7 +508,7 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_native_mode_based_suggests_to_appropriate_relationship_fields()
+    public function it_migrates_native_mode_based_suggests_to_appropriate_relationship_fields()
     {
         $this->assertEquals(['type' => 'collections'], $this->migrateSuggestField(['mode' => 'collections']));
         $this->assertEquals(['type' => 'entries'], $this->migrateSuggestField(['mode' => 'collection']));
@@ -528,7 +527,7 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_partial_to_import()
+    public function it_migrates_partial_to_import()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
             'title' => 'Posts',

@@ -4,7 +4,6 @@ namespace Statamic\Migrator;
 
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {

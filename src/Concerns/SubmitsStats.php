@@ -3,8 +3,8 @@
 namespace Statamic\Migrator\Concerns;
 
 use Exception;
-use Zttp\Zttp;
 use Statamic\Support\Str;
+use Zttp\Zttp;
 
 trait SubmitsStats
 {
@@ -23,7 +23,7 @@ trait SubmitsStats
             $stats['command'] = str_replace('statamic:', '', $stats['command']);
 
             Zttp::timeout(3)->post('https://outpost.statamic.com/v3/migrator-stats', array_merge([
-                'app' => md5(base_path())
+                'app' => md5(base_path()),
             ], $stats));
         } catch (Exception $exception) {
             //

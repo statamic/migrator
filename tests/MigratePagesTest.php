@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Facades\Entry;
 
 class MigratePagesTest extends TestCase
@@ -13,7 +12,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_correct_collection_and_structure_files()
+    public function it_migrates_correct_collection_and_structure_files()
     {
         $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
         $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
@@ -26,7 +25,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_yaml_config()
+    public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:pages');
 
@@ -46,7 +45,7 @@ class MigratePagesTest extends TestCase
                         'children' => [
                             ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
                             ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
-                        ]
+                        ],
                     ],
                     ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
                     [
@@ -55,14 +54,14 @@ class MigratePagesTest extends TestCase
                             [
                                 'entry' => '1a45dfed-9d06-4493-83b1-dffe2522cbe7',
                                 'children' => [
-                                    ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b']
-                                ]
-                            ]
-                        ]
+                                    ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b'],
+                                ],
+                            ],
+                        ],
                     ],
                     ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
-                    ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7']
-                ]
+                    ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7'],
+                ],
             ],
         ];
 
@@ -70,7 +69,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_used_fieldsets_if_cannot_find_fieldsets_in_site()
+    public function it_migrates_used_fieldsets_if_cannot_find_fieldsets_in_site()
     {
         $this->files->deleteDirectory(base_path('site/settings/fieldsets'));
 
@@ -81,14 +80,14 @@ class MigratePagesTest extends TestCase
                 'home',
                 'about',
                 'gallery',
-            ]
+            ],
         ];
 
         $this->assertParsedYamlContains($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
-    function it_migrates_structure_if_there_are_no_pages()
+    public function it_migrates_structure_if_there_are_no_pages()
     {
         $this->files->cleanDirectory(base_path('site/content/pages'));
 
@@ -97,7 +96,7 @@ class MigratePagesTest extends TestCase
         $expected = [
             'structure' => [
                 'root' => true,
-                'tree' => []
+                'tree' => [],
             ],
         ];
 
@@ -105,7 +104,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_structure_if_only_home_page_exists()
+    public function it_migrates_structure_if_only_home_page_exists()
     {
         collect($this->files->directories($this->sitePath('content/pages')))->each(function ($directory) {
             $this->files->deleteDirectory($directory);
@@ -118,15 +117,15 @@ class MigratePagesTest extends TestCase
                 'root' => true,
                 'tree' => [
                     ['entry' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->assertParsedYamlContains($expected, $this->path('pages.yaml'));
     }
 
     /** @test */
-    function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
+    public function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
     {
         $this->artisan('statamic:migrate:pages');
 
@@ -147,7 +146,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_pages_without_order()
+    public function it_migrates_pages_without_order()
     {
         $this->files->moveDirectory($this->sitePath('content/pages/5.contact'), $this->sitePath('content/pages/contact'));
 
@@ -157,7 +156,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_textile_and_html_extensions()
+    public function it_migrates_textile_and_html_extensions()
     {
         $this->files->move(
             $this->sitePath('content/pages/2.blog/index.md'),

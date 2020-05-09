@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
 class MigrateCollectionTest extends TestCase
@@ -26,7 +25,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_collection()
+    public function it_can_migrate_a_collection()
     {
         $this->assertFileNotExists($this->path('blog'));
         $this->assertFileNotExists($this->path('blog.yaml'));
@@ -39,7 +38,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_yaml_config()
+    public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
@@ -64,7 +63,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_without_a_route()
+    public function it_migrates_without_a_route()
     {
         $this->files->delete($this->sitePath('settings/routes.yaml'));
 
@@ -74,7 +73,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_wraps_non_reserved_config_with_inject()
+    public function it_wraps_non_reserved_config_with_inject()
     {
         $collection = $this->migrateCollection([
             'title' => 'Blog',
@@ -94,18 +93,18 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_spicey_yaml()
+    public function it_migrates_spicey_yaml()
     {
         $collection = $this->migrateCollection([
             'seo' => [
-                'description' => '@seo:content'
+                'description' => '@seo:content',
             ],
         ]);
 
         $expected = [
             'inject' => [
                 'seo' => [
-                    'description' => '@seo:content'
+                    'description' => '@seo:content',
                 ],
             ],
         ];
@@ -114,7 +113,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_entry()
+    public function it_migrates_entry()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
@@ -126,7 +125,7 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_a_draft_entry()
+    public function it_migrates_a_draft_entry()
     {
         $draftPath = 'blog/_2017-01-19.paperwork-and-snowshoeing.md';
         $path = 'blog/2017-01-19.paperwork-and-snowshoeing.md';
@@ -141,11 +140,11 @@ class MigrateCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_entry_content_as_document_content()
+    public function it_migrates_entry_content_as_document_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $expected = <<<EOT
+        $expected = <<<'EOT'
 id: f5c18e4c-4d51-4fc6-ab52-b7afe5116b3a
 ---
 Let me first explain myself. I am not a brave person by nature.
@@ -155,12 +154,12 @@ EOT;
     }
 
     /** @test */
-    function it_can_migrate_multiple_taxonomies_onto_collection()
+    public function it_can_migrate_multiple_taxonomies_onto_collection()
     {
         $path = $this->sitePath('content/collections/blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md');
         $entry = $this->files->get($path);
 
-        $entry = str_replace('---', <<<EOT
+        $entry = str_replace('---', <<<'EOT'
 colours:
   - red
   - blue
@@ -176,7 +175,7 @@ EOT
     }
 
     /** @test */
-    function it_will_not_migrate_taxonomies_if_none_are_referenced()
+    public function it_will_not_migrate_taxonomies_if_none_are_referenced()
     {
         collect($this->files->allFiles($this->sitePath('content/collections/blog')))->each(function ($entry) {
             $this->files->put($entry->getPathname(), str_replace('tags:', 'not_tags:', $entry->getContents()));
@@ -188,7 +187,7 @@ EOT
     }
 
     /** @test */
-    function it_can_migrate_if_taxonomies_are_missing()
+    public function it_can_migrate_if_taxonomies_are_missing()
     {
         $this->files->deleteDirectory($this->sitePath('content/taxonomies'));
 
@@ -198,7 +197,7 @@ EOT
     }
 
     /** @test */
-    function it_will_not_migrate_date_settings_if_none_are_referenced()
+    public function it_will_not_migrate_date_settings_if_none_are_referenced()
     {
         $path = $this->sitePath('content/collections/blog/folder.yaml');
 
@@ -212,7 +211,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_number_ordered_collection()
+    public function it_migrates_number_ordered_collection()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'favs']);
 
@@ -226,8 +225,8 @@ EOT
                 'tree' => [
                     ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
                     ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
-                ]
-            ]
+                ],
+            ],
         ];
 
         $this->assertParsedYamlEquals($expectedConfig, $this->path('favs.yaml'));
@@ -236,7 +235,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_textile_and_html_extensions()
+    public function it_migrates_textile_and_html_extensions()
     {
         $this->files->move(
             $this->sitePath('content/collections/blog/2017-01-18.my-first-day.md'),

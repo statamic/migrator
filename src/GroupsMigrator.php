@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
+use Statamic\Support\Str;
 
 class GroupsMigrator extends Migrator
 {
@@ -38,10 +38,10 @@ class GroupsMigrator extends Migrator
         }
 
         $currentGroups = $this->files->get($this->newPath());
-        $defaultGroups = $this->files->get("vendor/statamic/cms/resources/users/groups.yaml");
+        $defaultGroups = $this->files->get('vendor/statamic/cms/resources/users/groups.yaml');
 
         if ($currentGroups !== $defaultGroups) {
-            throw new MigratorSkippedException("Groups file [resources/users/groups.yaml] has already been modified.");
+            throw new MigratorSkippedException('Groups file [resources/users/groups.yaml] has already been modified.');
         }
 
         return $this;

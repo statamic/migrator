@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Providers\AddonServiceProvider;
 use Illuminate\Console\Application as Artisan;
+use Statamic\Providers\AddonServiceProvider;
 
 class ServiceProvider extends AddonServiceProvider
 {

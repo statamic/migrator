@@ -2,9 +2,9 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Support\Arr;
-use Statamic\Migrator\YAML;
 use Illuminate\Support\Facades\File;
+use Statamic\Migrator\YAML;
+use Statamic\Support\Arr;
 
 trait GetsSettings
 {

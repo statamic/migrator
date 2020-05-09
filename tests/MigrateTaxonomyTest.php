@@ -2,9 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\YAML;
-
 class MigrateTaxonomyTest extends TestCase
 {
     protected function path($append = null)
@@ -13,7 +10,7 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_taxonomy()
+    public function it_can_migrate_a_taxonomy()
     {
         $this->assertFileNotExists($this->path('tags'));
         $this->assertFileNotExists($this->path('tags.yaml'));
@@ -25,7 +22,7 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_yaml_config()
+    public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
@@ -41,7 +38,7 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_without_a_route()
+    public function it_migrates_without_a_route()
     {
         $this->files->delete($this->sitePath('settings/routes.yaml'));
 
@@ -51,7 +48,7 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_without_a_terms_folder()
+    public function it_migrates_without_a_terms_folder()
     {
         $this->files->deleteDirectory($this->sitePath('content/taxonomies/tags'));
 
@@ -61,11 +58,11 @@ class MigrateTaxonomyTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_term_content_under_content_key()
+    public function it_migrates_term_content_under_content_key()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $expected = <<<EOT
+        $expected = <<<'EOT'
 title: spring
 content: 'Spring has sprung!'
 
@@ -75,7 +72,7 @@ EOT;
     }
 
     /** @test */
-    function it_migrates_into_empty_terms_folder_without_complaining()
+    public function it_migrates_into_empty_terms_folder_without_complaining()
     {
         $this->files->makeDirectory($this->path('tags'));
 
@@ -89,7 +86,7 @@ EOT;
     }
 
     /** @test */
-    function it_wont_migrate_into_a_populated_terms_folder()
+    public function it_wont_migrate_into_a_populated_terms_folder()
     {
         $this->files->makeDirectory($this->path('tags'));
         $this->files->put($this->path('tags/llamas.yaml'), '');

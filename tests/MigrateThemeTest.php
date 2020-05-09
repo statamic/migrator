@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-
 class MigrateThemeTest extends TestCase
 {
     protected function path()
@@ -22,7 +20,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_views()
+    public function it_migrates_views()
     {
         $this->assertCount(0, $this->files->allFiles($this->viewsPath()));
 
@@ -50,7 +48,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_default_layout()
+    public function it_migrates_default_layout()
     {
         $this->assertCount(0, $this->files->allFiles($this->viewsPath()));
 
@@ -61,7 +59,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_custom_default_layout()
+    public function it_migrates_custom_default_layout()
     {
         $this->files->put($this->sitePath('settings/theming.yaml'), 'default_layout: custom');
 
@@ -80,7 +78,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_leaves_blade_extension_alone()
+    public function it_leaves_blade_extension_alone()
     {
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
 
@@ -88,7 +86,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_theme_partial_tags()
+    public function it_migrates_theme_partial_tags()
     {
         $this->assertFileHasContent('{{ theme:partial src="nav" }}', $this->redwoodPath('layouts/default.html'));
 
@@ -98,7 +96,7 @@ class MigrateThemeTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_blade_global_modify_calls()
+    public function it_migrates_blade_global_modify_calls()
     {
         $this->assertFileHasContent('{{ modify($content)->striptags() }}', $this->redwoodPath('templates/not-antlers.blade.php'));
 

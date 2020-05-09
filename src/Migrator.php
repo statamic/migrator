@@ -2,11 +2,10 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
-use Statamic\Facades\Path;
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Support\Str;
 
 abstract class Migrator
 {
@@ -161,7 +160,7 @@ abstract class Migrator
     protected function uniquePaths()
     {
         return [
-            $this->newPath
+            $this->newPath,
         ];
     }
 

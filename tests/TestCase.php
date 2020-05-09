@@ -2,9 +2,9 @@
 
 namespace Tests;
 
-use Statamic\Migrator\YAML;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Migrator\Concerns\PreparesPathFolder;
+use Statamic\Migrator\YAML;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -16,7 +16,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             \Statamic\Providers\StatamicServiceProvider::class,
-            \Statamic\Migrator\ServiceProvider::class
+            \Statamic\Migrator\ServiceProvider::class,
         ];
     }
 

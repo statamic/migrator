@@ -36,7 +36,7 @@ class FieldsetMigrator extends Migrator
     protected function uniquePaths()
     {
         return [
-            resource_path("blueprints/{$this->handle}.yaml")
+            resource_path("blueprints/{$this->handle}.yaml"),
         ];
     }
 
@@ -145,7 +145,7 @@ class FieldsetMigrator extends Migrator
 
         $fieldtype = $config['type'] ?? 'text';
 
-        $migrateMethod = 'migrate' . ucfirst(strtolower($fieldtype)) . 'Field';
+        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
 
         if (method_exists($this, $migrateMethod)) {
             $config = $this->{$migrateMethod}($config, $handle);
@@ -192,7 +192,7 @@ class FieldsetMigrator extends Migrator
             })
             ->map(function ($condition) {
                 return is_array($condition)
-                    ? 'contains_any ' . collect($condition)->implode(', ')
+                    ? 'contains_any '.collect($condition)->implode(', ')
                     : $condition;
             })
             ->map(function ($condition) {
@@ -217,8 +217,8 @@ class FieldsetMigrator extends Migrator
     {
         $this->addWarning(
             "Redactor field [{$handle}] has been migrated to bard.",
-            "Not all redactor features and settings are bard-compatible.\n" .
-            "Please revise your bard configuration as necessary."
+            "Not all redactor features and settings are bard-compatible.\n".
+            'Please revise your bard configuration as necessary.'
         );
 
         return $config
@@ -291,8 +291,8 @@ class FieldsetMigrator extends Migrator
     {
         $this->addWarning(
             "Pages field [{$handle}] has been migrated to an entries field.",
-            "Not all config features and settings are compatible.\n" .
-            "Please revise your entries field configuration as necessary."
+            "Not all config features and settings are compatible.\n".
+            'Please revise your entries field configuration as necessary.'
         );
 
         return $config
@@ -311,8 +311,8 @@ class FieldsetMigrator extends Migrator
     {
         $this->addWarning(
             "Collection field [{$handle}] has been migrated to an entries field.",
-            "Not all config features and settings are compatible.\n" .
-            "Please revise your entries field configuration as necessary."
+            "Not all config features and settings are compatible.\n".
+            'Please revise your entries field configuration as necessary.'
         );
 
         return $config
@@ -379,8 +379,8 @@ class FieldsetMigrator extends Migrator
 
         $this->addWarning(
             "Suggest field [{$handle}] cannot be migrated to a relationship field!",
-            "This suggest field uses a custom [{$mode}] suggest mode.\n" .
-            "Please revise your suggest field configuration as necessary."
+            "This suggest field uses a custom [{$mode}] suggest mode.\n".
+            'Please revise your suggest field configuration as necessary.'
         );
 
         return $config;
@@ -395,7 +395,7 @@ class FieldsetMigrator extends Migrator
     protected function convertPartialFieldToImport($config)
     {
         return [
-            'import' => $config['fieldset']
+            'import' => $config['fieldset'],
         ];
     }
 

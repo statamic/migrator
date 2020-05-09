@@ -2,28 +2,28 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Facades\Path;
-use Statamic\Migrator\Concerns;
-use Statamic\Console\RunsInPlease;
-use Statamic\Migrator\FormMigrator;
-use Statamic\Migrator\UserMigrator;
-use Statamic\Migrator\PagesMigrator;
-use Statamic\Migrator\RolesMigrator;
-use Statamic\Migrator\ThemeMigrator;
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\GroupsMigrator;
-use Statamic\Migrator\FieldsetMigrator;
-use Statamic\Migrator\SettingsMigrator;
-use Statamic\Migrator\TaxonomyMigrator;
-use Statamic\Migrator\GlobalSetMigrator;
-use Statamic\Migrator\CollectionMigrator;
+use Statamic\Console\RunsInPlease;
+use Statamic\Facades\Path;
 use Statamic\Migrator\AssetContainerMigrator;
-use Statamic\Migrator\FieldsetPartialMigrator;
-use Symfony\Component\Console\Input\InputOption;
+use Statamic\Migrator\CollectionMigrator;
+use Statamic\Migrator\Concerns;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Migrator\Exceptions\MigratorWarningsException;
+use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\FieldsetPartialMigrator;
+use Statamic\Migrator\FormMigrator;
+use Statamic\Migrator\GlobalSetMigrator;
+use Statamic\Migrator\GroupsMigrator;
+use Statamic\Migrator\PagesMigrator;
+use Statamic\Migrator\RolesMigrator;
+use Statamic\Migrator\SettingsMigrator;
+use Statamic\Migrator\TaxonomyMigrator;
+use Statamic\Migrator\ThemeMigrator;
+use Statamic\Migrator\UserMigrator;
+use Symfony\Component\Console\Input\InputOption;
 
 class MigrateSite extends Command
 {
@@ -110,7 +110,7 @@ class MigrateSite extends Command
             $this->submitStats();
         }
 
-        $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
+        $this->line('<info>Site migration complete:</info> '.$this->getStats()->implode(', '));
     }
 
     /**
@@ -422,8 +422,8 @@ class MigrateSite extends Command
     {
         return collect([
             "{$this->skippedCount} skipped",
-            "{$this->errorCount} " . ($this->errorCount == 1 ? 'error' : 'errors'),
-            "{$this->warningCount} " . ($this->warningCount == 1 ? 'warning' : 'warnings'),
+            "{$this->errorCount} ".($this->errorCount == 1 ? 'error' : 'errors'),
+            "{$this->warningCount} ".($this->warningCount == 1 ? 'warning' : 'warnings'),
             "{$this->successCount} successful",
         ]);
     }

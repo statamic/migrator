@@ -2,10 +2,9 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Support\Str;
 use Statamic\Facades\Path;
-use Statamic\Migrator\YAML;
 use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Migrator\YAML;
 
 trait MigratesFile
 {

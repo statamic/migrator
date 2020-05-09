@@ -2,11 +2,9 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Facades\Path;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Facades\Path;
-use Statamic\Migrator\YAML;
-use Statamic\Migrator\Exceptions\AlreadyExistsException;
 
 class PagesMigrator extends Migrator
 {
@@ -24,7 +22,7 @@ class PagesMigrator extends Migrator
     public function migrate()
     {
         $this
-            ->setNewPath(base_path("content/collections/pages"))
+            ->setNewPath(base_path('content/collections/pages'))
             ->validateUnique()
             ->parseTree()
             ->createYamlConfig()

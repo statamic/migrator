@@ -3,7 +3,6 @@
 namespace Statamic\Migrator;
 
 use Illuminate\Support\Facades\Validator;
-use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Migrator\Exceptions\InvalidEmailException;
 
 class UserMigrator extends Migrator

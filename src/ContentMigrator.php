@@ -3,7 +3,6 @@
 namespace Statamic\Migrator;
 
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
@@ -138,7 +137,7 @@ class ContentMigrator
             return array_merge($fieldConfigs, $partialFieldConfigs);
         }
 
-        $keyAtPartialLevel = preg_replace('/(.*)\..*$/', "$1", $originalKey);
+        $keyAtPartialLevel = preg_replace('/(.*)\..*$/', '$1', $originalKey);
         $configsAtPartialLevel = Arr::get($fieldConfigs, $keyAtPartialLevel, []);
         $configsAtPartialLevel = array_merge($configsAtPartialLevel, $partialFieldConfigs);
 
@@ -173,7 +172,7 @@ class ContentMigrator
         $config = $config ?? $this->getFieldConfig($handle);
         $fieldtype = $this->getFieldtype($config);
 
-        $migrateMethod = 'migrate' . ucfirst(strtolower($fieldtype)) . 'Field';
+        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
 
         if (method_exists($this, $migrateMethod)) {
             return $this->{$migrateMethod}($handle, $value, $config);

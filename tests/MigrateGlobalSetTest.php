@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
 class MigrateGlobalSetTest extends TestCase
@@ -31,7 +30,7 @@ class MigrateGlobalSetTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_global_set()
+    public function it_can_migrate_a_global_set()
     {
         $set = $this->migrateGlobalSet([
             'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
@@ -48,12 +47,12 @@ class MigrateGlobalSetTest extends TestCase
             'data' => [
                 'site_title' => 'Frederick\'s Swap Shop',
                 'author' => 'Frederick Schwap',
-            ]
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_default_fieldset()
+    public function it_migrates_default_fieldset()
     {
         $set = $this->migrateGlobalSet([
             'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',

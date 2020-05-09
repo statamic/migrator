@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
 class MigrateLocalizedCollectionTest extends TestCase
@@ -28,7 +27,7 @@ class MigrateLocalizedCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_collection()
+    public function it_can_migrate_a_collection()
     {
         $this->assertFileNotExists($this->path('blog'));
         $this->assertFileNotExists($this->path('blog.yaml'));
@@ -49,7 +48,7 @@ class MigrateLocalizedCollectionTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_yaml_config()
+    public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 

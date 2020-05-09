@@ -43,8 +43,8 @@ class FieldsetPartialMigrator extends FieldsetMigrator
             ->forget('sections')
             ->put('fields', [
                 [
-                    'import' => $this->handle
-                ]
+                    'import' => $this->handle,
+                ],
             ])
             ->all();
 

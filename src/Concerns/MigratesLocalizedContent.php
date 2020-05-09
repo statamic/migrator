@@ -2,9 +2,6 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Migrator\ContentMigrator;
-use Statamic\Support\Str;
-
 trait MigratesLocalizedContent
 {
     use GetsSettings;

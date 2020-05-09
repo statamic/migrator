@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
 use Statamic\Facades\Path;
+use Statamic\Support\Str;
 
 class ThemeMigrator extends Migrator
 {
@@ -82,9 +82,9 @@ class ThemeMigrator extends Migrator
         $relativePath = $this->convertExtension($template->getRelativePathname());
 
         if (Str::contains($originalPath, "themes/{$this->handle}/layouts")) {
-            $relativePath = 'layouts/' . $this->migrateLayoutFilename($relativePath);
+            $relativePath = 'layouts/'.$this->migrateLayoutFilename($relativePath);
         } elseif (Str::contains($originalPath, "themes/{$this->handle}/partials")) {
-            $relativePath = 'partials/' . $relativePath;
+            $relativePath = 'partials/'.$relativePath;
         }
 
         $absolutePath = $this->newPath($relativePath);

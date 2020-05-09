@@ -2,15 +2,13 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Arr;
-use Statamic\Support\Str;
-use Statamic\Facades\Path;
-use Statamic\Migrator\YAML;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
-use Statamic\Migrator\Exceptions\NotFoundException;
-use Statamic\Migrator\Exceptions\FilesystemException;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Migrator\Exceptions\FilesystemException;
+use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Support\Arr;
 
 class AssetContainerMigrator extends Migrator
 {
@@ -87,7 +85,7 @@ class AssetContainerMigrator extends Migrator
     protected function parseDiskKey()
     {
         $this->disk = $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
-            ? 'assets_' . strtolower($this->handle)
+            ? 'assets_'.strtolower($this->handle)
             : 'assets';
 
         return $this;
@@ -186,7 +184,7 @@ class AssetContainerMigrator extends Migrator
             return $path;
         }
 
-        throw new NotFoundException("Assets folder cannot be found at path [path].", $path);
+        throw new NotFoundException('Assets folder cannot be found at path [path].', $path);
     }
 
     /**
@@ -262,7 +260,7 @@ class AssetContainerMigrator extends Migrator
                 ->mergeSpaciously('disks', [$this->disk => $this->diskConfig()])
                 ->normalize();
         } catch (\Exception $exception) {
-            throw new FilesystemException("Cannot migrate filesystem disk config.");
+            throw new FilesystemException('Cannot migrate filesystem disk config.');
         }
 
         return $this;
@@ -395,7 +393,7 @@ class AssetContainerMigrator extends Migrator
         } catch (\Exception $exception) {
             $this->addWarning(
                 'Could not generate asset meta.',
-                "Please ensure proper configuration on your [{$this->disk}] disk in [config/filesystems.php]{$envNote},\n" .
+                "Please ensure proper configuration on your [{$this->disk}] disk in [config/filesystems.php]{$envNote},\n".
                 "Then run `php please migrate:asset-container {$this->handle} --meta-only` to complete meta migration."
             );
         }
@@ -426,7 +424,7 @@ class AssetContainerMigrator extends Migrator
         $path = preg_replace('/(\/*)([^\/]+)$/', '$1.meta/$2.yaml', Path::resolve($file));
         $subFolder = $this->s3Path ? "{$this->s3Path}/" : '';
 
-        return $subFolder . $path;
+        return $subFolder.$path;
     }
 
     /**

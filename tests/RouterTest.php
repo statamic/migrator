@@ -2,9 +2,8 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\YAML;
 use Statamic\Migrator\Router;
+use Statamic\Migrator\YAML;
 
 class RouterTest extends TestCase
 {
@@ -12,11 +11,11 @@ class RouterTest extends TestCase
     {
         parent::setUp();
 
-        $this->files->copy(__DIR__ . '/Fixtures/routes/web.php', $this->path());
+        $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->path());
 
         $this->router = Router::file('test.php');
 
-        $this->oldRoutes = YAML::parse($this->files->get(__DIR__ . '/Fixtures/site/settings/routes.yaml'));
+        $this->oldRoutes = YAML::parse($this->files->get(__DIR__.'/Fixtures/site/settings/routes.yaml'));
     }
 
     protected function path()
@@ -25,13 +24,13 @@ class RouterTest extends TestCase
     }
 
     /** @test */
-    function it_appends_routes()
+    public function it_appends_routes()
     {
         $router = $this->router->appendRoutes($this->oldRoutes['routes']);
 
         $this->assertInstanceOf(Router::class, $router);
 
-        $this->assertRoutesFileContains(<<<EOT
+        $this->assertRoutesFileContains(<<<'EOT'
 Route::statamic('search', 'search');
 Route::statamic('blog/tags', 'blog.taxonomies');
 Route::statamic('blog/feed', 'feeds.blog', [
@@ -44,26 +43,26 @@ EOT
     }
 
     /** @test */
-    function it_appends_redirects()
+    public function it_appends_redirects()
     {
         $router = $this->router->appendRedirects($this->oldRoutes['vanity']);
 
         $this->assertInstanceOf(Router::class, $router);
 
-        $this->assertRoutesFileContains(<<<EOT
+        $this->assertRoutesFileContains(<<<'EOT'
 Route::redirect('products', 'products-old');
 EOT
         );
     }
 
     /** @test */
-    function it_appends_permanent_redirects()
+    public function it_appends_permanent_redirects()
     {
         $router = $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
 
         $this->assertInstanceOf(Router::class, $router);
 
-        $this->assertRoutesFileContains(<<<EOT
+        $this->assertRoutesFileContains(<<<'EOT'
 Route::permanentRedirect('articles', '/');
 Route::permanentRedirect('blog/posts', 'blog');
 EOT
@@ -71,7 +70,7 @@ EOT
     }
 
     /** @test */
-    function it_detects_if_routes_file_already_has_any_of_the_given_routes()
+    public function it_detects_if_routes_file_already_has_any_of_the_given_routes()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
@@ -83,7 +82,7 @@ EOT
     }
 
     /** @test */
-    function it_detects_if_routes_file_already_has_any_of_the_given_redirects()
+    public function it_detects_if_routes_file_already_has_any_of_the_given_redirects()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
@@ -95,7 +94,7 @@ EOT
     }
 
     /** @test */
-    function it_detects_if_routes_file_already_has_any_of_the_given_permanent_redirects()
+    public function it_detects_if_routes_file_already_has_any_of_the_given_permanent_redirects()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
 
@@ -107,7 +106,7 @@ EOT
     }
 
     /** @test */
-    function it_wont_append_the_same_route_twice()
+    public function it_wont_append_the_same_route_twice()
     {
         $this->router->appendRoutes($this->oldRoutes['routes']);
         $this->router->appendRoutes($this->oldRoutes['routes']);
@@ -135,7 +134,7 @@ EOT
     {
         $contents = $this->files->get($this->path());
 
-        $beginning = <<<EOT
+        $beginning = <<<'EOT'
 <?php
 
 /*

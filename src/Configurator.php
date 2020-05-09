@@ -2,12 +2,12 @@
 
 namespace Statamic\Migrator;
 
+use Facades\Statamic\Console\Processes\Process;
+use Illuminate\Filesystem\Filesystem;
+use Statamic\Facades\Path;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Facades\Path;
-use Illuminate\Filesystem\Filesystem;
 use Symfony\Component\VarExporter\VarExporter;
-use Facades\Statamic\Console\Processes\Process;
 
 class Configurator
 {
@@ -134,7 +134,7 @@ class Configurator
      */
     public function refresh()
     {
-        $key = str_replace(Path::resolve(config_path()) . '/', '', $this->path());
+        $key = str_replace(Path::resolve(config_path()).'/', '', $this->path());
         $key = str_replace('.php', '', $key);
         $key = str_replace('/', '.', $key);
 
@@ -196,7 +196,7 @@ class Configurator
 
         $value = $this->varExport($value);
 
-        $updatedConfig = preg_replace($regex, '${1}' . $value . '$2', $config);
+        $updatedConfig = preg_replace($regex, '${1}'.$value.'$2', $config);
 
         $this->files->put($this->path(), $updatedConfig);
 
@@ -222,7 +222,7 @@ class Configurator
             return false;
         }
 
-        $element = $this->varExport($key) . ' => ' . $this->varExport($value);
+        $element = $this->varExport($key).' => '.$this->varExport($value);
 
         $updatedConfig = preg_replace($regex, "{$element}\n\n$1", $config);
 
@@ -259,8 +259,8 @@ class Configurator
         }
 
         $element = is_string($childKey)
-            ? $this->varExport($childKey) . ' => ' . $this->varExport($value) . ','
-            : $this->varExport($value) . ',';
+            ? $this->varExport($childKey).' => '.$this->varExport($value).','
+            : $this->varExport($value).',';
 
         $element = $spaciously ? "\n{$element}\n" : $element;
 
@@ -337,7 +337,7 @@ class Configurator
 
         $endingGroup = $this->buildEndingGroup($isArrayValue, $indentation, $matchParentCloser);
 
-        $pattern = str_replace('/', '\/', $beginningGroup . $pattern . $endingGroup);
+        $pattern = str_replace('/', '\/', $beginningGroup.$pattern.$endingGroup);
 
         return "/{$pattern}/mU";
     }
@@ -358,6 +358,7 @@ class Configurator
         $beginningRegex = collect(explode('.', $key))
             ->map(function ($key) use (&$indentation) {
                 $indentation = $indentation + 4;
+
                 return "^\s{{$indentation}}['\"]{$key}['\"]\s\=\>\s";
             })
             ->implode('\X*');
@@ -366,7 +367,7 @@ class Configurator
 
         $endingGroup = $this->buildEndingGroup($isArrayValue, $indentation, $matchParentCloser);
 
-        $pattern = str_replace('/', '\/', $beginningGroup . $pattern . $endingGroup);
+        $pattern = str_replace('/', '\/', $beginningGroup.$pattern.$endingGroup);
 
         return "/{$pattern}/mU";
     }
