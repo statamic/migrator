@@ -41,7 +41,6 @@ class MigrateGlobalSetTest extends TestCase
         ]);
 
         $this->assertEquals($set, [
-            'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
             'title' => 'Global',
             'blueprint' => 'global',
             'data' => [
@@ -55,7 +54,6 @@ class MigrateGlobalSetTest extends TestCase
     public function it_migrates_default_fieldset()
     {
         $set = $this->migrateGlobalSet([
-            'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
             'title' => 'Global',
             'site_title' => 'Frederick\'s Swap Shop',
             'author' => 'Frederick Schwap',
