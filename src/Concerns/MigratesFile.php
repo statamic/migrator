@@ -52,7 +52,7 @@ trait MigratesFile
      */
     protected function saveMigratedYaml($migrated, $path = null)
     {
-        $migrated = collect($migrated)->all();
+        $migrated = collect($migrated)->toArray();
 
         return $this->saveMigratedContents(YAML::dump($migrated), $path);
     }
@@ -67,7 +67,7 @@ trait MigratesFile
     protected function saveMigratedWithYamlFrontMatter($migrated, $path = null)
     {
         $content = collect($migrated)->get('content');
-        $migrated = collect($migrated)->except('content')->all();
+        $migrated = collect($migrated)->except('content')->toArray();
 
         return $this->saveMigratedContents(YAML::dump($migrated, $content), $path);
     }
