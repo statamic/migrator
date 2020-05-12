@@ -4,9 +4,11 @@ namespace Statamic\Migrator;
 
 class GlobalSetMigrator extends Migrator
 {
-    use Concerns\MigratesFile;
+    use Concerns\MigratesFile,
+        Concerns\MigratesLocalizedContent;
 
     protected $set;
+    protected $localizedSets;
 
     /**
      * Perform migration.
@@ -18,7 +20,7 @@ class GlobalSetMigrator extends Migrator
             ->validateUnique()
             ->parseGlobalSet($relativePath)
             ->migrateGlobalSetSchema()
-            ->saveMigratedYaml($this->set);
+            ->saveMigratedSet();
     }
 
     /**
@@ -29,7 +31,7 @@ class GlobalSetMigrator extends Migrator
      */
     protected function parseGlobalSet($relativePath)
     {
-        $this->set = $this->getSourceYaml($relativePath);
+        $this->set = $this->getSourceYaml($relativePath, true);
 
         return $this;
     }
@@ -41,17 +43,77 @@ class GlobalSetMigrator extends Migrator
      */
     protected function migrateGlobalSetSchema()
     {
-        $set = collect($this->set);
+        $metaKeys = ['blueprint', 'title'];
 
-        $set->put('blueprint', $set->get('fieldset', 'global'));
-        $set->forget('fieldset');
+        $this->set
+            ->put('blueprint', $this->set->get('fieldset', 'global'))
+            ->forget('fieldset')
+            ->forget('id');
 
-        $nonData = $set->except(['id', 'blueprint', 'title']);
+        $meta = $this->set->only($metaKeys);
+        $data = $this->set->except($metaKeys);
 
-        $set->put('data', $nonData->all());
-
-        $this->set = $set->diffKeys($nonData)->all();
+        if ($this->isMultisite()) {
+            $this->set = $meta;
+            $this->localizedSets = $this->migrateLocalizedSets($data);
+        } else {
+            $this->set = $meta->put('data', $data);
+        }
 
         return $this;
+    }
+
+    /**
+     * Migrate localized sets.
+     *
+     * @param array $data
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateLocalizedSets($data)
+    {
+        $sets = ['default' => $data];
+
+        return $this->getMigratedSiteKeys()->mapWithKeys(function ($site) use ($data) {
+            return [$site => $site === 'default' ? $data : $this->migrateLocalizedSet($site)];
+        });
+    }
+
+    /**
+     * Migrate specific localized set.
+     *
+     * @param string $site
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateLocalizedSet($site)
+    {
+        return $this->getSourceYaml($this->sitePath("content/globals/{$site}/{$this->handle}.yaml"), true)
+            ->forget('id')
+            ->put('origin', 'default');
+    }
+
+    /**
+     * Save migrated global set, along with new localized versions.
+     *
+     * @return $this
+     */
+    protected function saveMigratedSet()
+    {
+        if ($this->isMultisite()) {
+            $this->saveLocalizedSets();
+        }
+
+        return $this->saveMigratedYaml($this->set);
+    }
+
+    /**
+     * Save migrated localized sets.
+     *
+     * @return $this
+     */
+    protected function saveLocalizedSets()
+    {
+        collect($this->localizedSets)->each(function ($set, $locale) {
+            $this->saveMigratedYaml($set, base_path("content/globals/{$locale}/{$this->handle}.yaml"));
+        });
     }
 }
