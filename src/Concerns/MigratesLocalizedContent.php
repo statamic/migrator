@@ -49,23 +49,40 @@ trait MigratesLocalizedContent
     }
 
     /**
-     * Migrate site and get filename.
+     * Migrate site.
      *
      * @param string $relativePath
-     * @return array
+     * @return string
      */
-    protected function migrateSiteAndGetFilename($relativePath)
+    protected function migrateSite($relativePath)
     {
         $parts = collect(explode('/', $relativePath));
 
         $locale = $parts->shift();
 
         if (! $this->getLocaleKeys()->contains($locale)) {
-            return ['default', $relativePath];
+            return 'default';
         }
 
-        $filename = $parts->implode('/');
+        return $locale;
+    }
 
-        return [$locale, $filename];
+    /**
+     * Migrate localized filename.
+     *
+     * @param string $relativePath
+     * @return string
+     */
+    protected function migrateLocalizedFilename($relativePath)
+    {
+        $parts = collect(explode('/', $relativePath));
+
+        $locale = $parts->shift();
+
+        if (! $this->getLocaleKeys()->contains($locale)) {
+            return $relativePath;
+        }
+
+        return $parts->implode('/');
     }
 }
