@@ -110,15 +110,31 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateEntry($entry, $path)
     {
-        unset($entry['slug']);
-
         if (Str::startsWith(basename($path), '_')) {
             $entry['published'] = false;
         }
 
+        if ($this->isMultisite() && $this->isLocalizedEntry($path)) {
+            $entry['origin'] = $entry['id'];
+            $entry['id'] = Str::uuid();
+        }
+
+        unset($entry['slug']);
+
         $this->migrateUsedTaxonomies($entry);
 
         return $this->migrateContent($entry, $this->getEntryFieldset($entry));
+    }
+
+    /**
+     * Check if entry is a localized entry..
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function isLocalizedEntry($path)
+    {
+        return $this->migrateSite($this->getRelativePath($path)) !== 'default';
     }
 
     /**
@@ -168,11 +184,12 @@ class CollectionMigrator extends Migrator
     protected function migratePath($path, $entry)
     {
         // Convert to relative path.
-        $filename = str_replace($this->sitePath("content/collections/{$this->handle}/"), '', $path);
+        $filename = $this->getRelativePath($path);
 
         // If multisite, migrate site and get filename from relative path.
         if ($this->isMultisite()) {
-            [$site, $filename] = $this->migrateSiteAndGetFilename($filename);
+            $site = $this->migrateSite($filename);
+            $filename = $this->migrateLocalizedFilename($filename);
         }
 
         // Ensure file has .md extension.
@@ -285,5 +302,16 @@ class CollectionMigrator extends Migrator
         $this->files->delete($this->newPath('folder.yaml'));
 
         return $this;
+    }
+
+    /**
+     * Get relative path.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function getRelativePath($path)
+    {
+        return str_replace($this->sitePath("content/collections/{$this->handle}/"), '', $path);
     }
 }
