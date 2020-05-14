@@ -1,0 +1,17 @@
+sections:
+  main:
+    display: Main
+    fields:
+      title:
+        type: text
+        localizable: true
+        display: Title
+      thumbnail:
+        container: main
+        folder: /
+        restrict: false
+        max_files: 1
+        type: assets
+        display: Thumbnail
+taxonomies: true
+title: Tag

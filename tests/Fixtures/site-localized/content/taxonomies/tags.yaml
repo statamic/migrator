@@ -1,5 +1,6 @@
 title: Tags
 template: blog/taxonomy
+fieldset: tag
 slugs:
   fr:
     coffee: le-coffvefe-les-slug
