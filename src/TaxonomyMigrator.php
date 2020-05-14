@@ -2,10 +2,17 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Arr;
+
 class TaxonomyMigrator extends Migrator
 {
-    use Concerns\MigratesFile,
+    use Concerns\GetsSettings,
+        Concerns\MigratesContent,
+        Concerns\MigratesLocalizedContent,
+        Concerns\MigratesFile,
         Concerns\MigratesRoute;
+
+    protected $config;
 
     /**
      * Perform migration.
@@ -17,6 +24,7 @@ class TaxonomyMigrator extends Migrator
         $this
             ->setNewPath(base_path($relativePath = "content/taxonomies/{$this->handle}"))
             ->validateUnique()
+            ->parseYamlConfig()
             ->copyDirectoryFromSiteToNewPath($relativePath)
             ->migrateTerms()
             ->migrateYamlConfig();
@@ -36,6 +44,18 @@ class TaxonomyMigrator extends Migrator
     }
 
     /**
+     * Parse yaml config.
+     *
+     * @return $this
+     */
+    protected function parseYamlConfig()
+    {
+        $this->config = $this->getSourceYaml("content/taxonomies/{$this->handle}.yaml", true);
+
+        return $this;
+    }
+
+    /**
      * Migrate terms.
      *
      * @return $this
@@ -46,32 +66,124 @@ class TaxonomyMigrator extends Migrator
             ? $this->files->files($this->newPath())
             : [];
 
-        collect($files)->each(function ($term) {
-            $this->updateYaml($this->newPath($term->getFilename()));
-        });
+        collect($files)
+            ->mapWithKeys(function ($term) {
+                return [$term->getPathname() => $this->getSourceYaml($term->getPathname(), true)];
+            })
+            ->each(function ($term, $path) {
+                $this->saveMigratedYaml(
+                    $this->migrateTerm($term, pathinfo($path)['filename']),
+                    $path
+                );
+            });
 
         return $this;
     }
 
     /**
-     * Migrate yaml config.
+     * Migrate term.
      *
-     * @return $this
+     * @param \Illuminate\Support\Collection $term
+     * @param string $slug
+     * @return array
+     */
+    protected function migrateTerm($term, $slug)
+    {
+        $fieldset = $this->getTermFieldset($term);
+
+        $localizations = $this
+            ->pullLocalizedTermContent($term)
+            ->map(function ($term, $locale) use ($slug) {
+                return $this->mergeLocalizedTermSlug($term, $locale, $slug);
+            })
+            ->map(function ($term) use ($fieldset) {
+                return $this->migrateContent($term, $fieldset);
+            });
+
+        $term = $this->migrateContent($term, $fieldset);
+
+        if (! $term->has('title')) {
+            $term->put('title', $slug);
+        }
+
+        if ($localizations->isNotEmpty()) {
+            $term->put('localizations', $localizations);
+        }
+
+        return $term;
+    }
+
+    /**
+     * Get term fieldset.
+     *
+     * @param \Illuminate\Support\Collection $term
+     * @return string
+     */
+    protected function getTermFieldset($term)
+    {
+        return $term['fieldset']
+            ?? $this->config['fieldset']
+            ?? $this->getSetting('theming.default_term_fieldset')
+            ?? $this->getSetting('theming.default_fieldset');
+    }
+
+    /**
+     * Pull localized term content.
+     *
+     * @param \Illuminate\Support\Collection $term
+     * @return \Illuminate\Support\Collection
+     */
+    protected function pullLocalizedTermContent($term)
+    {
+        return $this
+            ->getZippedLocaleAndSiteKeys()
+            ->filter(function ($zipped) use ($term) {
+                return $term->has($zipped['locale']);
+            })
+            ->mapWithKeys(function ($zipped) use ($term) {
+                return [$zipped['site'] => $term->pull($zipped['locale'])];
+            });
+    }
+
+    /**
+     * Merge localized term slug into term's data.
+     *
+     * @param array $term
+     * @param string $locale
+     * @param string $slug
+     * @return array
+     */
+    protected function mergeLocalizedTermSlug($term, $locale, $slug)
+    {
+        $localizedSlug = Arr::get($this->config, "slugs.{$locale}.{$slug}");
+
+        return $localizedSlug
+            ? array_merge($term, ['slug' => $localizedSlug])
+            : $term;
+    }
+
+    /**
+     * Migrate yaml config.
+     * * @return $this
      */
     protected function migrateYamlConfig()
     {
-        $config = $this->getSourceYaml("content/taxonomies/{$this->handle}.yaml", true);
+        if ($this->isMultisite()) {
+            $this->config->put('sites', $this->getMigratedSiteKeys()->all());
+        }
 
-        if ($fieldset = $config->get('fieldset')) {
-            $config->put('blueprints', [$fieldset]);
-            $config->forget('fieldset');
+        if ($fieldset = $this->config->get('fieldset')) {
+            $this->config->put('blueprints', [$fieldset]);
+            $this->config->forget('fieldset');
         }
 
         if ($route = $this->migrateRoute("taxonomies.{$this->handle}")) {
-            $config->put('route', $route);
+            $this->config->put('route', $route);
         }
 
-        $this->saveMigratedYaml($config, $this->newPath("../{$this->handle}.yaml"));
+        $this->config->forget('slugs');
+
+        $this->saveMigratedYaml($this->config, $this->newPath("../{$this->handle}.yaml"));
 
         return $this;
     }
