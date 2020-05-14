@@ -7,7 +7,8 @@ use Statamic\Support\Str;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesContent,
+    use Concerns\GetsSettings,
+        Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesRoute,
         Concerns\MigratesFile;
