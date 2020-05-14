@@ -49,6 +49,23 @@ trait MigratesLocalizedContent
     }
 
     /**
+     * Get zipped locale and migrated site keys.
+     *
+     * @return \Illuminate\Support\Collection
+     */
+    protected function getZippedLocaleAndSiteKeys()
+    {
+        return $this->getLocaleKeys()
+            ->zip($this->getMigratedSiteKeys())
+            ->map(function ($zipped) {
+                return [
+                    'locale' => $zipped[0],
+                    'site' => $zipped[1],
+                ];
+            });
+    }
+
+    /**
      * Migrate site.
      *
      * @param string $relativePath
