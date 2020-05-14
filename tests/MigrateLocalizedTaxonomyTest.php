@@ -53,6 +53,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
             'title' => 'coffee',
             'content' => 'wat',
             'thumbnail' => 'img/coffee-mug.jpg',
+            'blueprint' => 'tag',
             'localizations' => [
                 'fr' => [
                     'title' => 'le coffvefe',
@@ -72,6 +73,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
 
         $expected = [
             'title' => 'harry-potter',
+            'blueprint' => 'tag',
             'localizations' => [
                 'fr' => [
                     'title' => 'le-harry-potter',
@@ -89,6 +91,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
 
         $expected = [
             'title' => 'spring',
+            'blueprint' => 'tag',
         ];
 
         $this->assertParsedYamlEquals($expected, $this->path('tags/spring.yaml'));
@@ -101,6 +104,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
 
         $expected = [
             'title' => 'smells',
+            'blueprint' => 'tag',
             'localizations' => [
                 'fr' => [
                     'title' => 'la smells',

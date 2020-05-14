@@ -77,6 +77,7 @@ class ContentMigratorTest extends TestCase
                 'img/coffee-mug.jpg',
                 'img/stetson.jpg',
             ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -117,6 +118,7 @@ class ContentMigratorTest extends TestCase
         $expected = [
             'image_in_section_one' => 'img/coffee-mug.jpg',
             'image_in_section_two' => 'img/stetson.jpg',
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -141,6 +143,7 @@ class ContentMigratorTest extends TestCase
 
         $expected = [
             'image_at_top_level' => 'img/coffee-mug.jpg',
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -218,6 +221,7 @@ class ContentMigratorTest extends TestCase
                     ],
                 ],
             ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -277,6 +281,7 @@ class ContentMigratorTest extends TestCase
                     ],
                 ],
             ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -356,6 +361,7 @@ class ContentMigratorTest extends TestCase
                     'flag' => 'img/canada.jpg',
                 ],
             ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);

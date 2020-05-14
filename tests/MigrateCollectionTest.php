@@ -146,6 +146,7 @@ class MigrateCollectionTest extends TestCase
 
         $expected = <<<'EOT'
 id: f5c18e4c-4d51-4fc6-ab52-b7afe5116b3a
+blueprint: post
 ---
 Let me first explain myself. I am not a brave person by nature.
 EOT;

@@ -65,6 +65,7 @@ class MigrateTaxonomyTest extends TestCase
         $expected = <<<'EOT'
 title: spring
 content: 'Spring has sprung!'
+blueprint: tag
 
 EOT;
 
