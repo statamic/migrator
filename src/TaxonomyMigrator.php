@@ -97,7 +97,7 @@ class TaxonomyMigrator extends Migrator
                 return $this->mergeLocalizedTermSlug($term, $locale, $slug);
             })
             ->map(function ($term) use ($fieldset) {
-                return $this->migrateContent($term, $fieldset);
+                return $this->migrateContent($term, $fieldset, false);
             });
 
         $term = $this->migrateContent($term, $fieldset);
