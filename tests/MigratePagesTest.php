@@ -12,7 +12,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_correct_collection_and_structure_files()
+    public function it_migrates_expected_number_of_files()
     {
         $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
         $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
