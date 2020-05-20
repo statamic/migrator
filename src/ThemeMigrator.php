@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Facades\Path;
+use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Support\Str;
 
 class ThemeMigrator extends Migrator
@@ -46,15 +47,34 @@ class ThemeMigrator extends Migrator
      */
     protected function parseTheme()
     {
+        if (! $this->files->exists($path = $this->sitePath("themes/{$this->handle}"))) {
+            throw new NotFoundException('Theme folder cannot be found at path [path].', $path);
+        }
+
         $this->templates = collect()
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/layouts")))
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/partials")))
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/templates")))
+            ->merge($this->getThemeFiles('layouts'))
+            ->merge($this->getThemeFiles('partials'))
+            ->merge($this->getThemeFiles('templates'))
             ->filter(function ($template) {
                 return Str::endsWith($template->getFilename(), ['.html', '.blade.php']);
             });
 
         return $this;
+    }
+
+    /**
+     * Get theme files from subfolder.
+     *
+     * @param string $subFolder
+     * @return array
+     */
+    protected function getThemeFiles($subFolder)
+    {
+        $path = $this->sitePath("themes/{$this->handle}/{$subFolder}");
+
+        return $this->files->exists($path)
+            ? $this->files->allFiles($path)
+            : [];
     }
 
     /**
@@ -67,6 +87,8 @@ class ThemeMigrator extends Migrator
         $this->templates->each(function ($template) {
             $this->files->put($this->migratePath($template), $this->migrateTemplate($template));
         });
+
+        return $this;
     }
 
     /**
