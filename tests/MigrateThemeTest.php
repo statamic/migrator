@@ -4,9 +4,14 @@ namespace Tests;
 
 class MigrateThemeTest extends TestCase
 {
-    protected function path()
+    protected function paths($key = null)
     {
-        return resource_path('views');
+        $paths = [
+            'views' => resource_path('views'),
+            'macros' => resource_path('macros.yaml'),
+        ];
+
+        return $key ? $paths[$key] : $paths;
     }
 
     protected function viewsPath($append = null)
@@ -103,5 +108,16 @@ class MigrateThemeTest extends TestCase
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
 
         $this->assertFileHasContent('{{ \Statamic\Modifiers\Modify::value($content)->striptags() }}', $this->viewsPath('not-antlers.blade.php'));
+    }
+
+    /** @test */
+    public function it_migrates_macros()
+    {
+        $this->assertFileNotExists($this->paths('macros'));
+
+        $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
+
+        $this->assertFileExists($this->paths('macros'));
+        $this->assertParsedYamlHasKey('jake', $this->paths('macros'));
     }
 }

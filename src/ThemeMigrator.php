@@ -27,6 +27,7 @@ class ThemeMigrator extends Migrator
             ->parseTheme()
             ->validateUnique()
             ->migrateTemplates()
+            ->migrateMacros()
             ->throwFinalWarnings();
     }
 
@@ -37,9 +38,15 @@ class ThemeMigrator extends Migrator
      */
     protected function uniquePaths()
     {
-        return $this->templates->map(function ($template) {
+        $templates = $this->templates->map(function ($template) {
             return $this->migratePath($template, false);
         })->all();
+
+        $misc = [
+            resource_path('macros.yaml'),
+        ];
+
+        return array_merge($templates, $misc);
     }
 
     /**
@@ -201,5 +208,19 @@ class ThemeMigrator extends Migrator
         $template = preg_replace('/modify\((.*)\)->/mU', '\Statamic\Modifiers\Modify::value($1)->', $template);
 
         return $template;
+    }
+
+    /**
+     * Migrate macros.
+     *
+     * @return $this
+     */
+    protected function migrateMacros()
+    {
+        if ($this->files->exists($path = $this->sitePath("themes/{$this->handle}/settings/macros.yaml"))) {
+            $this->files->copy($path, resource_path('macros.yaml'));
+        }
+
+        return $this;
     }
 }
