@@ -7,8 +7,8 @@ class MigrateThemeTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
-            'views' => resource_path('views'),
             'macros' => resource_path('macros.yaml'),
+            'views' => resource_path('views'),
         ];
 
         return $key ? $paths[$key] : $paths;
