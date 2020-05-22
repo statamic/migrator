@@ -3,7 +3,6 @@
 namespace Statamic\Migrator\Concerns;
 
 use Exception;
-use Statamic\Support\Str;
 use Zttp\Zttp;
 
 trait SubmitsStats
@@ -15,7 +14,7 @@ trait SubmitsStats
      */
     protected function attemptSubmitStats($stats)
     {
-        if (Str::contains(base_path(), 'orchestra/testbench-core')) {
+        if (env('DISABLE_MIGRATOR_STATS')) {
             return;
         }
 
