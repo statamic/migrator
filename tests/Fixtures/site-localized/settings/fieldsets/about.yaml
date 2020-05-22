@@ -28,4 +28,10 @@ sections:
         type: assets
         localizable: true
         display: Assets
+      avatar:
+        type: assets
+        container: main
+        max_files: 1
+        display: Avatar
+        localizable: true
 taxonomies: true
