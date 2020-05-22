@@ -4,7 +4,9 @@ namespace Statamic\Migrator\Concerns;
 
 trait MigratesLocalizedContent
 {
-    use GetsSettings;
+    use GetsSettings {
+        GetsSettings::getSetting as migratesLocalizedGetSetting;
+    }
 
     /**
      * Check if site has multiple locales.
@@ -23,7 +25,7 @@ trait MigratesLocalizedContent
      */
     protected function getLocales()
     {
-        return collect($this->getSetting('system.locales', []));
+        return collect($this->migratesLocalizedGetSetting('system.locales', []));
     }
 
     /**
