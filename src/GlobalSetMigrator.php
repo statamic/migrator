@@ -73,9 +73,12 @@ class GlobalSetMigrator extends Migrator
     {
         $sets = ['default' => $data];
 
-        return $this->getMigratedSiteKeys()->mapWithKeys(function ($site) use ($data) {
-            return [$site => $site === 'default' ? $data : $this->migrateLocalizedSet($site)];
-        });
+        return $this
+            ->getMigratedSiteKeys()
+            ->mapWithKeys(function ($site) use ($data) {
+                return [$site => $site === 'default' ? $data : $this->migrateLocalizedSet($site)];
+            })
+            ->filter();
     }
 
     /**
@@ -86,7 +89,13 @@ class GlobalSetMigrator extends Migrator
      */
     protected function migrateLocalizedSet($site)
     {
-        return $this->getSourceYaml($this->sitePath("content/globals/{$site}/{$this->handle}.yaml"), true)
+        $path = $this->sitePath("content/globals/{$site}/{$this->handle}.yaml");
+
+        if (! $this->files->exists($path)) {
+            return false;
+        }
+
+        return $this->getSourceYaml($path, true)
             ->forget('id')
             ->put('origin', 'default');
     }
