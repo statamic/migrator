@@ -26,4 +26,5 @@ sections:
         container: main
         folder: img
         max_files: 1
+        localizable: true
 taxonomies: true

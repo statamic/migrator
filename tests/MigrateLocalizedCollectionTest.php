@@ -93,4 +93,20 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
         $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
     }
+
+    /** @test */
+    public function it_can_migrate_localized_entry_content()
+    {
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlContains(
+            ['image' => 'img/redwood-james-irvine-trail.jpg'],
+            $this->path('blog/default/2017-07-31.english-fire.md')
+        );
+
+        $this->assertParsedYamlContains(
+            ['image' => 'img/coffee-mug.jpg'],
+            $this->path('blog/fr/2017-07-31.le-fire.md')
+        );
+    }
 }

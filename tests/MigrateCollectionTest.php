@@ -255,4 +255,12 @@ EOT
         $this->assertFileExists($this->path('blog/2017-01-18.my-first-day.md'));
         $this->assertFileExists($this->path('blog/2017-01-19.paperwork-and-snowshoeing.md'));
     }
+
+    /** @test */
+    public function it_can_migrate_entry_content()
+    {
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertParsedYamlContains(['intro_image' => 'img/stetson.jpg'], $this->path('blog/2017-01-18.my-first-day.md'));
+    }
 }
