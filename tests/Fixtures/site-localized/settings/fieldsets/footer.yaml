@@ -1,4 +1,5 @@
 title: Footer
+hide: true
 sections:
   main:
     display: Main
