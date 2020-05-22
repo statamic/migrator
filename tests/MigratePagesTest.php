@@ -175,4 +175,12 @@ class MigratePagesTest extends TestCase
         $this->assertFileExists($this->path('pages/blog.md'));
         $this->assertFileExists($this->path('pages/gallery.md'));
     }
+
+    /** @test */
+    public function it_can_migrate_page_content()
+    {
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertParsedYamlContains(['avatar' => 'img/stetson.jpg'], $this->path('pages/about.md'));
+    }
 }
