@@ -15,6 +15,7 @@ class Configurator
 
     protected $configFile;
     protected $files;
+    protected $originalConfig;
 
     /**
      * Instantiate configurator.
@@ -26,6 +27,8 @@ class Configurator
         $this->configFile = $configFile;
 
         $this->files = app(Filesystem::class);
+
+        $this->originalConfig = $this->files->get($this->path());
     }
 
     /**
@@ -143,6 +146,20 @@ class Configurator
         config([$key => $updatedConfig]);
 
         return $this;
+    }
+
+    /**
+     * Run custom logic if no changes have been made to config file.
+     *
+     * @param \Closure $closure
+     */
+    public function ifNoChanges($closure)
+    {
+        $config = $this->files->get($this->path());
+
+        if ($config === $this->originalConfig) {
+            $closure();
+        }
     }
 
     /**

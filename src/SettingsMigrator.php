@@ -45,11 +45,12 @@ class SettingsMigrator extends Migrator
 
         $cp = $this->parseSettingsFile('cp.yaml');
 
-        Configurator::file('statamic/cp.php')
+        Configurator::file($configFile = 'statamic/cp.php')
             ->set('start_page', $cp['start_page'] ?? false)
             ->set('date_format', $cp['date_format'] ?? false)
             ->merge('widgets', $cp['widgets'] ?? [])
-            ->set('pagination_size', $cp['pagination_size'] ?? false);
+            ->set('pagination_size', $cp['pagination_size'] ?? false)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -86,7 +87,9 @@ class SettingsMigrator extends Migrator
 
         $system = $this->parseSettingsFile('system.yaml');
 
-        Configurator::file('statamic/sites.php')->mergeSpaciously('sites', $this->migrateLocales($system));
+        Configurator::file($configFile = 'statamic/sites.php')
+            ->mergeSpaciously('sites', $this->migrateLocales($system))
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -126,9 +129,10 @@ class SettingsMigrator extends Migrator
 
         $users = $this->parseSettingsFile('users.yaml');
 
-        Configurator::file('statamic/users.php')
+        Configurator::file($configFile = 'statamic/users.php')
             ->set('avatars', Arr::get($users, 'enable_gravatar', false) ? 'gravatar' : 'initials')
-            ->set('new_user_roles', $this->migrateRoles(Arr::get($users, 'new_user_roles', [])) ?: false);
+            ->set('new_user_roles', $this->migrateRoles(Arr::get($users, 'new_user_roles', [])) ?: false)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -199,5 +203,20 @@ class SettingsMigrator extends Migrator
         }
 
         return $this->getSourceYaml($path);
+    }
+
+    /**
+     * Throw no changes exception.
+     *
+     * @param string $configFile
+     * @throws MigratorSkippedException
+     */
+    protected function throwNoChangesException($configFile)
+    {
+        return function () use ($configFile) {
+            if (! $this->overwrite) {
+                throw new MigratorSkippedException("Config file [config/{$configFile}] did not require any changes.");
+            }
+        };
     }
 }
