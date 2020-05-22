@@ -40,6 +40,10 @@ composer require statamic/migrator --dev
 
 ## Getting started
 
+### Update v2
+
+Please ensure you are running the latest version of Statamic in your v2 project before starting.
+
 ### File prep
 
 All of the migrators assume the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root first.  Also, if you were running above webroot, be sure to copy your `public/themes` folder into `site/themes`.
