@@ -10,7 +10,8 @@ class ThemeMigrator extends Migrator
 {
     use Concerns\GetsSettings,
         Concerns\MigratesFile,
-        Concerns\PreparesPathFolder;
+        Concerns\PreparesPathFolder,
+        Concerns\ThrowsFinalWarnings;
 
     protected $templates;
 
@@ -25,7 +26,8 @@ class ThemeMigrator extends Migrator
             ->setNewPath(resource_path('views'))
             ->parseTheme()
             ->validateUnique()
-            ->migrateTemplates();
+            ->migrateTemplates()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -87,6 +89,8 @@ class ThemeMigrator extends Migrator
         $this->templates->each(function ($template) {
             $this->files->put($this->migratePath($template), $this->migrateTemplate($template));
         });
+
+        $this->addWarning('Your theme\'s templates have been migrated to [resources/views], but it\'s worth noting that Antlers templating has undergone a number of changes.  Many of these changes are opinionated and will need your attention (please refer to [https://statamic.dev/upgrade-guide] for an overview of the most breaking changes).  Your theme\'s front end assets and build pipelines will also need to be manually migrated.  We recommend checking out Laravel Mix if you are building your assets (Mix comes pre-installed into your v3 apps, and documentation is available at [https://laravel.com/docs/mix]).');
 
         return $this;
     }
