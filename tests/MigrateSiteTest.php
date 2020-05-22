@@ -10,6 +10,7 @@ class MigrateSiteTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
+            'macros' => resource_path('macros.yaml'),
             'site' => base_path('site'),
             'users' => base_path('users'),
             'blueprints' => resource_path('blueprints'),
