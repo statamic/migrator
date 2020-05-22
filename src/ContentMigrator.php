@@ -231,7 +231,11 @@ class ContentMigrator
      */
     protected function migrateReplicatorField($handle, $value, $config)
     {
-        $fieldConfigs = collect($config['sets'] ?? [])->map(function ($set) {
+        if (! isset($config['sets'])) {
+            return $value;
+        }
+
+        $fieldConfigs = collect($config['sets'])->map(function ($set) {
             return $set['fields'] ?? [];
         })->all();
 

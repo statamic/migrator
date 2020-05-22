@@ -264,6 +264,9 @@ class ContentMigratorTest extends TestCase
                                         ],
                                     ],
                                 ],
+                                'nested_bard_with_no_sets' => [
+                                    'type' => 'bard',
+                                ],
                             ],
                         ],
                     ],
@@ -443,6 +446,31 @@ class ContentMigratorTest extends TestCase
                     'flag' => 'img/canada.jpg',
                 ],
             ],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_can_migrate_bards_with_no_sets()
+    {
+        $content = $this
+            ->setFields([
+                'some_bard' => [
+                    'type' => 'bard',
+                    'buttons' => [
+                        'bold',
+                        'italic',
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_bard' => 'Well hello there!',
+            ]);
+
+        $expected = [
+            'some_bard' => 'Well hello there!',
             'blueprint' => 'speaker',
         ];
 
