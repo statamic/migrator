@@ -228,6 +228,88 @@ class ContentMigratorTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_fields_within_bards()
+    {
+        $content = $this
+            ->setFields([
+                'some_bard' => [
+                    'type' => 'bard',
+                    'buttons' => [
+                        'bold',
+                        'italic',
+                    ],
+                    'sets' => [
+                        'set_1' => [
+                            'fields' => [
+                                'image_within_bard_set_1' => [
+                                    'type' => 'assets',
+                                    'container' => 'main',
+                                    'max_files' => 1,
+                                ],
+                            ],
+                        ],
+                        'set_2' => [
+                            'fields' => [
+                                'nested_bard' => [
+                                    'type' => 'bard',
+                                    'sets' => [
+                                        'nested_set' => [
+                                            'fields' => [
+                                                'image_within_bard_set_2' => [
+                                                    'type' => 'assets',
+                                                    'container' => 'main',
+                                                    'max_files' => 1,
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_bard' => [
+                    [
+                        'type' => 'set_1',
+                        'image_within_bard_set_1' => '/assets/img/coffee-mug.jpg',
+                    ],
+                    [
+                        'type' => 'set_2',
+                        'nested_bard' => [
+                            [
+                                'type' => 'nested_set',
+                                'image_within_bard_set_2' => '/assets/img/stetson.jpg',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $expected = [
+            'some_bard' => [
+                [
+                    'type' => 'set_1',
+                    'image_within_bard_set_1' => 'img/coffee-mug.jpg',
+                ],
+                [
+                    'type' => 'set_2',
+                    'nested_bard' => [
+                        [
+                            'type' => 'nested_set',
+                            'image_within_bard_set_2' => 'img/stetson.jpg',
+                        ],
+                    ],
+                ],
+            ],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
     public function it_can_migrate_fields_within_grids()
     {
         $content = $this

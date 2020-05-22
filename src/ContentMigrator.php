@@ -257,6 +257,19 @@ class ContentMigrator
     }
 
     /**
+     * Migrate bard field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateBardField($handle, $value, $config)
+    {
+        return $this->migrateReplicatorField($handle, $value, $config);
+    }
+
+    /**
      * Migrate grid field.
      *
      * @param string $handle
