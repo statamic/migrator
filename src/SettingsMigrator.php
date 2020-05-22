@@ -171,10 +171,17 @@ class SettingsMigrator extends Migrator
 
         $currentConfig = $this->files->get(config_path("statamic/{$configFile}"));
         $defaultConfig = $this->files->get("vendor/statamic/cms/config/{$configFile}");
+        $stubbedConfig = null;
 
-        if ($currentConfig !== $defaultConfig) {
-            throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
+        if ($this->files->exists($stubPath = "vendor/statamic/cms/src/Console/Commands/stubs/config/{$configFile}.stub")) {
+            $stubbedConfig = $this->files->get($stubPath);
         }
+
+        if ($currentConfig === $defaultConfig || $currentConfig === $stubbedConfig) {
+            return $this;
+        }
+
+        throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
     }
 
     /**
