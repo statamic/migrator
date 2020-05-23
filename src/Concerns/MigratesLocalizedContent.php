@@ -4,10 +4,6 @@ namespace Statamic\Migrator\Concerns;
 
 trait MigratesLocalizedContent
 {
-    use GetsSettings {
-        GetsSettings::getSetting as migratesLocalizedGetSetting;
-    }
-
     /**
      * Check if site has multiple locales.
      *
@@ -25,7 +21,17 @@ trait MigratesLocalizedContent
      */
     protected function getLocales()
     {
-        return collect($this->migratesLocalizedGetSetting('system.locales', []));
+        // TODO: Figure out how to fix php 7.2 trait collision using trait aliasing?
+        $container = new class {
+            use GetsSettings;
+
+            public function getLocales()
+            {
+                return collect($this->getSetting('system.locales', []));
+            }
+        };
+
+        return $container->getLocales();
     }
 
     /**
