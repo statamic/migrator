@@ -216,6 +216,14 @@ Be sure to manually test your site, addressing all errors and warnings as you se
 composer remove statamic/migrator
 ```
 
+### Common Issues
+
+#### All my pages are 404'ing
+
+If you run into an issue after migrating where all of your pages are hitting the 404 page, then you may have absolutely defined your site's URL.
+
+Go to `config/statamic/sites.php` and open it. In your default array, if you have anything other than 'url' => env('APP_URL'), then consider changing it to that and ensuring that you're referencing the correct URL in your .env file.
+
 ## Reporting issues
 
 While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we still recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't migrate everything, hopefully you have found this package useful in your transition to v3.  If you come across a bug or issue that you think needs to be addressed, please [open an issue](https://github.com/statamic/migrator/issues/new).
