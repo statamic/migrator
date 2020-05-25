@@ -105,7 +105,7 @@ class SettingsMigrator extends Migrator
         $locales = $system['locales'] ?? [];
         $defaultLocale = collect($locales)->keys()->first();
 
-        return collect($locales)
+        $sites = collect($locales)
             ->mapWithKeys(function ($site, $handle) use ($defaultLocale) {
                 return [
                     $handle === $defaultLocale ? 'default' : $handle => [
@@ -116,6 +116,17 @@ class SettingsMigrator extends Migrator
                 ];
             })
             ->all();
+
+        $defaultSiteUrl = $sites['default']['url'];
+
+        if ($defaultSiteUrl != '/') {
+            $this->addWarning(
+                "Your default site url is currently set to [{$defaultSiteUrl}] instead of [/].",
+                'Please double check your sites configuration in [config/statamic/sites.php], as this may cause your pages to 404.'
+            );
+        }
+
+        return $sites;
     }
 
     /**
