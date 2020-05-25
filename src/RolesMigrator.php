@@ -244,7 +244,11 @@ class RolesMigrator extends Migrator
      */
     protected function migrateFormPermission()
     {
-        return collect($this->files->files($this->sitePath('settings/formsets')))
+        if (! $this->files->exists($path = $this->sitePath('settings/formsets'))) {
+            return [];
+        }
+
+        return collect($this->files->files($path))
             ->map
             ->getFilenameWithoutExtension()
             ->flatMap(function ($handle) {
