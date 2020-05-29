@@ -96,7 +96,7 @@ abstract class Migrator
      */
     protected function sitePath($append = null)
     {
-        return collect([base_path('site'), $append])->filter()->implode('/');
+        return $this->normalizePath(collect([base_path('site'), $append])->filter()->implode('/'));
     }
 
     /**
@@ -107,7 +107,18 @@ abstract class Migrator
      */
     protected function newPath($append = null)
     {
-        return collect([$this->newPath, $append])->filter()->implode('/');
+        return $this->normalizePath(collect([$this->newPath, $append])->filter()->implode('/'));
+    }
+
+    /**
+     * Normalize path to help prevent errors in Windows.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function normalizePath($path)
+    {
+        return Path::resolve($path);
     }
 
     /**
