@@ -134,6 +134,23 @@ class TestCase extends \Orchestra\Testbench\TestCase
         return collect([base_path('site'), $append])->filter()->implode('/');
     }
 
+    protected static function normalizeMultilineString($string)
+    {
+        return str_replace("\r\n", "\n", $string);
+    }
+
+    /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertStringContainsString($needle, $haystack, $message = '') : void
+    {
+        parent::assertStringContainsString(
+            static::normalizeMultilineString($needle),
+            static::normalizeMultilineString($haystack),
+            $message
+        );
+    }
+
     /**
      * @deprecated
      */
