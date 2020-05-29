@@ -111,6 +111,8 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateEntry($entry, $path)
     {
+        $path = $this->normalizePath($path);
+
         if (Str::startsWith(basename($path), '_')) {
             $entry['published'] = false;
         }
@@ -184,6 +186,9 @@ class CollectionMigrator extends Migrator
      */
     protected function migratePath($path, $entry)
     {
+        // Prevent windows issues.
+        $path = $this->normalizePath($path);
+
         // Convert to relative path.
         $filename = $this->getRelativePath($path);
 
