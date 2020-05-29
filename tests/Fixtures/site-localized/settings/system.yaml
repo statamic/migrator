@@ -1,0 +1,9 @@
+locales:
+  en:
+    name: English
+    full: en_US
+    url: /
+  fr:
+    full: fr_CF
+    name: French
+    url: /fr

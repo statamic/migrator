@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Arr;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
+use Statamic\Support\Arr;
 
 class SettingsMigrator extends Migrator
 {
@@ -45,11 +45,12 @@ class SettingsMigrator extends Migrator
 
         $cp = $this->parseSettingsFile('cp.yaml');
 
-        Configurator::file('statamic/cp.php')
+        Configurator::file($configFile = 'statamic/cp.php')
             ->set('start_page', $cp['start_page'] ?? false)
             ->set('date_format', $cp['date_format'] ?? false)
             ->merge('widgets', $cp['widgets'] ?? [])
-            ->set('pagination_size', $cp['pagination_size'] ?? false);
+            ->set('pagination_size', $cp['pagination_size'] ?? false)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -64,7 +65,7 @@ class SettingsMigrator extends Migrator
         $routes = $this->parseSettingsFile('routes.yaml');
 
         if (Router::file('web.php')->has($routes) && ! $this->overwrite) {
-            throw new MigratorSkippedException("Routes file [routes/web.php] has already been modified.");
+            throw new MigratorSkippedException('Routes file [routes/web.php] has already been modified.');
         }
 
         Router::file('web.php')
@@ -86,7 +87,9 @@ class SettingsMigrator extends Migrator
 
         $system = $this->parseSettingsFile('system.yaml');
 
-        Configurator::file('statamic/sites.php')->mergeSpaciously('sites', $this->migrateLocales($system));
+        Configurator::file($configFile = 'statamic/sites.php')
+            ->mergeSpaciously('sites', $this->migrateLocales($system))
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -99,20 +102,31 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateLocales($system)
     {
-        $sites = collect($system['locales'] ?? [])
-            ->map(function ($site) {
-                return [
-                    'name' => $site['name'] ?? "config('app.name')",
-                    'locale' => $site['full'] ?? 'en_US',
-                    'url' => $site['url'],
-                ];
-            });
+        $locales = $system['locales'] ?? [];
+        $defaultLocale = collect($locales)->keys()->first();
 
-        if ($sites->count() === 1) {
-            return ['default' => $sites->first()];
+        $sites = collect($locales)
+            ->mapWithKeys(function ($site, $handle) use ($defaultLocale) {
+                return [
+                    $handle === $defaultLocale ? 'default' : $handle => [
+                        'name' => $site['name'] ?? "config('app.name')",
+                        'locale' => $site['full'] ?? 'en_US',
+                        'url' => $site['url'],
+                    ],
+                ];
+            })
+            ->all();
+
+        $defaultSiteUrl = $sites['default']['url'];
+
+        if ($defaultSiteUrl != '/') {
+            $this->addWarning(
+                "Your default site url is currently set to [{$defaultSiteUrl}] instead of [/].",
+                'Please double check your sites configuration in [config/statamic/sites.php], as this may cause your pages to 404.'
+            );
         }
 
-        return $sites->all();
+        return $sites;
     }
 
     /**
@@ -126,9 +140,10 @@ class SettingsMigrator extends Migrator
 
         $users = $this->parseSettingsFile('users.yaml');
 
-        Configurator::file('statamic/users.php')
+        Configurator::file($configFile = 'statamic/users.php')
             ->set('avatars', Arr::get($users, 'enable_gravatar', false) ? 'gravatar' : 'initials')
-            ->set('new_user_roles', $this->migrateRoles(Arr::get($users, 'new_user_roles', [])) ?: false);
+            ->set('new_user_roles', $this->migrateRoles(Arr::get($users, 'new_user_roles', [])) ?: false)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }
@@ -140,7 +155,7 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateSingle()
     {
-        $migrateMethod = 'migrate' . ucfirst($this->handle);
+        $migrateMethod = 'migrate'.ucfirst($this->handle);
 
         return $this->{$migrateMethod}();
     }
@@ -171,10 +186,17 @@ class SettingsMigrator extends Migrator
 
         $currentConfig = $this->files->get(config_path("statamic/{$configFile}"));
         $defaultConfig = $this->files->get("vendor/statamic/cms/config/{$configFile}");
+        $stubbedConfig = null;
 
-        if ($currentConfig !== $defaultConfig) {
-            throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
+        if ($this->files->exists($stubPath = "vendor/statamic/cms/src/Console/Commands/stubs/config/{$configFile}.stub")) {
+            $stubbedConfig = $this->files->get($stubPath);
         }
+
+        if ($currentConfig === $defaultConfig || $currentConfig === $stubbedConfig) {
+            return $this;
+        }
+
+        throw new MigratorSkippedException("Config file [config/statamic/{$configFile}] has already been modified.");
     }
 
     /**
@@ -192,5 +214,20 @@ class SettingsMigrator extends Migrator
         }
 
         return $this->getSourceYaml($path);
+    }
+
+    /**
+     * Throw no changes exception.
+     *
+     * @param string $configFile
+     * @throws MigratorSkippedException
+     */
+    protected function throwNoChangesException($configFile)
+    {
+        return function () use ($configFile) {
+            if (! $this->overwrite) {
+                throw new MigratorSkippedException("Config file [config/{$configFile}] did not require any changes.");
+            }
+        };
     }
 }

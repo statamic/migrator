@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
 
 class MigrateFieldsetPartialTest extends TestCase
@@ -19,7 +18,7 @@ class MigrateFieldsetPartialTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_fieldset_partial_to_v3_fieldset()
+    public function it_migrates_fieldset_partial_to_v3_fieldset()
     {
         $this->assertFileNotExists($this->paths('new_fieldset'));
 
@@ -60,9 +59,9 @@ class MigrateFieldsetPartialTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_fieldset_partial_with_sections_to_v3_fieldset()
+    public function it_migrates_fieldset_partial_with_sections_to_v3_fieldset()
     {
-        $this->files->put($this->paths('old'), <<<EOT
+        $this->files->put($this->paths('old'), <<<'EOT'
 title: Address
 sections:
   main:
@@ -89,7 +88,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_fieldset_partial_to_blueprint_wrapper()
+    public function it_migrates_fieldset_partial_to_blueprint_wrapper()
     {
         $this->assertFileNotExists($this->paths('new_blueprint'));
 

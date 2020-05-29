@@ -1,0 +1,44 @@
+.tiles {
+    display: flex;
+    align-content: center;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding-bottom: $gap * 2;
+
+    .item {
+        background: #fff;
+        box-shadow: 0px 2px 6px -2px rgba(0,0,0,0.2);
+        padding: 30px;
+        height: 300px;
+        width: 300px;
+        flex-basis: 300px;
+        margin: 20px;
+        display: flex;
+        justify-content: center;
+
+        &:hover { text-decoration: none; }
+
+        .image {
+            height: 100%;
+            width: 100%;
+            background-repeat: no-repeat;
+            background-size: contain;
+            background-position: center center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .caption {
+            text-align: center;
+            box-shadow: 0px 0px 50px 100px rgba(255,255,255,.75);
+            background: rgba(255,255,255,.75);
+            color: $color_dark;
+            font-weight: 300;
+            margin: 0;
+            opacity: 0;
+            transition: all .15s;
+        }
+        &:hover .caption { opacity: 1; }
+    }
+}

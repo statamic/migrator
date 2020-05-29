@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Spyc;
 use Exception;
+use Spyc;
 use Statamic\Facades\File;
 use Statamic\Facades\Pattern;
 use Statamic\Facades\YAML as StatamicYAML;

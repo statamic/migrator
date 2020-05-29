@@ -2,28 +2,30 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Facades\Path;
-use Statamic\Migrator\Concerns;
-use Statamic\Console\RunsInPlease;
-use Statamic\Migrator\FormMigrator;
-use Statamic\Migrator\UserMigrator;
-use Statamic\Migrator\PagesMigrator;
-use Statamic\Migrator\RolesMigrator;
-use Statamic\Migrator\ThemeMigrator;
+use Exception;
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\GroupsMigrator;
-use Statamic\Migrator\FieldsetMigrator;
-use Statamic\Migrator\SettingsMigrator;
-use Statamic\Migrator\TaxonomyMigrator;
-use Statamic\Migrator\GlobalSetMigrator;
-use Statamic\Migrator\CollectionMigrator;
+use Statamic\Console\RunsInPlease;
+use Statamic\Facades\Path;
 use Statamic\Migrator\AssetContainerMigrator;
-use Statamic\Migrator\FieldsetPartialMigrator;
-use Symfony\Component\Console\Input\InputOption;
+use Statamic\Migrator\CollectionMigrator;
+use Statamic\Migrator\Concerns;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Migrator\Exceptions\MigratorWarningsException;
+use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\FieldsetPartialMigrator;
+use Statamic\Migrator\FormMigrator;
+use Statamic\Migrator\GlobalSetMigrator;
+use Statamic\Migrator\GroupsMigrator;
+use Statamic\Migrator\PagesMigrator;
+use Statamic\Migrator\RolesMigrator;
+use Statamic\Migrator\SettingsMigrator;
+use Statamic\Migrator\TaxonomyMigrator;
+use Statamic\Migrator\ThemeMigrator;
+use Statamic\Migrator\UserMigrator;
+use Statamic\Migrator\YAML;
+use Symfony\Component\Console\Input\InputOption;
 
 class MigrateSite extends Command
 {
@@ -75,6 +77,13 @@ class MigrateSite extends Command
     protected $errorCount = 0;
 
     /**
+     * Log file path.
+     *
+     * @var string
+     */
+    protected $logPath;
+
+    /**
      * Create a new controller creator command instance.
      *
      * @param Filesystem $files
@@ -92,6 +101,7 @@ class MigrateSite extends Command
     public function handle()
     {
         $this
+            ->setLogPath()
             ->migrateFieldsets()
             ->migrateCollections()
             ->migratePages()
@@ -110,7 +120,21 @@ class MigrateSite extends Command
             $this->submitStats();
         }
 
-        $this->line('<info>Site migration complete:</info> ' . $this->getStats()->implode(', '));
+        $this->line('<info>Site migration complete:</info> '.$this->getStats()->implode(', '));
+    }
+
+    /**
+     * Set log path for current migration attempt.
+     *
+     * @return $this
+     */
+    protected function setLogPath()
+    {
+        $timestamp = time();
+
+        $this->logPath = base_path("site-migration-log-{$timestamp}.yaml");
+
+        return $this;
     }
 
     /**
@@ -360,6 +384,7 @@ class MigrateSite extends Command
             $migration();
         } catch (MigratorWarningsException $warningsException) {
             $this->outputMigrationWarnings($descriptor, $handle, $warningsException->getWarnings());
+            $this->logMigrationWarnings($descriptor, $handle, $warningsException->getWarnings());
             $this->warningCount++;
         } catch (AlreadyExistsException $exception) {
             $this->line("<comment>{$descriptor} already exists:</comment> {$handle}");
@@ -371,6 +396,12 @@ class MigrateSite extends Command
         } catch (MigratorErrorException $exception) {
             $this->line("<error>{$descriptor} could not be migrated:</error> {$handle}");
             $this->line($exception->getMessage());
+            $this->logError($descriptor, $handle, $exception->getMessage());
+            $this->errorCount++;
+        } catch (Exception $exception) {
+            $this->line("<error>{$descriptor} exception:</error> {$handle}");
+            $this->line($exception->getMessage());
+            $this->logException($descriptor, $handle, $exception);
             $this->errorCount++;
         }
 
@@ -400,6 +431,60 @@ class MigrateSite extends Command
     }
 
     /**
+     * Log warnings.
+     *
+     * @param string $descriptor
+     * @param string $handle
+     * @param \Illuminate\Support\Collection $warnings
+     */
+    protected function logMigrationWarnings($descriptor, $handle, $warnings)
+    {
+        $warnings = $warnings->map(function ($warning) use ($descriptor, $handle) {
+            return collect([
+                'migration' => $descriptor,
+                'handle' => $handle,
+                'warning' => $warning->get('warning'),
+                'info' => $warning->get('extra'),
+            ])->filter()->all();
+        })->all();
+
+        $this->files->append($this->logPath, YAML::dump($warnings));
+    }
+
+    /**
+     * Log error.
+     *
+     * @param string $descriptor
+     * @param string $handle
+     * @param string $error
+     */
+    protected function logError($descriptor, $handle, $error)
+    {
+        $this->files->append($this->logPath, YAML::dump([[
+            'migration' => $descriptor,
+            'handle' => $handle,
+            'error' => $error,
+        ]]));
+    }
+
+    /**
+     * Log exception.
+     *
+     * @param string $descriptor
+     * @param string $handle
+     * @param string $exception
+     */
+    protected function logException($descriptor, $handle, $exception)
+    {
+        $this->files->append($this->logPath, YAML::dump([[
+            'migration' => $descriptor,
+            'handle' => $handle,
+            'exception' => $exception->getMessage(),
+            'trace' => $exception->getTrace(),
+        ]]));
+    }
+
+    /**
      * Submit stats.
      */
     protected function submitStats()
@@ -422,8 +507,8 @@ class MigrateSite extends Command
     {
         return collect([
             "{$this->skippedCount} skipped",
-            "{$this->errorCount} " . ($this->errorCount == 1 ? 'error' : 'errors'),
-            "{$this->warningCount} " . ($this->warningCount == 1 ? 'warning' : 'warnings'),
+            "{$this->errorCount} ".($this->errorCount == 1 ? 'error' : 'errors'),
+            "{$this->warningCount} ".($this->warningCount == 1 ? 'warning' : 'warnings'),
             "{$this->successCount} successful",
         ]);
     }

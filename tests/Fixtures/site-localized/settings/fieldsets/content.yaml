@@ -1,0 +1,30 @@
+title: 'Blog Post'
+hide: true
+sections:
+  main:
+    display: Main
+    fields:
+      title:
+        type: text
+        display: Title
+        localizable: true
+        width: 50
+      slug:
+        width: 50
+        type: text
+      sub_title:
+        type: textarea
+        display: Subtitle
+        localizable: true
+      content:
+        type: markdown
+        display: Content
+        localizable: true
+      image:
+        type: assets
+        display: 'Intro Image'
+        container: main
+        folder: img
+        max_files: 1
+        localizable: true
+taxonomies: true

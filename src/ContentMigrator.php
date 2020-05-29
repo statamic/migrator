@@ -3,13 +3,13 @@
 namespace Statamic\Migrator;
 
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
 class ContentMigrator
 {
     protected $fieldset;
+    protected $addExplicitBlueprint = true;
     protected $fieldConfigs;
 
     /**
@@ -33,6 +33,19 @@ class ContentMigrator
     public static function usingFieldset(string $fieldset)
     {
         return new static($fieldset);
+    }
+
+    /**
+     * Add explicit blueprint.
+     *
+     * @param bool $addExplicitBlueprint
+     * @return $this
+     */
+    public function addExplicitBlueprint($addExplicitBlueprint = true)
+    {
+        $this->addExplicitBlueprint = $addExplicitBlueprint;
+
+        return $this;
     }
 
     /**
@@ -138,7 +151,7 @@ class ContentMigrator
             return array_merge($fieldConfigs, $partialFieldConfigs);
         }
 
-        $keyAtPartialLevel = preg_replace('/(.*)\..*$/', "$1", $originalKey);
+        $keyAtPartialLevel = preg_replace('/(.*)\..*$/', '$1', $originalKey);
         $configsAtPartialLevel = Arr::get($fieldConfigs, $keyAtPartialLevel, []);
         $configsAtPartialLevel = array_merge($configsAtPartialLevel, $partialFieldConfigs);
 
@@ -173,7 +186,7 @@ class ContentMigrator
         $config = $config ?? $this->getFieldConfig($handle);
         $fieldtype = $this->getFieldtype($config);
 
-        $migrateMethod = 'migrate' . ucfirst(strtolower($fieldtype)) . 'Field';
+        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
 
         if (method_exists($this, $migrateMethod)) {
             return $this->{$migrateMethod}($handle, $value, $config);
@@ -218,7 +231,11 @@ class ContentMigrator
      */
     protected function migrateReplicatorField($handle, $value, $config)
     {
-        $fieldConfigs = collect($config['sets'] ?? [])->map(function ($set) {
+        if (! isset($config['sets'])) {
+            return $value;
+        }
+
+        $fieldConfigs = collect($config['sets'])->map(function ($set) {
             return $set['fields'] ?? [];
         })->all();
 
@@ -241,6 +258,19 @@ class ContentMigrator
         return collect($set)->map(function ($fieldValue, $fieldHandle) use ($setHandle, $fieldConfigs) {
             return $this->migrateField($fieldHandle, $fieldValue, Arr::get($fieldConfigs, "{$setHandle}.{$fieldHandle}", []));
         })->all();
+    }
+
+    /**
+     * Migrate bard field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateBardField($handle, $value, $config)
+    {
+        return $this->migrateReplicatorField($handle, $value, $config);
     }
 
     /**
@@ -283,6 +313,8 @@ class ContentMigrator
     {
         if (isset($this->content['fieldset'])) {
             $this->content['blueprint'] = $this->content['fieldset'];
+        } elseif ($this->addExplicitBlueprint && $this->fieldsetExists()) {
+            $this->content['blueprint'] = $this->fieldset;
         }
 
         unset($this->content['fieldset']);
@@ -319,5 +351,15 @@ class ContentMigrator
     protected function getFieldtype($config)
     {
         return $config['type'] ?? 'text';
+    }
+
+    /**
+     * Fieldset exists.
+     *
+     * @return bool
+     */
+    protected function fieldsetExists()
+    {
+        return $this->files->exists($this->sitePath("settings/fieldsets/{$this->fieldset}.yaml"));
     }
 }

@@ -2,12 +2,12 @@
 
 namespace Statamic\Migrator\Commands;
 
-use Statamic\Migrator\Concerns\SubmitsStats;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Console\Command as IlluminateCommand;
+use Statamic\Migrator\Concerns\SubmitsStats;
 use Statamic\Migrator\Exceptions\MigratorErrorException;
 use Statamic\Migrator\Exceptions\MigratorWarningsException;
+use Symfony\Component\Console\Input\InputArgument;
+use Symfony\Component\Console\Input\InputOption;
 
 class Command extends IlluminateCommand
 {
@@ -62,7 +62,7 @@ class Command extends IlluminateCommand
     protected function outputWarnings($warnings)
     {
         $warnings->each(function ($warning) {
-            $this->comment('Warning: ' . $warning->get('warning'));
+            $this->comment('Warning: '.$warning->get('warning'));
 
             if ($extra = $warning->get('extra')) {
                 $this->line($extra);

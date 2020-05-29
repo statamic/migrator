@@ -2,10 +2,8 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\YAML;
 use Statamic\Migrator\ContentMigrator;
-use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\YAML;
 
 class ContentMigratorTest extends TestCase
 {
@@ -21,7 +19,7 @@ class ContentMigratorTest extends TestCase
 
     private function addFieldset($handle, $fieldsetConfig)
     {
-        $this->files->put($this->paths('fieldsets') . "/{$handle}.yaml", YAML::dump($fieldsetConfig));
+        $this->files->put($this->paths('fieldsets')."/{$handle}.yaml", YAML::dump($fieldsetConfig));
 
         return $this;
     }
@@ -33,9 +31,9 @@ class ContentMigratorTest extends TestCase
         $fieldset = $rawFieldset ? $fields : [
             'sections' => [
                 'main' => [
-                    'fields' => $fields
-                ]
-            ]
+                    'fields' => $fields,
+                ],
+            ],
         ];
 
         $this->files->put($this->paths('speaker'), YAML::dump($fieldset));
@@ -79,6 +77,7 @@ class ContentMigratorTest extends TestCase
                 'img/coffee-mug.jpg',
                 'img/stetson.jpg',
             ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -119,6 +118,7 @@ class ContentMigratorTest extends TestCase
         $expected = [
             'image_in_section_one' => 'img/coffee-mug.jpg',
             'image_in_section_two' => 'img/stetson.jpg',
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -143,6 +143,7 @@ class ContentMigratorTest extends TestCase
 
         $expected = [
             'image_at_top_level' => 'img/coffee-mug.jpg',
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -179,8 +180,8 @@ class ContentMigratorTest extends TestCase
                                                 ],
                                             ],
                                         ],
-                                    ]
-                                ]
+                                    ],
+                                ],
                             ],
                         ],
                     ],
@@ -219,7 +220,93 @@ class ContentMigratorTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_can_migrate_fields_within_bards()
+    {
+        $content = $this
+            ->setFields([
+                'some_bard' => [
+                    'type' => 'bard',
+                    'buttons' => [
+                        'bold',
+                        'italic',
+                    ],
+                    'sets' => [
+                        'set_1' => [
+                            'fields' => [
+                                'image_within_bard_set_1' => [
+                                    'type' => 'assets',
+                                    'container' => 'main',
+                                    'max_files' => 1,
+                                ],
+                            ],
+                        ],
+                        'set_2' => [
+                            'fields' => [
+                                'nested_bard' => [
+                                    'type' => 'bard',
+                                    'sets' => [
+                                        'nested_set' => [
+                                            'fields' => [
+                                                'image_within_bard_set_2' => [
+                                                    'type' => 'assets',
+                                                    'container' => 'main',
+                                                    'max_files' => 1,
+                                                ],
+                                            ],
+                                        ],
+                                    ],
+                                ],
+                                'nested_bard_with_no_sets' => [
+                                    'type' => 'bard',
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_bard' => [
+                    [
+                        'type' => 'set_1',
+                        'image_within_bard_set_1' => '/assets/img/coffee-mug.jpg',
+                    ],
+                    [
+                        'type' => 'set_2',
+                        'nested_bard' => [
+                            [
+                                'type' => 'nested_set',
+                                'image_within_bard_set_2' => '/assets/img/stetson.jpg',
+                            ],
+                        ],
+                    ],
+                ],
+            ]);
+
+        $expected = [
+            'some_bard' => [
+                [
+                    'type' => 'set_1',
+                    'image_within_bard_set_1' => 'img/coffee-mug.jpg',
+                ],
+                [
+                    'type' => 'set_2',
+                    'nested_bard' => [
+                        [
+                            'type' => 'nested_set',
+                            'image_within_bard_set_2' => 'img/stetson.jpg',
+                        ],
+                    ],
+                ],
+            ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -278,7 +365,8 @@ class ContentMigratorTest extends TestCase
                         ],
                     ],
                 ],
-            ]
+            ],
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);
@@ -358,6 +446,32 @@ class ContentMigratorTest extends TestCase
                     'flag' => 'img/canada.jpg',
                 ],
             ],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_can_migrate_bards_with_no_sets()
+    {
+        $content = $this
+            ->setFields([
+                'some_bard' => [
+                    'type' => 'bard',
+                    'buttons' => [
+                        'bold',
+                        'italic',
+                    ],
+                ],
+            ])
+            ->migrateContent([
+                'some_bard' => 'Well hello there!',
+            ]);
+
+        $expected = [
+            'some_bard' => 'Well hello there!',
+            'blueprint' => 'speaker',
         ];
 
         $this->assertEquals($expected, $content);

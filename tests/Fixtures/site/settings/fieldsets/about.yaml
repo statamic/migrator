@@ -13,3 +13,8 @@ fields:
   fun_facts:
     type: list
     display: Fun Facts
+  avatar:
+    type: assets
+    container: main
+    max_files: 1
+    display: Avatar

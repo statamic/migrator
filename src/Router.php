@@ -2,8 +2,8 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Support\Str;
 use Symfony\Component\VarExporter\VarExporter;
 
 class Router
@@ -221,7 +221,7 @@ class Router
      */
     protected function routeContentAlreadyExists($content)
     {
-        $pattern = '/' . preg_quote($content, '/') . '/m';
+        $pattern = '/'.preg_quote($content, '/').'/m';
 
         return preg_match($pattern, $this->getRoutesFileContents());
     }

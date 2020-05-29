@@ -2,12 +2,14 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Support\Arr;
 use Statamic\Support\Str;
-use Statamic\Migrator\YAML;
 
 class CollectionMigrator extends Migrator
 {
-    use Concerns\MigratesContent,
+    use Concerns\GetsSettings,
+        Concerns\MigratesContent,
+        Concerns\MigratesLocalizedContent,
         Concerns\MigratesRoute,
         Concerns\MigratesFile;
 
@@ -83,17 +85,17 @@ class CollectionMigrator extends Migrator
     {
         $this->files->cleanDirectory($this->newPath());
 
-        collect($this->files->files($this->sitePath($relativePath)))
+        collect($this->files->allFiles($this->sitePath($relativePath)))
             ->reject(function ($file) {
                 return $file->getFilename() === 'folder.yaml';
             })
             ->mapWithKeys(function ($file) {
-                return [$file->getFilename() => $this->getSourceYaml($file->getPathname())];
+                return [$file->getPathname() => $this->getSourceYaml($file->getPathname())];
             })
-            ->each(function ($entry, $filename) {
+            ->each(function ($entry, $path) {
                 $this->saveMigratedWithYamlFrontMatter(
-                    $this->migrateEntry($entry, $filename),
-                    $this->migratePath($filename, $entry)
+                    $this->migrateEntry($entry, $path),
+                    $this->migratePath($path, $entry)
                 );
             });
 
@@ -104,17 +106,38 @@ class CollectionMigrator extends Migrator
      * Migrate entry.
      *
      * @param array $entry
+     * @param string $path
      * @return string
      */
-    protected function migrateEntry($entry, $filename)
+    protected function migrateEntry($entry, $path)
     {
-        if (Str::startsWith($filename, '_')) {
+        $path = $this->normalizePath($path);
+
+        if (Str::startsWith(basename($path), '_')) {
             $entry['published'] = false;
         }
+
+        if ($this->isMultisite() && $this->isLocalizedEntry($path)) {
+            $entry['origin'] = $entry['id'];
+            $entry['id'] = Str::uuid();
+        }
+
+        unset($entry['slug']);
 
         $this->migrateUsedTaxonomies($entry);
 
         return $this->migrateContent($entry, $this->getEntryFieldset($entry));
+    }
+
+    /**
+     * Check if entry is a localized entry..
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function isLocalizedEntry($path)
+    {
+        return $this->migrateSite($this->getRelativePath($path)) !== 'default';
     }
 
     /**
@@ -157,17 +180,34 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate path.
      *
-     * @param string $filename
+     * @param string $path
      * @param array $entry
      * @return $string
      */
-    protected function migratePath($filename, $entry)
+    protected function migratePath($path, $entry)
     {
+        // Prevent windows issues.
+        $path = $this->normalizePath($path);
+
+        // Convert to relative path.
+        $filename = $this->getRelativePath($path);
+
+        // If multisite, migrate site and get filename from relative path.
+        if ($this->isMultisite()) {
+            $site = $this->migrateSite($filename);
+            $filename = $this->migrateLocalizedFilename($filename);
+        }
+
         // Ensure file has .md extension.
         $filename = preg_replace('/(.*)\.[^\.]+/', '$1.md', $filename);
 
         // Remove `_` draft entry prefix.
         $filename = preg_replace('/^_(.*)$/', '$1', $filename);
+
+        // If entry has slug in yaml, use this for filename.
+        if ($slug = Arr::get($entry, 'slug')) {
+            $filename = preg_replace('/([^.]*\.)?[^.]*(\.md)$/', "$1{$slug}$2", $filename);
+        }
 
         // If filename has order key, store order and remove order key.
         if ($this->config->get('order') === 'number') {
@@ -176,7 +216,10 @@ class CollectionMigrator extends Migrator
             $filename = preg_replace($regex, '', $filename);
         }
 
-        return $this->newPath($filename);
+        // If multisite, ensure site subfolder.
+        $path = $this->isMultisite() ? "{$site}/{$filename}" : $filename;
+
+        return $this->newPath($path);
     }
 
     /**
@@ -186,7 +229,11 @@ class CollectionMigrator extends Migrator
      */
     protected function migrateYamlConfig()
     {
-        $reservedKeys = collect(['title', 'template']);
+        $reservedKeys = collect(['title', 'template', 'sites']);
+
+        if ($this->isMultisite()) {
+            $this->config->put('sites', $this->getMigratedSiteKeys()->all());
+        }
 
         if ($fieldset = $this->config->get('fieldset')) {
             $this->config->forget('fieldset');
@@ -261,5 +308,16 @@ class CollectionMigrator extends Migrator
         $this->files->delete($this->newPath('folder.yaml'));
 
         return $this;
+    }
+
+    /**
+     * Get relative path.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function getRelativePath($path)
+    {
+        return str_replace($this->sitePath("content/collections/{$this->handle}").'/', '', $path);
     }
 }

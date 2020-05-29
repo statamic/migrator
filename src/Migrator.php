@@ -2,11 +2,10 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
-use Statamic\Facades\Path;
 use Illuminate\Filesystem\Filesystem;
-use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
+use Statamic\Support\Str;
 
 abstract class Migrator
 {
@@ -97,7 +96,7 @@ abstract class Migrator
      */
     protected function sitePath($append = null)
     {
-        return collect([base_path('site'), $append])->filter()->implode('/');
+        return $this->normalizePath(collect([base_path('site'), $append])->filter()->implode('/'));
     }
 
     /**
@@ -108,7 +107,18 @@ abstract class Migrator
      */
     protected function newPath($append = null)
     {
-        return collect([$this->newPath, $append])->filter()->implode('/');
+        return $this->normalizePath(collect([$this->newPath, $append])->filter()->implode('/'));
+    }
+
+    /**
+     * Normalize path to help prevent errors in Windows.
+     *
+     * @param string $path
+     * @return string
+     */
+    protected function normalizePath($path)
+    {
+        return Path::resolve($path);
     }
 
     /**
@@ -161,7 +171,7 @@ abstract class Migrator
     protected function uniquePaths()
     {
         return [
-            $this->newPath
+            $this->newPath,
         ];
     }
 

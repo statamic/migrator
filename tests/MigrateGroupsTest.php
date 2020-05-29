@@ -2,9 +2,8 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Support\Arr;
 use Statamic\Migrator\YAML;
+use Statamic\Support\Arr;
 
 class MigrateGroupsTest extends TestCase
 {
@@ -14,7 +13,7 @@ class MigrateGroupsTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_groups()
+    public function it_migrates_groups()
     {
         $this->assertFileNotExists($this->path());
 

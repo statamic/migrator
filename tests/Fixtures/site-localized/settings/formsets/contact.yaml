@@ -1,0 +1,28 @@
+title: Contact Me
+
+fields:
+  name:
+    display: Name
+    validate: required|min:2
+  email:
+    display: Email Address
+    validate: required|email
+  number:
+    display: Favorite Number
+    validate: integer
+  comment:
+    display: Comment
+
+metrics:
+  -
+    type: total
+    label: Total Responses
+  -
+    type: sum
+    field: number
+    label: Sum of Favorite Number
+  -
+    type: average
+    field: number
+    label: Average Favorite Number
+    precision: 1

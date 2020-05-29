@@ -11,6 +11,7 @@ fun_facts:
   - "I have a restraining order against me from J.K. Rowling but I promise it's just a misunderstanding"
   - "I hope one day I love something the way women in commercials love yogurt"
   - "I’m not smart. I just wear glasses."
+avatar: /assets/img/stetson.jpg
 ---
 My name is Niles Peppertrout. I am a relatively new Park Ranger working at Redwood Nation Park with a background in Applied Harry Potter Sciences from [Frostburg University](http://frostburg.edu). I've always loved the outdoors but never dreamed I'd get paid to wander them. [Join me on my adventure](/blog)!
 

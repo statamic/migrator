@@ -11,15 +11,17 @@ trait MigratesContent
      *
      * @param array $content
      * @param string $fieldset
+     * @param bool $addExplicitBlueprint
      * @return array
      */
-    protected function migrateContent($content, $fieldset)
+    protected function migrateContent($content, $fieldset, $addExplicitBlueprint = true)
     {
-        // TODO: Throw warning?
         if (! $fieldset) {
             return $content;
         }
 
-        return ContentMigrator::usingFieldset($fieldset)->migrateContent($content);
+        return ContentMigrator::usingFieldset($fieldset)
+            ->addExplicitBlueprint($addExplicitBlueprint)
+            ->migrateContent($content);
     }
 }

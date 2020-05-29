@@ -124,7 +124,7 @@ class FormMigrator extends Migrator
             ? ''
             : '_form';
 
-        return $this->handle . $suffix;
+        return $this->handle.$suffix;
     }
 
     /**

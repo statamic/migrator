@@ -1,0 +1,10 @@
+title: Footer
+hide: true
+sections:
+  main:
+    display: Main
+    fields:
+      copyright:
+        type: text
+        display: Copyright
+taxonomies: true

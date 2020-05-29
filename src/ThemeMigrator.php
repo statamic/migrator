@@ -2,14 +2,16 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
 use Statamic\Facades\Path;
+use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Support\Str;
 
 class ThemeMigrator extends Migrator
 {
     use Concerns\GetsSettings,
         Concerns\MigratesFile,
-        Concerns\PreparesPathFolder;
+        Concerns\PreparesPathFolder,
+        Concerns\ThrowsFinalWarnings;
 
     protected $templates;
 
@@ -24,7 +26,9 @@ class ThemeMigrator extends Migrator
             ->setNewPath(resource_path('views'))
             ->parseTheme()
             ->validateUnique()
-            ->migrateTemplates();
+            ->migrateTemplates()
+            ->migrateMacros()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -34,9 +38,15 @@ class ThemeMigrator extends Migrator
      */
     protected function uniquePaths()
     {
-        return $this->templates->map(function ($template) {
+        $templates = $this->templates->map(function ($template) {
             return $this->migratePath($template, false);
         })->all();
+
+        $misc = [
+            resource_path('macros.yaml'),
+        ];
+
+        return array_merge($templates, $misc);
     }
 
     /**
@@ -46,15 +56,34 @@ class ThemeMigrator extends Migrator
      */
     protected function parseTheme()
     {
+        if (! $this->files->exists($path = $this->sitePath("themes/{$this->handle}"))) {
+            throw new NotFoundException('Theme folder cannot be found at path [path].', $path);
+        }
+
         $this->templates = collect()
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/layouts")))
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/partials")))
-            ->merge($this->files->allFiles($this->sitePath("themes/{$this->handle}/templates")))
+            ->merge($this->getThemeFiles('layouts'))
+            ->merge($this->getThemeFiles('partials'))
+            ->merge($this->getThemeFiles('templates'))
             ->filter(function ($template) {
                 return Str::endsWith($template->getFilename(), ['.html', '.blade.php']);
             });
 
         return $this;
+    }
+
+    /**
+     * Get theme files from subfolder.
+     *
+     * @param string $subFolder
+     * @return array
+     */
+    protected function getThemeFiles($subFolder)
+    {
+        $path = $this->sitePath("themes/{$this->handle}/{$subFolder}");
+
+        return $this->files->exists($path)
+            ? $this->files->allFiles($path)
+            : [];
     }
 
     /**
@@ -67,6 +96,13 @@ class ThemeMigrator extends Migrator
         $this->templates->each(function ($template) {
             $this->files->put($this->migratePath($template), $this->migrateTemplate($template));
         });
+
+        $this->addWarning(
+            "Your [{$this->handle}] theme templates have been migrated to [resources/views].",
+            'It\'s worth noting that Antlers templating has undergone a number of changes.  Many of these changes are opinionated and will need your attention (please refer to [https://statamic.dev/upgrade-guide] for an overview of the most breaking changes).  Your theme\'s front end assets and build pipelines will also need to be manually migrated.  We recommend checking out Laravel Mix if you are building your assets (Mix comes pre-installed into your v3 apps, and documentation is available at [https://laravel.com/docs/mix]).'
+        );
+
+        return $this;
     }
 
     /**
@@ -82,9 +118,9 @@ class ThemeMigrator extends Migrator
         $relativePath = $this->convertExtension($template->getRelativePathname());
 
         if (Str::contains($originalPath, "themes/{$this->handle}/layouts")) {
-            $relativePath = 'layouts/' . $this->migrateLayoutFilename($relativePath);
+            $relativePath = 'layouts/'.$this->migrateLayoutFilename($relativePath);
         } elseif (Str::contains($originalPath, "themes/{$this->handle}/partials")) {
-            $relativePath = 'partials/' . $relativePath;
+            $relativePath = 'partials/'.$relativePath;
         }
 
         $absolutePath = $this->newPath($relativePath);
@@ -175,5 +211,19 @@ class ThemeMigrator extends Migrator
         $template = preg_replace('/modify\((.*)\)->/mU', '\Statamic\Modifiers\Modify::value($1)->', $template);
 
         return $template;
+    }
+
+    /**
+     * Migrate macros.
+     *
+     * @return $this
+     */
+    protected function migrateMacros()
+    {
+        if ($this->files->exists($path = $this->sitePath("themes/{$this->handle}/settings/macros.yaml"))) {
+            $this->files->copy($path, resource_path('macros.yaml'));
+        }
+
+        return $this;
     }
 }

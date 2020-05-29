@@ -2,15 +2,14 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Support\Arr;
-use Statamic\Support\Str;
-use Statamic\Migrator\YAML;
 use Illuminate\Support\Facades\File;
+use Statamic\Migrator\YAML;
+use Statamic\Support\Arr;
 
 trait GetsFieldsetHandles
 {
     /**
-     * Get fieldset handles
+     * Get fieldset handles.
      *
      * @return \stdClass
      */

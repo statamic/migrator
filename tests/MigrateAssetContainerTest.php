@@ -2,12 +2,10 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Support\Arr;
-use Statamic\Support\Str;
-use Statamic\Migrator\YAML;
-use Statamic\Migrator\Configurator;
 use Facades\Statamic\Console\Processes\Process;
+use Statamic\Migrator\Configurator;
+use Statamic\Migrator\YAML;
+use Statamic\Support\Arr;
 
 class MigrateAssetContainerTest extends TestCase
 {
@@ -17,7 +15,7 @@ class MigrateAssetContainerTest extends TestCase
 
         $this->configurator = Configurator::file('filesystems.php');
 
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
+        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
     }
 
     protected function paths()
@@ -34,7 +32,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_yaml_config()
+    public function it_migrates_yaml_config()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
@@ -49,7 +47,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_assets_folder()
+    public function it_migrates_assets_folder()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
@@ -61,7 +59,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_multiple_assets_folders()
+    public function it_migrates_multiple_assets_folders()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
             'title' => 'Secondary Assets',
@@ -81,7 +79,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_meta()
+    public function it_can_migrate_meta()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
 
@@ -114,7 +112,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_with_custom_fieldset_meta()
+    public function it_can_migrate_with_custom_fieldset_meta()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
             'title' => 'Secondary Assets',
@@ -124,9 +122,9 @@ class MigrateAssetContainerTest extends TestCase
                 'img/stetson.jpg' => [
                     'title' => 'A Hat',
                     'alt' => 'fancy hat',
-                    'purchase' => 'amazon.texas/stetson'
-                ]
-            ]
+                    'purchase' => 'amazon.texas/stetson',
+                ],
+            ],
         ]));
 
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('secondary'));
@@ -150,7 +148,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_only_meta()
+    public function it_can_migrate_only_meta()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
             'title' => 'Secondary Assets',
@@ -160,9 +158,9 @@ class MigrateAssetContainerTest extends TestCase
                 'img/stetson.jpg' => [
                     'title' => 'A Hat',
                     'alt' => 'fancy hat',
-                    'purchase' => 'amazon.texas/stetson'
-                ]
-            ]
+                    'purchase' => 'amazon.texas/stetson',
+                ],
+            ],
         ]));
 
         $this->configurator->mergeSpaciously('disks', [
@@ -171,7 +169,7 @@ class MigrateAssetContainerTest extends TestCase
                 'root' => public_path('assets/secondary'),
                 'url' => '/assets/secondary',
                 'visibility' => 'public',
-            ]
+            ],
         ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
@@ -190,7 +188,7 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_meta_into_s3_path()
+    public function it_can_migrate_meta_into_s3_path()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
             'title' => 'Secondary Assets',
@@ -201,9 +199,9 @@ class MigrateAssetContainerTest extends TestCase
                 'img/stetson.jpg' => [
                     'title' => 'A Hat',
                     'alt' => 'fancy hat',
-                    'purchase' => 'amazon.texas/stetson'
-                ]
-            ]
+                    'purchase' => 'amazon.texas/stetson',
+                ],
+            ],
         ]));
 
         // Fake S3 connection so that we can test `path` on `s3` driver.
@@ -213,7 +211,7 @@ class MigrateAssetContainerTest extends TestCase
                 'root' => public_path('assets/secondary'),
                 'url' => '/assets/secondary',
                 'visibility' => 'public',
-            ]
+            ],
         ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'secondary', '--meta-only' => true]);
@@ -229,11 +227,11 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_disk_with_local_driver()
+    public function it_migrates_disk_with_local_driver()
     {
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
+        $this->assertFilesystemConfigFileContains(<<<'EOT'
     'disks' => [
 
         'local' => [
@@ -276,7 +274,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_disk_with_s3_driver()
+    public function it_migrates_disk_with_s3_driver()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
             'title' => 'Main Assets',
@@ -292,7 +290,7 @@ EOT
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
+        $this->assertFilesystemConfigFileContains(<<<'EOT'
     'disks' => [
 
         'local' => [
@@ -338,18 +336,18 @@ EOT
     }
 
     /** @test */
-    function it_migrates_disk_with_terser_key_when_assets_already_exists()
+    public function it_migrates_disk_with_terser_key_when_assets_already_exists()
     {
         $this->configurator->mergeSpaciously('disks', [
             'assets' => [
                 'driver' => 'local',
                 'root' => "storage_path('app/some-other-user-assets-unrelated-to-statamic')",
-            ]
+            ],
         ]);
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
+        $this->assertFilesystemConfigFileContains(<<<'EOT'
     'disks' => [
 
         'local' => [
@@ -398,7 +396,7 @@ EOT
     }
 
     /** @test */
-    function it_migrates_multiple_disks_with_terser_keys_only()
+    public function it_migrates_multiple_disks_with_terser_keys_only()
     {
         $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
             'title' => 'Cloud Assets',
@@ -413,7 +411,7 @@ EOT
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud']);
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
+        $this->assertFilesystemConfigFileContains(<<<'EOT'
     'disks' => [
 
         'local' => [
@@ -468,7 +466,7 @@ EOT
     }
 
     /** @test */
-    function it_overwrites_disks_when_forced()
+    public function it_overwrites_disks_when_forced()
     {
         $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
             'title' => 'Cloud Assets',
@@ -503,7 +501,7 @@ EOT
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main', '--force' => true]);
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'cloud', '--force' => true]);
 
-        $this->assertFilesystemConfigFileContains(<<<EOT
+        $this->assertFilesystemConfigFileContains(<<<'EOT'
     'disks' => [
 
         'local' => [
@@ -568,7 +566,7 @@ EOT
 
         $config = $this->normalizeS3Config($this->files->get($configPath));
 
-        $beginning = <<<EOT
+        $beginning = <<<'EOT'
 <?php
 
 return [
@@ -620,7 +618,7 @@ EOT;
     protected function normalizeS3Config($config)
     {
         // Laravel 7.0
-        $variants[] = <<<EOT
+        $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -632,7 +630,7 @@ EOT;
 EOT;
 
         // Laravel 7.3
-        $variants[] = <<<EOT
+        $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -644,7 +642,7 @@ EOT;
 EOT;
 
         // Current version
-        $current = <<<EOT
+        $current = <<<'EOT'
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

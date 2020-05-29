@@ -2,9 +2,8 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\Configurator;
 use Facades\Statamic\Console\Processes\Process;
+use Statamic\Migrator\Configurator;
 
 class ConfiguratorTest extends TestCase
 {
@@ -12,11 +11,11 @@ class ConfiguratorTest extends TestCase
     {
         parent::setUp();
 
-        $this->files->copy(__DIR__ . '/Fixtures/config/configurator-test.php', $this->path());
+        $this->files->copy(__DIR__.'/Fixtures/config/configurator-test.php', $this->path());
 
         $this->configurator = Configurator::file('statamic/configurator-test.php');
 
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
+        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
     }
 
     protected function path()
@@ -25,11 +24,11 @@ class ConfiguratorTest extends TestCase
     }
 
     /** @test */
-    function it_normalizes_mangled_indentation_and_ensures_trailing_commas()
+    public function it_normalizes_mangled_indentation_and_ensures_trailing_commas()
     {
         $this->configurator->normalize();
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'disks_mangled' => [
         's3' => [
             'driver' => 's3',
@@ -45,27 +44,27 @@ EOT
     }
 
     /** @test */
-    function it_can_set_string_value_to_something_new()
+    public function it_can_set_string_value_to_something_new()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'action' => '!',
 EOT
         );
 
         $this->configurator->set('action', '?');
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'action' => '?',
 EOT
         );
 
         $this->configurator
             ->set('action', [
-                'hero' => 'batman'
+                'hero' => 'batman',
             ])
             ->normalize();
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'action' => [
         'hero' => 'batman',
     ],
@@ -74,25 +73,25 @@ EOT
     }
 
     /** @test */
-    function it_can_set_integer_value_to_something_new()
+    public function it_can_set_integer_value_to_something_new()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'pagination_size' => 50,
 EOT
         );
 
         $this->configurator->set('pagination_size', 12);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'pagination_size' => 12,
 EOT
         );
     }
 
     /** @test */
-    function it_can_set_array_value_to_something_new()
+    public function it_can_set_array_value_to_something_new()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
     ],
@@ -104,10 +103,10 @@ EOT
                 'layout' => 'feed',
                 'template' => 'feeds/blog',
                 'content_type' => 'atom',
-            ]
+            ],
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         '/blog/feed' => [
             'layout' => 'feed',
@@ -120,16 +119,16 @@ EOT
 
         $this->configurator->set('routes', '?');
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => '?',
 EOT
         );
     }
 
     /** @test */
-    function it_can_set_nested_array_value_to_something_new()
+    public function it_can_set_nested_array_value_to_something_new()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'disks_spacious' => [
 
         'local' => [
@@ -144,7 +143,7 @@ EOT
             'root' => 'not_root',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'not_local',
             'root' => 'not_root',
@@ -154,7 +153,7 @@ EOT
 
         $this->configurator->set('disks_spacious.local.root', 'beer');
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'not_local',
             'root' => 'beer',
@@ -164,7 +163,7 @@ EOT
     }
 
     /** @test */
-    function it_can_set_completely_new_values()
+    public function it_can_set_completely_new_values()
     {
         $this->configurator->set('lol', 'catz');
 
@@ -173,7 +172,7 @@ EOT
             'worst' => 'Newman',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'extra-config' => [
         'from-some-other-package' => env('THIS_SHOULDNT_GET_TOUCHED'),
     ],
@@ -191,9 +190,9 @@ EOT
     }
 
     /** @test */
-    function it_can_merge_into_array()
+    public function it_can_merge_into_array()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
     ],
@@ -205,7 +204,7 @@ EOT
             '/blog' => 'blog',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
         '/search' => 'search',
@@ -219,8 +218,7 @@ EOT
             '/feed' => 'feed',
         ]);
 
-
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
         '/search' => 'search',
@@ -232,9 +230,9 @@ EOT
     }
 
     /** @test */
-    function it_can_merge_into_nested_array()
+    public function it_can_merge_into_nested_array()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
@@ -247,7 +245,7 @@ EOT
             'coca' => 'cola',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'local',
             'root' => 'beer',
@@ -258,9 +256,9 @@ EOT
     }
 
     /** @test */
-    function it_can_spaciously_merge_into_array()
+    public function it_can_spaciously_merge_into_array()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
     ],
@@ -272,7 +270,7 @@ EOT
             '/blog' => 'blog',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
 
@@ -289,8 +287,7 @@ EOT
             '/feed' => 'feed',
         ]);
 
-
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
 
@@ -306,9 +303,9 @@ EOT
     }
 
     /** @test */
-    function it_can_spaciously_merge_into_nested_array()
+    public function it_can_spaciously_merge_into_nested_array()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
@@ -321,7 +318,7 @@ EOT
             'coca' => 'cola',
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
         'local' => [
             'driver' => 'local',
             'root' => 'beer',
@@ -334,9 +331,9 @@ EOT
     }
 
     /** @test */
-    function it_can_spaciously_merge_into_mangled_array()
+    public function it_can_spaciously_merge_into_mangled_array()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
 'disks_mangled' => [
 's3'=>[
 'driver'=>'s3',
@@ -356,7 +353,7 @@ EOT
             ],
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'disks_mangled' => [
         's3' => [
             'driver' => 's3',
@@ -378,7 +375,7 @@ EOT
     }
 
     /** @test */
-    function it_can_refresh_config()
+    public function it_can_refresh_config()
     {
         $this->configurator->merge('disks_spacious.local', [
             'root' => 'beer',
@@ -392,16 +389,16 @@ EOT
     }
 
     /** @test */
-    function it_wont_merge_duplicate_values()
+    public function it_wont_merge_duplicate_values()
     {
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
     ],
 EOT
         );
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'widgets' => [
         'getting_started',
     ],
@@ -436,7 +433,7 @@ EOT
             ],
         ]);
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'routes' => [
         // '/' => 'home'
         '/search' => 'search',
@@ -448,7 +445,7 @@ EOT
 EOT
         );
 
-        $this->assertConfigFileContains(<<<EOT
+        $this->assertConfigFileContains(<<<'EOT'
     'widgets' => [
         'getting_started',
         [
@@ -475,9 +472,9 @@ EOT
      */
     protected function assertConfigFileContains($content)
     {
-        $contents = $this->files->get($path = config_path("statamic/configurator-test.php"));
+        $contents = $this->files->get($path = config_path('statamic/configurator-test.php'));
 
-        $beginning = <<<EOT
+        $beginning = <<<'EOT'
 return [
 
     /*
@@ -494,7 +491,7 @@ return [
     'start' => env('THIS_SHOULDNT_GET_TOUCHED'),
 EOT;
 
-        $extraConfig = <<<EOT
+        $extraConfig = <<<'EOT'
     'extra-config' => [
         'from-some-other-package' => env('THIS_SHOULDNT_GET_TOUCHED'),
     ],

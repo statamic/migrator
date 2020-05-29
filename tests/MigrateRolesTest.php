@@ -2,8 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-
 class MigrateRolesTest extends TestCase
 {
     protected function path()
@@ -12,7 +10,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_roles()
+    public function it_migrates_roles()
     {
         $this->assertFileNotExists($this->path());
 
@@ -26,7 +24,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_general_permissions()
+    public function it_migrates_general_permissions()
     {
         $this->assertPermissionMigratesTo('super', 'super');
         $this->assertPermissionMigratesTo('cp:access', 'access cp');
@@ -40,7 +38,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_pages_permissions()
+    public function it_migrates_pages_permissions()
     {
         $this->assertPermissionMigratesTo('pages:view', 'view pages entries');
         $this->assertPermissionMigratesTo('pages:edit', 'edit pages entries');
@@ -50,7 +48,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_collection_permissions()
+    public function it_migrates_collection_permissions()
     {
         $this->assertPermissionMigratesTo('collections:blog:view', 'view blog entries');
         $this->assertPermissionMigratesTo('collections:blog:edit', ['edit blog entries', 'reorder blog entries']);
@@ -64,7 +62,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_taxonomy_permissions()
+    public function it_migrates_taxonomy_permissions()
     {
         $this->assertPermissionMigratesTo('taxonomies:tags:view', 'view tags terms');
         $this->assertPermissionMigratesTo('taxonomies:tags:edit', 'edit tags terms');
@@ -78,7 +76,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_asset_container_permissions()
+    public function it_migrates_asset_container_permissions()
     {
         $this->assertPermissionMigratesTo('assets:main:view', 'view main assets');
         $this->assertPermissionMigratesTo('assets:main:edit', ['edit main assets', 'move main assets', 'rename main assets']);
@@ -87,14 +85,14 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_global_set_permissions()
+    public function it_migrates_global_set_permissions()
     {
         $this->assertPermissionMigratesTo('globals:global:edit', 'edit global globals');
         $this->assertPermissionMigratesTo('globals:social:edit', 'edit social globals');
     }
 
     /** @test */
-    function it_migrates_user_management_permissions()
+    public function it_migrates_user_management_permissions()
     {
         $this->assertPermissionMigratesTo('users:view', 'view users');
         $this->assertPermissionMigratesTo('users:edit', 'edit users');
@@ -105,7 +103,7 @@ class MigrateRolesTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_form_permissions()
+    public function it_migrates_form_permissions()
     {
         $this->files->copy($this->sitePath('settings/formsets/contact.yaml'), $this->sitePath('settings/formsets/job_application.yaml'));
 

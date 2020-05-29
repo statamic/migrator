@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Facades\Statamic\Console\Processes\Process;
 
 class MigrateSettingsTest extends TestCase
@@ -20,32 +19,32 @@ class MigrateSettingsTest extends TestCase
     {
         parent::setUp();
 
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__ . '/../'));
+        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
 
-        $this->files->copy(__DIR__ . '/Fixtures/routes/web.php', $this->paths('routesFile'));
+        $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->paths('routesFile'));
     }
 
     /** @test */
-    function it_migrates_cp_settings()
+    public function it_migrates_cp_settings()
     {
-        $this->assertConfigFileContains('cp.php', <<<EOT
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
         'getting_started',
 EOT
         );
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'cp']);
 
-        $this->assertConfigFileContains('cp.php', <<<EOT
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'start_page' => 'collections',
 EOT
         );
 
-        $this->assertConfigFileContains('cp.php', <<<EOT
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'date_format' => 'Y-m-d',
 EOT
         );
 
-        $this->assertConfigFileContains('cp.php', <<<EOT
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'widgets' => [
         'getting_started',
         [
@@ -73,18 +72,18 @@ EOT
 EOT
         );
 
-        $this->assertConfigFileContains('cp.php', <<<EOT
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'pagination_size' => 12,
 EOT
         );
     }
 
     /** @test */
-    function it_migrates_routes()
+    public function it_migrates_routes()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'routes']);
 
-        $this->assertRoutesFileContains(<<<EOT
+        $this->assertRoutesFileContains(<<<'EOT'
 Route::statamic('search', 'search');
 Route::statamic('blog/tags', 'blog.taxonomies');
 Route::statamic('blog/feed', 'feeds.blog', [
@@ -102,11 +101,11 @@ EOT
     }
 
     /** @test */
-    function it_migrates_system_settings()
+    public function it_migrates_system_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<EOT
+        $this->assertConfigFileContains('sites.php', <<<'EOT'
     'sites' => [
 
         'default' => [
@@ -121,9 +120,9 @@ EOT
     }
 
     /** @test */
-    function it_migrates_multiple_locales_with_env_references()
+    public function it_migrates_multiple_locales_with_env_references()
     {
-        $this->files->put($this->sitePath('settings/system.yaml'), <<<EOT
+        $this->files->put($this->sitePath('settings/system.yaml'), <<<'EOT'
 locales:
   en:
     name: English
@@ -138,8 +137,10 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<EOT
-        'en' => [
+        $this->assertConfigFileContains('sites.php', <<<'EOT'
+    'sites' => [
+
+        'default' => [
             'name' => 'English',
             'locale' => 'en_US',
             'url' => env('APP_URL'),
@@ -150,21 +151,23 @@ EOT
             'locale' => 'fr_FR',
             'url' => env('APP_URL_FR'),
         ],
+
+    ],
 EOT
         );
     }
 
     /** @test */
-    function it_migrates_user_settings()
+    public function it_migrates_user_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'users']);
 
-        $this->assertConfigFileContains('users.php', <<<EOT
+        $this->assertConfigFileContains('users.php', <<<'EOT'
     'avatars' => 'gravatar',
 EOT
         );
 
-        $this->assertConfigFileContains('users.php', <<<EOT
+        $this->assertConfigFileContains('users.php', <<<'EOT'
     'new_user_roles' => [
         'author',
     ],
@@ -173,21 +176,21 @@ EOT
     }
 
     /** @test */
-    function it_migrates_empty_user_settings()
+    public function it_migrates_empty_user_settings()
     {
-        $this->files->put($this->sitePath('settings/users.yaml'), <<<EOT
+        $this->files->put($this->sitePath('settings/users.yaml'), <<<'EOT'
 nothing_relevant: true
 EOT
         );
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'users']);
 
-        $this->assertConfigFileContains('users.php', <<<EOT
+        $this->assertConfigFileContains('users.php', <<<'EOT'
     'avatars' => 'initials',
 EOT
         );
 
-        $this->assertConfigFileContains('users.php', <<<EOT
+        $this->assertConfigFileContains('users.php', <<<'EOT'
     'new_user_roles' => [
         //
     ],
@@ -205,7 +208,7 @@ EOT
     {
         $config = config_path("statamic/{$file}");
 
-        $beginning = <<<EOT
+        $beginning = <<<'EOT'
 <?php
 
 return [
@@ -233,7 +236,7 @@ EOT;
     {
         $contents = $this->files->get($this->paths('routesFile'));
 
-        $beginning = <<<EOT
+        $beginning = <<<'EOT'
 // Route::get('/', function () {
 //     return view('welcome');
 // });

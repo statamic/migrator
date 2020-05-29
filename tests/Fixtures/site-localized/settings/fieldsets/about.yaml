@@ -1,0 +1,37 @@
+title: About
+hide: true
+sections:
+  main:
+    display: Main
+    fields:
+      title:
+        type: text
+        width: 66
+        localizable: true
+      slug:
+        type: text
+        width: 33
+      content:
+        type: markdown
+        display: Content
+        localizable: true
+        cheatsheet: false
+        restrict_assets: false
+      fun_facts:
+        type: list
+        display: 'Fun Facts'
+      assets:
+        container: main
+        folder: /
+        restrict: false
+        max_files: 1
+        type: assets
+        localizable: true
+        display: Assets
+      avatar:
+        type: assets
+        container: main
+        max_files: 1
+        display: Avatar
+        localizable: true
+taxonomies: true

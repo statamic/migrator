@@ -2,9 +2,7 @@
 
 namespace Tests;
 
-use Tests\TestCase;
 use Statamic\Migrator\YAML;
-use Statamic\Migrator\FieldsetMigrator;
 
 class MigrateUserTest extends TestCase
 {
@@ -33,7 +31,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_a_user()
+    public function it_can_migrate_a_user()
     {
         $user = $this->migrateUser([
             'first_name' => 'Irma',
@@ -51,7 +49,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_requires_an_email_for_handle()
+    public function it_requires_an_email_for_handle()
     {
         $this->files->put($this->paths('old_username'), YAML::dump([
             'first_name' => 'Irma',
@@ -64,7 +62,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_email_from_filename()
+    public function it_migrates_email_from_filename()
     {
         $this->files->put($this->sitePath('settings/users.yaml'), 'login_type: email');
 
@@ -80,7 +78,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_with_only_first_name()
+    public function it_migrates_with_only_first_name()
     {
         $user = $this->migrateUser([
             'first_name' => 'Irma',
@@ -93,7 +91,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_with_only_last_name()
+    public function it_migrates_with_only_last_name()
     {
         $user = $this->migrateUser([
             'last_name' => 'Gobb',
@@ -106,7 +104,7 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_singular_name_field()
+    public function it_migrates_singular_name_field()
     {
         $user = $this->migrateUser([
             'name' => 'Irma Gobb',
@@ -119,40 +117,40 @@ class MigrateUserTest extends TestCase
     }
 
     /** @test */
-    function it_migrates_roles()
+    public function it_migrates_roles()
     {
         $user = $this->migrateUser([
             'name' => 'Irma Gobb',
             'email' => 'irmagobb@example.com',
             'roles' => [
-                'd32e14fb-08c9-44c2-aaf8-21200852bafd'
-            ]
+                'd32e14fb-08c9-44c2-aaf8-21200852bafd',
+            ],
         ]);
 
         $this->assertEquals($user, [
             'name' => 'Irma Gobb',
             'roles' => [
-                'super_admin'
-            ]
+                'super_admin',
+            ],
         ]);
     }
 
     /** @test */
-    function it_migrates_groups()
+    public function it_migrates_groups()
     {
         $user = $this->migrateUser([
             'name' => 'Irma Gobb',
             'email' => 'irmagobb@example.com',
             'groups' => [
-                'bc8b131b-4e01-4325-9fbc-598dff152855'
-            ]
+                'bc8b131b-4e01-4325-9fbc-598dff152855',
+            ],
         ]);
 
         $this->assertEquals($user, [
             'name' => 'Irma Gobb',
             'groups' => [
-                'scribblers'
-            ]
+                'scribblers',
+            ],
         ]);
     }
 }

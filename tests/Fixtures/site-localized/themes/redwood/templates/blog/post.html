@@ -1,0 +1,37 @@
+<section class="regular">
+
+	<header>
+		<div class="meta clearfix">
+			<div class="author">
+				<img src="https://s3.amazonaws.com/uifaces/faces/twitter/rssems/48.jpg" class="img-circle" width="48" height="48">
+				<div class="pull-left">
+					<a href="" class="name">{{ author_name }}</a>
+					<span class="length">{{ content | read_time }} minute read</span>
+				</div>
+			</div>
+			<div class="date">
+				{{ date format="F j, Y" }}
+			</div>
+		</div>
+		<h1>{{ title }}</h1>
+		{{ sub_title wrap="h2" }}
+	</header>
+
+	<article class="content">
+
+		{{ if intro_image }}
+			<p><img src="{{ intro_image }}" class="intro-image"></p>
+		{{ /if }}
+
+		{{ content }}
+
+		<ul class="tags">
+		{{ tags }}
+			<li><a href="{{ url }}">{{ title }}</a></li>
+		{{ /tags }}
+		</ul>
+	</article>
+
+</section>
+
+{{ partial:article-footer }}

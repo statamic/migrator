@@ -2,9 +2,9 @@
 
 namespace Statamic\Migrator\Concerns;
 
-use Statamic\Migrator\RolesMigrator;
-use Statamic\Migrator\GroupsMigrator;
 use Statamic\Migrator\Exceptions\NotFoundException;
+use Statamic\Migrator\GroupsMigrator;
+use Statamic\Migrator\RolesMigrator;
 
 trait MigratesRoles
 {
@@ -19,7 +19,7 @@ trait MigratesRoles
         $path = $this->sitePath('settings/users/roles.yaml');
 
         if (! $this->files->exists($path)) {
-            throw new NotFoundException("Roles file cannot be found at path [path].", $path);
+            throw new NotFoundException('Roles file cannot be found at path [path].', $path);
         }
 
         return $this
@@ -45,7 +45,7 @@ trait MigratesRoles
         $path = $this->sitePath('settings/users/groups.yaml');
 
         if (! $this->files->exists($path)) {
-            throw new NotFoundException("Groups file cannot be found at path [path].", $path);
+            throw new NotFoundException('Groups file cannot be found at path [path].', $path);
         }
 
         return $this

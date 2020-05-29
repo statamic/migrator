@@ -2,10 +2,6 @@
 
 namespace Tests;
 
-use Tests\TestCase;
-use Statamic\Migrator\YAML;
-use Tests\Console\Foundation\InteractsWithConsole;
-
 class MigrateFormTest extends TestCase
 {
     protected function paths($key = null)
@@ -20,7 +16,7 @@ class MigrateFormTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_form()
+    public function it_can_migrate_form()
     {
         $this->assertFileNotExists($this->paths('form'));
 
@@ -29,42 +25,42 @@ class MigrateFormTest extends TestCase
         $this->assertFileExists($this->paths('form'));
 
         $expected = [
-            "title" => "Contact Me",
-            "store" => false,
-            "metrics" => [
+            'title' => 'Contact Me',
+            'store' => false,
+            'metrics' => [
                 [
-                    "type" => "total",
-                    "label" => "Total Responses",
+                    'type' => 'total',
+                    'label' => 'Total Responses',
                 ],
                 [
-                    "type" => "sum",
-                    "label" => "Sum of Favorite Number",
-                    "field" => "number",
+                    'type' => 'sum',
+                    'label' => 'Sum of Favorite Number',
+                    'field' => 'number',
                 ],
                 [
-                    "type" => "average",
-                    "label" => "Average Favorite Number",
-                    "field" => "number",
-                    "precision" => 1,
-                ],
-            ],
-            "email" => [
-                [
-                    "to" => "to@example.com",
-                    "from" => "from@example.com",
-                    "reply_to" => "replyto@example.com",
-                    "subject" => "You've got fan mail",
-                    "template" => "fan-mail",
+                    'type' => 'average',
+                    'label' => 'Average Favorite Number',
+                    'field' => 'number',
+                    'precision' => 1,
                 ],
             ],
-            "blueprint" => "contact_form",
+            'email' => [
+                [
+                    'to' => 'to@example.com',
+                    'from' => 'from@example.com',
+                    'reply_to' => 'replyto@example.com',
+                    'subject' => "You've got fan mail",
+                    'template' => 'fan-mail',
+                ],
+            ],
+            'blueprint' => 'contact_form',
         ];
 
         $this->assertParsedYamlEquals($expected, $this->paths('form'));
     }
 
     /** @test */
-    function it_can_migrate_fields_to_blueprint()
+    public function it_can_migrate_fields_to_blueprint()
     {
         $this->assertFileNotExists($this->paths('blueprint'));
 
@@ -76,36 +72,36 @@ class MigrateFormTest extends TestCase
             'title' => 'Contact Me',
             'fields' => [
                 [
-                    "handle" => "name",
-                    "field" => [
-                        "type" => "text",
-                        "display" => "Name",
-                        "validate" => "required|min:2",
-                    ]
+                    'handle' => 'name',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Name',
+                        'validate' => 'required|min:2',
+                    ],
                 ],
                 [
-                    "handle" => "email",
-                    "field" => [
-                        "type" => "text",
-                        "display" => "Email Address",
-                        "validate" => "required|email",
-                    ]
+                    'handle' => 'email',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Email Address',
+                        'validate' => 'required|email',
+                    ],
                 ],
                 [
-                    "handle" => "number",
-                    "field" => [
-                        "type" => "text",
-                        "display" => "Favorite Number",
-                        "validate" => "integer",
-                    ]
+                    'handle' => 'number',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Favorite Number',
+                        'validate' => 'integer',
+                    ],
                 ],
                 [
-                    "handle" => "comment",
-                    "field" => [
-                        "type" => "text",
-                        "display" => "Comment",
-                        "listable" => false,
-                    ]
+                    'handle' => 'comment',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Comment',
+                        'listable' => false,
+                    ],
                 ],
             ],
         ];
@@ -114,7 +110,7 @@ class MigrateFormTest extends TestCase
     }
 
     /** @test */
-    function it_can_migrate_submissions()
+    public function it_can_migrate_submissions()
     {
         $this->assertCount(0, $this->files->files($this->paths('submissions')));
 

@@ -1,0 +1,15 @@
+title: 'Default Globals'
+hide: true
+sections:
+  main:
+    display: Main
+    fields:
+      site_name:
+        type: text
+        display: 'Website Name'
+        instructions: 'The name of your website'
+        localizable: true
+      company:
+        type: text
+        display: Company
+taxonomies: true

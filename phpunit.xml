@@ -27,5 +27,6 @@
 	<env name="APP_KEY" value="base64:QeU8nSJFKtBB3Y9SdxH0U4xH/1rsFd4zNfOLTeK/DUw=" />
 	<env name="DB_CONNECTION" value="sqlite"/>
 	<env name="DB_DATABASE" value=":memory:"/>
+	<env name="DISABLE_MIGRATOR_STATS" value="true" />
     </php>
 </phpunit>

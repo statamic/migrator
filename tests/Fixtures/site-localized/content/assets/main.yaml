@@ -1,0 +1,16 @@
+title: Main Assets
+path: assets
+url: /assets
+assets:
+  img/black-bear-cubs.jpg:
+    title: Black Bear Cubs
+    alt: Some black bears standing up
+  img/coffee-mug.jpg:
+    title: Coffee Mug
+  img/me.jpg:
+    title: Me
+    alt: Niles Peppertrout
+  img/redwood-sign.jpg:
+    title: redwood sign
+  img/desert.jpg:
+    focus: 77-70
