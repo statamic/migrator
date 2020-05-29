@@ -313,6 +313,6 @@ class CollectionMigrator extends Migrator
      */
     protected function getRelativePath($path)
     {
-        return str_replace($this->sitePath("content/collections/{$this->handle}/"), '', $path);
+        return str_replace($this->sitePath("content/collections/{$this->handle}").'/', '', $path);
     }
 }
