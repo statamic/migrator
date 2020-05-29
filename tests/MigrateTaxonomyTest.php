@@ -69,7 +69,10 @@ blueprint: tag
 
 EOT;
 
-        $this->assertEquals($expected, $this->files->get($this->path('tags/spring.yaml')));
+        $this->assertEquals(
+            static::normalizeMultilineString($expected),
+            static::normalizeMultilineString($this->files->get($this->path('tags/spring.yaml')))
+        );
     }
 
     /** @test */
