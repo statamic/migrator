@@ -2,6 +2,8 @@
 
 namespace Statamic\Migrator\Concerns;
 
+use Statamic\Facades\Path;
+
 trait MigratesLocalizedContent
 {
     /**
@@ -81,7 +83,7 @@ trait MigratesLocalizedContent
      */
     protected function migrateSite($relativePath)
     {
-        $parts = collect(explode('/', $relativePath));
+        $parts = collect(explode('/', Path::resolve($relativePath)));
 
         $locale = $parts->shift();
 
@@ -100,7 +102,7 @@ trait MigratesLocalizedContent
      */
     protected function migrateLocalizedFilename($relativePath)
     {
-        $parts = collect(explode('/', $relativePath));
+        $parts = collect(explode('/', Path::resolve($relativePath)));
 
         $locale = $parts->shift();
 
