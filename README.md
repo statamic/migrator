@@ -58,7 +58,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
     - Use the `--force` flag if you would like to overwrite previously migrated files.
 
-    - While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't automate everything, hopefully you will find this package useful in your transition to v3.
+    - While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  Checkout the [upgrade guide](https://statamic.dev/upgrade-guide) for more info on breaking changes.
 
 8) When you are finished and happy, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
 
