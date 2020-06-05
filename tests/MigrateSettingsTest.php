@@ -158,6 +158,27 @@ EOT
     }
 
     /** @test */
+    public function it_migrates_missing_locales_using_v2_default()
+    {
+        $this->files->put($this->sitePath('settings/system.yaml'), '');
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
+
+        $this->assertConfigFileContains('sites.php', <<<'EOT'
+    'sites' => [
+
+        'default' => [
+            'name' => 'English',
+            'locale' => 'en_US',
+            'url' => '/',
+        ],
+
+    ],
+EOT
+        );
+    }
+
+    /** @test */
     public function it_migrates_user_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'users']);

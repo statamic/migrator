@@ -102,7 +102,14 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateLocales($system)
     {
-        $locales = $system['locales'] ?? [];
+        $locales = $system['locales'] ?? [
+            'en' => [
+                'name' => 'English',
+                'full' => 'en_US',
+                'url' => '/',
+            ],
+        ];
+
         $defaultLocale = collect($locales)->keys()->first();
 
         $sites = collect($locales)
