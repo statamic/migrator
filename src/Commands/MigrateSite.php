@@ -120,7 +120,7 @@ class MigrateSite extends Command
             $this->submitStats();
         }
 
-        $this->line('<info>Site migration complete:</info> '.$this->getStats()->implode(', '));
+        $this->outputSummary();
     }
 
     /**
@@ -511,6 +511,23 @@ class MigrateSite extends Command
             "{$this->warningCount} ".($this->warningCount == 1 ? 'warning' : 'warnings'),
             "{$this->successCount} successful",
         ]);
+    }
+
+    /**
+     * Output site migration summary.
+     */
+    protected function outputSummary()
+    {
+        $statsSummary = $this->getStats()->implode(', ');
+        $logFile = str_replace(base_path().'/', '', $this->logPath);
+
+        $this->line('---');
+
+        $this->line("<info>Site migration complete:</info> {$statsSummary}");
+
+        if ($this->errorCount || $this->warningCount) {
+            $this->line("<comment>View log:</comment> {$logFile}");
+        }
     }
 
     /**
