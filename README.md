@@ -6,12 +6,6 @@
 
 📺 See the migrator in action [in this screencast](https://youtu.be/OeXbaeuJrws).
 
-- [Installation](#installation)
-- [Getting started](#getting-started)
-    - [File prep](#file-prep)
-    - [Git state](#git-state)
-    - [Idempotency](#idempotency)
-    - [Upgrade guide](#upgrade-guide)
 - [Using the site migrator](#using-the-site-migrator)
 - [Using individual migrators](#using-individual-migrators)
     - [Fieldset to blueprint migrator](#fieldset-to-blueprint-migrator)
@@ -30,65 +24,59 @@
 - [After migration](#after-migration)
 - [Reporting issues](#reporting-issues)
 
-## Installation
-
-Run the following command in your v3 project root:
-
-```
-composer require statamic/migrator --dev
-```
-
-## Getting started
-
-### Update v2
-
-Please ensure you are running the latest version of Statamic in your v2 project before starting.
-
-### File prep
-
-All of the migrators assume the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root first.  Also, if you were running above webroot, be sure to copy your `public/themes` folder into `site/themes`.
-
-### Git state
-
-We recommend running these commands from a clean [git](https://git-scm.com/) state, so that you can see a diff of the changes made, and easily rollback if necessary.
-
-### Idempotency
-
-It's worth noting that these commands are generally idempotent, in that they can be run multiple times without negative side effects.  If you encounter any warnings or errors, fix what you need and re-run your migration command.  If necessary, you can force overwriting a particular migration using the `--force` option.
-
-### Upgrade guide
-
-While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we still recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't migrate everything, hopefully you have found this package useful in your transition to v3.
-
 ## Using the site migrator
 
 The site migrator is the recommended way to migrate your site.  To get started...
 
-1) We recommend creating a new [branch](https://git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell), so that you can easily roll back a migration if necessary.
+1) Install a fresh instance of [Statamic v3](https://statamic.dev/installation), and require the migrator:
 
-2) The site migrator requires the presence of your v2 project's `site` folder, as well as any local asset container folders.  Be sure to copy these into your v3 project root.  Also, if you were running above webroot, be sure to copy your `public/themes` folder into `site/themes`.
+    ```
+    composer require statamic/migrator --dev
+    ```
 
-3) We recommend clearing your existing site, to ensure a blank slate for your migration:
+2) Clear your new site to ensure all default content is removed prior to migration:
 
     ```
     php please site:clear
     ```
 
-4) We recommend [committing](https://git-scm.com/book/en/v2/Git-Basics-Recording-Changes-to-the-Repository) all your changes up to this point, so that you can view a diff of all the changes performed by the migrator.
+3) Ensure you are running the latest version of Statamic in your v2 project.
 
-5) Run the following command to initiate the migration:
+4) Copy your v2 project's `site` folder, as well as any local asset container folders, into the root of v3 project.
+
+    - If you were running above webroot, be sure to copy your `public/themes` folder into `site/themes` as well.
+
+5) Commit all your changes up to this point, so that you can view a diff of all the changes performed by the migrator, and easily rollback if necessary.
+
+6) Run the following command to initiate the migration:
 
     ```
     php please migrate:site
     ```
 
+7) Address any errors and warnings, and re-run `migrate:site` until there are no remaining issues.
+
+    - Use the `--force` flag if you would like to overwrite previously migrated files.
+
+    - While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't automate everything, hopefully you will find this package useful in your transition to v3.
+
+8) When you are finished and happy, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
+
+    ```
+    composer remove statamic/migrator
+    ```
+
+9) Order pizza! 🍕 🤘 😎
+
+---
+
 ## Using individual migrators
 
-If you prefer a more granular hands-on approach, you may also run the individual migrator commands.
+If you prefer a more granular hands-on approach, you may also run the individual migrator commands.  Please read [using the site migrator](#using-the-site-migrator) before starting, to ensure everything is properly prepared for migration.
 
 ### Fieldset to blueprint migrator
 
-In v3, [blueprints](https://statamic.dev/blueprints) are the replacement to fieldsets.  It's worth noting that [fieldsets](https://statamic.dev/fieldsets) technically still exist, although they are are a now a smaller, companion feature to blueprints.  To migrate a fieldset to a blueprint:
+In v3, [blueprints](https://statamic.dev/blueprints) are the replacement to fieldsets.  It's worth noting that [fieldsets](https://statamic.dev/fieldsets) technically still exist, although they are a now a smaller, companion feature to blueprints.  To migrate a fieldset to a blueprint:
 
 ```
 php please migrate:fieldset post
@@ -212,14 +200,6 @@ It's worth noting that [antlers templating](https://statamic.dev/antlers) has un
 
 Due to the evolution of antlers templating, we cannot guarantee a complete migration of your theme, but we attempt to update the most obvious stuff for you.
 
-## After migration
-
-Be sure to manually test your site, addressing all errors and warnings as you see fit.  When you are finished and happy with your migration, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
-
-```
-composer remove statamic/migrator
-```
-
 ## Reporting issues
 
-While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we still recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't migrate everything, hopefully you have found this package useful in your transition to v3.  If you come across a bug or issue that you think needs to be addressed, please [open an issue](https://github.com/statamic/migrator/issues/new).
+While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  For this reason, we recommend getting familiar with the [upgrade guide](https://statamic.dev/upgrade-guide).  Though we can't automate everything, hopefully you have found this package useful in your transition to v3.  If you come across a bug or issue that you think needs to be addressed, please [open an issue](https://github.com/statamic/migrator/issues/new).
