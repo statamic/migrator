@@ -21,7 +21,6 @@
     - [Groups migrator](#groups-migrator)
     - [Settings migrator](#settings-migrator)
     - [Theme migrator](#theme-migrator)
-- [After migration](#after-migration)
 - [Reporting issues](#reporting-issues)
 
 ## Using the site migrator
