@@ -107,9 +107,10 @@ class Configurator
 
         foreach ($items as $childKey => $value) {
             $this->attemptToMergeIntoArray($key, $childKey, $value);
+            $this->normalize();
         }
 
-        return $this->normalize();
+        return $this;
     }
 
     /**
@@ -125,9 +126,10 @@ class Configurator
 
         foreach ($items as $childKey => $value) {
             $this->attemptToMergeIntoArray($key, $childKey, $value, true);
+            $this->normalize();
         }
 
-        return $this->normalize();
+        return $this;
     }
 
     /**

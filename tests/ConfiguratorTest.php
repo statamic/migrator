@@ -465,6 +465,90 @@ EOT
         );
     }
 
+    /** @test */
+    public function it_can_merge_multiple_array_items_with_children()
+    {
+        $this->configurator->merge('widgets', [
+            [
+                'type' => 'form',
+                'form' => 'contact',
+                'fields' => [
+                    'name',
+                    'email',
+                ],
+            ],
+            [
+                'type' => 'form',
+                'form' => 'subscribe',
+                'fields' => [
+                    'name',
+                    'email',
+                ],
+            ],
+        ]);
+
+        $this->configurator->mergeSpaciously('widgets', [
+            [
+                'type' => 'form',
+                'form' => 'survey_1',
+                'fields' => [
+                    'name',
+                    'email',
+                ],
+            ],
+            [
+                'type' => 'form',
+                'form' => 'survey_2',
+                'fields' => [
+                    'name',
+                    'email',
+                ],
+            ],
+        ]);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'widgets' => [
+        'getting_started',
+        [
+            'type' => 'form',
+            'form' => 'contact',
+            'fields' => [
+                'name',
+                'email',
+            ],
+        ],
+        [
+            'type' => 'form',
+            'form' => 'subscribe',
+            'fields' => [
+                'name',
+                'email',
+            ],
+        ],
+
+        [
+            'type' => 'form',
+            'form' => 'survey_1',
+            'fields' => [
+                'name',
+                'email',
+            ],
+        ],
+
+        [
+            'type' => 'form',
+            'form' => 'survey_2',
+            'fields' => [
+                'name',
+                'email',
+            ],
+        ],
+
+    ],
+EOT
+        );
+    }
+
     /**
      * Assert config file is valid and contains specific content.
      *
