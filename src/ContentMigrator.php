@@ -208,16 +208,17 @@ class ContentMigrator
         $containerHandle = $config['container'];
         $container = YAML::parse($this->files->get($this->sitePath("content/assets/{$containerHandle}.yaml")));
 
-        $url = $container['url'];
+        $url = $container['url'] ?? null;
         $url = Str::ensureLeft($url, '/');
         $url = Str::ensureRight($url, '/');
+        $url = preg_quote($url, '/');
 
         if (is_string($value)) {
-            return str_replace($url, '', $value);
+            return preg_replace("/^$url(.*)/", '$1', $value);
         }
 
         return collect($value)->map(function ($asset) use ($url) {
-            return str_replace($url, '', $asset);
+            return preg_replace("/^$url(.*)/", '$1', $asset);
         })->all();
     }
 

@@ -84,6 +84,43 @@ class ContentMigratorTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_assets_fields_without_container_url()
+    {
+        $this->files->put($this->sitePath('content/assets/main.yaml'), 'title: Main');
+
+        $content = $this
+            ->setFields([
+                'hero' => [
+                    'type' => 'assets',
+                    'container' => 'main',
+                    'max_files' => 1,
+                ],
+                'images' => [
+                    'type' => 'assets',
+                    'container' => 'main',
+                ],
+            ])
+            ->migrateContent([
+                'hero' => '/assets/img/coffee-mug.jpg',
+                'images' => [
+                    '/assets/img/coffee-mug.jpg',
+                    '/assets/img/stetson.jpg',
+                ],
+            ]);
+
+        $expected = [
+            'hero' => 'assets/img/coffee-mug.jpg',
+            'images' => [
+                'assets/img/coffee-mug.jpg',
+                'assets/img/stetson.jpg',
+            ],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
     public function it_can_migrate_when_fieldset_has_fields_in_sections()
     {
         $content = $this
