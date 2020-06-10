@@ -27,7 +27,7 @@
 
 The site migrator is the recommended way to migrate your site.  To get started...
 
-1) Install a fresh instance of [Statamic v3](https://statamic.dev/installation), and require the migrator:
+1) Install a fresh instance of [Statamic v3](https://statamic.dev/installation) in a new location, and require the migrator:
 
     ```
     composer require statamic/migrator --dev
