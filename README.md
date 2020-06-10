@@ -41,7 +41,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
 3) Ensure you are running the latest version of Statamic in your v2 project.
 
-4) Copy your v2 project's `site` folder, as well as any local asset container folders, into the root of v3 project.
+4) Copy your v2 project's `site` folder, as well as any local asset container folders, into the root of your v3 project.
 
     - If you were running above webroot, be sure to copy your `public/themes` folder into `site/themes` as well.
 
@@ -71,7 +71,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
 ## Using individual migrators
 
-If you prefer a more granular hands-on approach, you may also run the individual migrator commands.  Please read [using the site migrator](#using-the-site-migrator) before starting, to ensure everything is properly prepared for migration.
+If you require a more granular approach, you may also run the individual migrator commands.  Please read [using the site migrator](#using-the-site-migrator) before starting, to ensure everything is properly prepared for migration.
 
 ### Fieldset to blueprint migrator
 
