@@ -46,15 +46,17 @@ class Router
 
         $this->appendBlankLine();
 
-        collect($routes)->each(function ($to, $from) {
-            if (is_string($to) && Str::contains($to, '@')) {
-                return $this->appendControllerRoute($from, $to);
-            } elseif (is_array($to)) {
-                return $this->appendTemplateRouteWithData($from, $to);
-            } else {
-                return $this->appendTemplateRoute($from, $to);
-            }
-        });
+        collect($routes)
+            ->filter()
+            ->each(function ($to, $from) {
+                if (is_string($to) && Str::contains($to, '@')) {
+                    return $this->appendControllerRoute($from, $to);
+                } elseif (is_array($to)) {
+                    return $this->appendTemplateRouteWithData($from, $to);
+                } else {
+                    return $this->appendTemplateRoute($from, $to);
+                }
+            });
 
         return $this;
     }
@@ -117,6 +119,7 @@ class Router
         $this->appendBlankLine();
 
         collect($redirects)
+            ->filter()
             ->mapWithKeys(function ($to, $from) {
                 return [$this->normalizeRoute($from) => $this->normalizeRoute($to)];
             })
