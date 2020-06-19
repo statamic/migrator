@@ -8,6 +8,7 @@ use Statamic\Migrator\Exceptions\InvalidEmailException;
 class UserMigrator extends Migrator
 {
     use Concerns\GetsSettings,
+        Concerns\MigratesContent,
         Concerns\MigratesFile,
         Concerns\MigratesRoles;
 
@@ -93,7 +94,11 @@ class UserMigrator extends Migrator
             $user['groups'] = $this->migrateGroups($user['groups']);
         }
 
-        $this->user = $user->except('first_name', 'last_name', 'email')->all();
+        $user = $user->except('first_name', 'last_name', 'email')->all();
+
+        $this->user = $this->files->exists($this->sitePath('settings/fieldsets/user.yaml'))
+            ? $this->migrateContent($user, 'user', false)
+            : $user;
 
         return $this;
     }

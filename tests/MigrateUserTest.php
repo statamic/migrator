@@ -153,4 +153,33 @@ class MigrateUserTest extends TestCase
             ],
         ]);
     }
+
+    /** @test */
+    public function it_can_migrate_user_content_with_custom_fieldset()
+    {
+        $this->files->put($this->sitePath('settings/fieldsets/user.yaml'), <<<'EOT'
+fields:
+  headshot:
+    type: assets
+    container: main
+    max_files: 1
+EOT
+        );
+
+        $user = $this->migrateUser([
+            'first_name' => 'Irma',
+            'last_name' => 'Gobb',
+            'email' => 'irmagobb@example.com',
+            'password' => 'mrbeanisdreamy',
+            'super' => true,
+            'headshot' => '/assets/img/coffee-mug.jpg',
+        ]);
+
+        $this->assertEquals($user, [
+            'name' => 'Irma Gobb',
+            'password' => 'mrbeanisdreamy',
+            'super' => true,
+            'headshot' => 'img/coffee-mug.jpg',
+        ]);
+    }
 }
