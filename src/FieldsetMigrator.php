@@ -164,7 +164,7 @@ class FieldsetMigrator extends Migrator
     {
         return collect($sets)
             ->map(function ($set) {
-                return collect($set)->put('fields', $this->migrateFields($set['fields']))->all();
+                return collect($set)->put('fields', $this->migrateFields($set['fields'] ?? []))->all();
             })
             ->all();
     }

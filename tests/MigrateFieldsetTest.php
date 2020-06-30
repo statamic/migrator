@@ -185,6 +185,39 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_empty_sets()
+    {
+        $blueprint = $this->migrateFieldsetToBlueprint([
+            'title' => 'Gallery',
+            'fields' => [
+                'prices' => [
+                    'type' => 'replicator',
+                    'sets' => [
+                        'main' => [],
+                    ],
+                ],
+            ],
+        ]);
+
+        $this->assertEquals($blueprint, [
+            'title' => 'Gallery',
+            'fields' => [
+                [
+                    'handle' => 'prices',
+                    'field' => [
+                        'type' => 'replicator',
+                        'sets' => [
+                            'main' => [
+                                'fields' => [],
+                            ],
+                        ],
+                    ],
+                ],
+            ],
+        ]);
+    }
+
+    /** @test */
     public function it_migrates_field_type_first()
     {
         $blueprint = $this->migrateFieldsetToBlueprint([
