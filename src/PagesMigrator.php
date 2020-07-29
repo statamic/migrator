@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Statamic\Facades\Path;
+use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
@@ -11,13 +12,14 @@ class PagesMigrator extends Migrator
     use Concerns\GetsSettings,
         Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
-        Concerns\MigratesFile;
+        Concerns\MigratesFile,
+        Concerns\ThrowsFinalWarnings;
 
     protected $sites = [];
     protected $entries = [];
     protected $localizedEntries = [];
     protected $structure = [];
-    protected $usedBlueprints = [];
+    protected $usedFieldsets = [];
 
     /**
      * Perform migration.
@@ -29,7 +31,9 @@ class PagesMigrator extends Migrator
             ->validateUnique()
             ->parseTree()
             ->createYamlConfig()
-            ->migratePagesToEntries();
+            ->migratePagesToEntries()
+            ->migrateFieldsetsToBlueprints()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -86,7 +90,6 @@ class PagesMigrator extends Migrator
         $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
         $this->entries[] = $page;
-        $this->usedBlueprints[] = $page['fieldset'] ?? null;
 
         $entry = $page['id'];
 
@@ -126,7 +129,6 @@ class PagesMigrator extends Migrator
             })
             ->each(function ($page, $site) {
                 $this->localizedEntries[$site][] = $page;
-                $this->usedBlueprints[] = $page['fieldset'] ?? null;
             });
     }
 
@@ -202,34 +204,12 @@ class PagesMigrator extends Migrator
         $config = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
-            'blueprints' => $this->migrateConfiguredBlueprints(),
             'structure' => $this->migrateStructure(),
         ];
 
         $this->saveMigratedYaml($config, $this->newPath('../pages.yaml'));
 
         return $this;
-    }
-
-    /**
-     * Migrate configured blueprints.
-     *
-     * @return array
-     */
-    protected function migrateConfiguredBlueprints()
-    {
-        $blueprints = collect($this->usedBlueprints)->filter()->unique();
-
-        if ($this->files->exists($path = base_path('site/settings/fieldsets'))) {
-            $blueprints = collect($this->files->files($path))
-                ->reject(function ($blueprint) {
-                    return Arr::get(YAML::parse($blueprint->getContents()), 'hide', false);
-                })
-                ->map
-                ->getFilenameWithoutExtension();
-        }
-
-        return collect($blueprints)->values()->all();
     }
 
     /**
@@ -287,9 +267,13 @@ class PagesMigrator extends Migrator
      */
     protected function getPageFieldset($page)
     {
-        return $page['fieldset']
+        $fieldset = $page['fieldset']
             ?? $this->getSetting('theming.default_page_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
+
+        $this->usedFieldsets[] = $fieldset;
+
+        return $fieldset;
     }
 
     /**
@@ -317,5 +301,49 @@ class PagesMigrator extends Migrator
         }
 
         return $path;
+    }
+
+    /**
+     * Migrate fieldsets to blueprints.
+     *
+     * @return $this
+     */
+    protected function migrateFieldsetsToBlueprints()
+    {
+        collect($this->usedFieldsets)
+            ->merge($this->allFieldsets())
+            ->filter()
+            ->unique()
+            ->reject(function ($handle) {
+                return $this->isNonExistentDefaultFieldset($handle, 'theming.default_page_fieldset');
+            })
+            ->each(function ($handle) {
+                try {
+                    FieldsetMigrator::asBlueprint($handle, 'collections/pages')->migrate();
+                } catch (NotFoundException $exception) {
+                    $this->addWarning($exception->getMessage());
+                }
+            });
+
+        return $this;
+    }
+
+    /**
+     * Get all selectable fieldsets.
+     *
+     * @return array
+     */
+    protected function allFieldsets()
+    {
+        if ($this->files->exists($path = base_path('site/settings/fieldsets'))) {
+            $fieldsets = collect($this->files->files($path))
+                ->reject(function ($fieldset) {
+                    return Arr::get(YAML::parse($fieldset->getContents()), 'hide', false);
+                })
+                ->map
+                ->getFilenameWithoutExtension();
+        }
+
+        return $fieldsets ?? [];
     }
 }

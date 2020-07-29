@@ -33,7 +33,6 @@ class MigrateLocalizedPagesTest extends TestCase
         $expected = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
-            'blueprints' => [],
             'structure' => [
                 'root' => true,
                 'tree' => [
