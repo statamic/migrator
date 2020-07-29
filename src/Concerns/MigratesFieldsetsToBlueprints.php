@@ -39,13 +39,14 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Migrate fieldsets to blueprints.
      *
+     * @param string $blueprintsFolder
      * @return $this
      */
-    protected function migrateFieldsetsToBlueprints()
+    protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
-        $this->getMigratableFieldsets()->each(function ($handle) {
+        $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
             try {
-                FieldsetMigrator::asBlueprint($handle, "collections/{$this->handle}")->migrate();
+                FieldsetMigrator::asBlueprint($handle, $blueprintsFolder)->migrate();
             } catch (NotFoundException $exception) {
                 $this->addWarning($exception->getMessage());
             }
