@@ -49,9 +49,6 @@ class MigrateLocalizedCollectionTest extends TestCase
                 'default',
                 'fr',
             ],
-            'blueprints' => [
-                'content',
-            ],
             'template' => 'blog/post',
             'route' => '/blog/{year}/{month}/{day}/{slug}',
             'taxonomies' => [

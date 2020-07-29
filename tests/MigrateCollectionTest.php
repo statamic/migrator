@@ -6,9 +6,22 @@ use Statamic\Migrator\YAML;
 
 class MigrateCollectionTest extends TestCase
 {
-    protected function path($append = null)
+    protected function paths()
+    {
+        return [
+            'collections' => base_path('content/collections'),
+            'blueprints' => resource_path('blueprints/collections'),
+        ];
+    }
+
+    protected function collectionsPath($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
+    }
+
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints/collections'), $append])->filter()->implode('/');
     }
 
     private function migrateCollection($config)
@@ -21,20 +34,22 @@ class MigrateCollectionTest extends TestCase
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'test']);
 
-        return YAML::parse($this->files->get($this->path('test.yaml')));
+        return YAML::parse($this->files->get($this->collectionsPath('test.yaml')));
     }
 
     /** @test */
     public function it_can_migrate_a_collection()
     {
-        $this->assertFileNotExists($this->path('blog'));
-        $this->assertFileNotExists($this->path('blog.yaml'));
+        $this->assertFileNotExists($this->collectionsPath('blog'));
+        $this->assertFileNotExists($this->collectionsPath('blog.yaml'));
+        $this->assertFileNotExists($this->blueprintsPath('blueprints'));
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path('blog/folder.yaml'));
-        $this->assertFileExists($this->path('blog.yaml'));
-        $this->assertCount(5, $this->files->files($this->path('blog')));
+        $this->assertFileNotExists($this->collectionsPath('blog/folder.yaml'));
+        $this->assertFileExists($this->collectionsPath('blog.yaml'));
+        $this->assertCount(5, $this->files->files($this->collectionsPath('blog')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('blog')));
     }
 
     /** @test */
@@ -43,9 +58,6 @@ class MigrateCollectionTest extends TestCase
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
         $expected = [
-            'blueprints' => [
-                'post',
-            ],
             'template' => 'blog/post',
             'route' => '/blog/{year}/{month}/{day}/{slug}',
             'taxonomies' => [
@@ -59,7 +71,7 @@ class MigrateCollectionTest extends TestCase
             'sort_dir' => 'desc',
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->path('blog.yaml'));
+        $this->assertParsedYamlEquals($expected, $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -69,7 +81,7 @@ class MigrateCollectionTest extends TestCase
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlNotHasKey('route', $this->path('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('route', $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -117,7 +129,7 @@ class MigrateCollectionTest extends TestCase
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $path = $this->path('blog/2017-09-28.what-i-did-last-summer.md');
+        $path = $this->collectionsPath('blog/2017-09-28.what-i-did-last-summer.md');
 
         $this->assertParsedYamlHasKey('id', $path);
         $this->assertParsedYamlContains(['blueprint' => 'long_form'], $path);
@@ -134,9 +146,9 @@ class MigrateCollectionTest extends TestCase
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path($draftPath));
-        $this->assertFileExists($this->path($path));
-        $this->assertParsedYamlContains(['published' => false], $this->path($path));
+        $this->assertFileNotExists($this->collectionsPath($draftPath));
+        $this->assertFileExists($this->collectionsPath($path));
+        $this->assertParsedYamlContains(['published' => false], $this->collectionsPath($path));
     }
 
     /** @test */
@@ -151,7 +163,7 @@ blueprint: post
 Let me first explain myself. I am not a brave person by nature.
 EOT;
 
-        $this->assertContainsIgnoringLineEndings($expected, $this->files->get($this->path('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
+        $this->assertContainsIgnoringLineEndings($expected, $this->files->get($this->collectionsPath('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
     }
 
     /** @test */
@@ -172,7 +184,7 @@ EOT
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlContains(['taxonomies' => ['colours', 'tags']], $this->path('blog.yaml'));
+        $this->assertParsedYamlContains(['taxonomies' => ['colours', 'tags']], $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -184,7 +196,7 @@ EOT
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlNotHasKey('taxonomies', $this->path('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('taxonomies', $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -194,7 +206,7 @@ EOT
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlNotHasKey('taxonomies', $this->path('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('taxonomies', $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -206,9 +218,9 @@ EOT
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlNotHasKey('date', $this->path('blog.yaml'));
-        $this->assertParsedYamlNotHasKey('date_behavior', $this->path('blog.yaml'));
-        $this->assertParsedYamlNotHasKey('sort_dir', $this->path('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('date', $this->collectionsPath('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('date_behavior', $this->collectionsPath('blog.yaml'));
+        $this->assertParsedYamlNotHasKey('sort_dir', $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -217,9 +229,6 @@ EOT
         $this->artisan('statamic:migrate:collection', ['handle' => 'favs']);
 
         $expectedConfig = [
-            'blueprints' => [
-                'post',
-            ],
             'template' => 'blog/post',
             'structure' => [
                 'max_depth' => 1,
@@ -230,9 +239,9 @@ EOT
             ],
         ];
 
-        $this->assertParsedYamlEquals($expectedConfig, $this->path('favs.yaml'));
-        $this->assertFileExists($this->path('favs/red-shirt.md'));
-        $this->assertFileExists($this->path('favs/blue-shirt.md'));
+        $this->assertParsedYamlEquals($expectedConfig, $this->collectionsPath('favs.yaml'));
+        $this->assertFileExists($this->collectionsPath('favs/red-shirt.md'));
+        $this->assertFileExists($this->collectionsPath('favs/blue-shirt.md'));
     }
 
     /** @test */
@@ -250,10 +259,10 @@ EOT
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path('blog/2017-01-18.my-first-day.textile'));
-        $this->assertFileNotExists($this->path('blog/2017-01-19.paperwork-and-snowshoeing.html'));
-        $this->assertFileExists($this->path('blog/2017-01-18.my-first-day.md'));
-        $this->assertFileExists($this->path('blog/2017-01-19.paperwork-and-snowshoeing.md'));
+        $this->assertFileNotExists($this->collectionsPath('blog/2017-01-18.my-first-day.textile'));
+        $this->assertFileNotExists($this->collectionsPath('blog/2017-01-19.paperwork-and-snowshoeing.html'));
+        $this->assertFileExists($this->collectionsPath('blog/2017-01-18.my-first-day.md'));
+        $this->assertFileExists($this->collectionsPath('blog/2017-01-19.paperwork-and-snowshoeing.md'));
     }
 
     /** @test */
@@ -261,6 +270,6 @@ EOT
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertParsedYamlContains(['intro_image' => 'img/stetson.jpg'], $this->path('blog/2017-01-18.my-first-day.md'));
+        $this->assertParsedYamlContains(['intro_image' => 'img/stetson.jpg'], $this->collectionsPath('blog/2017-01-18.my-first-day.md'));
     }
 }

@@ -11,10 +11,11 @@ class CollectionMigrator extends Migrator
         Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesRoute,
-        Concerns\MigratesFile;
+        Concerns\MigratesFile,
+        Concerns\ThrowsFinalWarnings;
 
     protected $config;
-    protected $defaultFieldset;
+    protected $usedFieldsets;
     protected $availableTaxonomies;
     protected $usedTaxonomies;
     protected $entryOrder;
@@ -31,7 +32,9 @@ class CollectionMigrator extends Migrator
             ->parseAvailableTaxonomies()
             ->migrateEntries($relativePath)
             ->migrateYamlConfig()
-            ->deleteOldConfig();
+            ->deleteOldConfig()
+            ->migrateFieldsetsToBlueprints()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -148,10 +151,14 @@ class CollectionMigrator extends Migrator
      */
     protected function getEntryFieldset($entry)
     {
-        return $entry['fieldset']
+        $fieldset = $entry['fieldset']
             ?? $this->config['fieldset']
             ?? $this->getSetting('theming.default_entry_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
+
+        $this->usedFieldsets[] = $fieldset;
+
+        return $fieldset;
     }
 
     /**
@@ -235,12 +242,6 @@ class CollectionMigrator extends Migrator
             $this->config->put('sites', $this->getMigratedSiteKeys()->all());
         }
 
-        if ($fieldset = $this->config->get('fieldset')) {
-            $this->config->forget('fieldset');
-            $this->config->put('blueprints', [$fieldset]);
-            $reservedKeys->push('blueprints');
-        }
-
         if ($route = $this->migrateRoute("collections.{$this->handle}")) {
             $this->config->put('route', $route);
             $reservedKeys->push('route');
@@ -260,6 +261,7 @@ class CollectionMigrator extends Migrator
             $reservedKeys->push('sort_dir');
         }
 
+        $this->config->forget('fieldset');
         $this->config->forget('order');
 
         if ($this->entryOrder) {
@@ -306,6 +308,30 @@ class CollectionMigrator extends Migrator
     protected function deleteOldConfig()
     {
         $this->files->delete($this->newPath('folder.yaml'));
+
+        return $this;
+    }
+
+    /**
+     * Migrate fieldsets to blueprints.
+     *
+     * @return $this
+     */
+    protected function migrateFieldsetsToBlueprints()
+    {
+        collect($this->usedFieldsets)
+            ->filter()
+            ->unique()
+            ->reject(function ($handle) {
+                return $this->isNonExistentDefaultFieldset($handle, 'theming.default_entry_fieldset');
+            })
+            ->each(function ($handle) {
+                try {
+                    FieldsetMigrator::asBlueprint($handle, "collections/{$this->handle}")->migrate();
+                } catch (NotFoundException $exception) {
+                    $this->addWarning($exception->getMessage());
+                }
+            });
 
         return $this;
     }
