@@ -2,15 +2,30 @@
 
 namespace Statamic\Migrator;
 
+use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
 class FieldsetMigrator extends Migrator
 {
     use Concerns\MigratesFile,
+        Concerns\MigratesFlattenedFieldsetSchema,
         Concerns\ThrowsFinalWarnings;
 
     protected $schema;
+
+    /**
+     * Migrate fieldset as blueprint.
+     *
+     * @param string $handle
+     * @return $this
+     */
+    public static function asBlueprint($handle, $folder = null)
+    {
+        $relativePath = collect([$folder, $handle])->filter()->implode('/');
+
+        return (new static($handle))->setNewPath(resource_path("blueprints/{$relativePath}.yaml"));
+    }
 
     /**
      * Perform migration.
@@ -20,24 +35,30 @@ class FieldsetMigrator extends Migrator
     public function migrate()
     {
         $this
+            ->setNewPath(resource_path("fieldsets/{$this->handle}.yaml"), false)
             ->parseFieldset()
             ->validateUnique()
             ->migrateSchema()
             ->removeOldFunctionality()
-            ->saveMigratedSchema()
+            ->saveMigratedYaml($this->schema)
             ->throwFinalWarnings();
     }
 
     /**
-     * Specify unique paths that shouldn't be overwritten.
+     * Set new path.
      *
-     * @return array
+     * @param string $path
+     * @return $this
      */
-    protected function uniquePaths()
+    protected function setNewPath($path)
     {
-        return [
-            resource_path("blueprints/{$this->handle}.yaml"),
-        ];
+        if ($this->newPath) {
+            return $this;
+        }
+
+        $this->newPath = $path;
+
+        return $this;
     }
 
     /**
@@ -47,7 +68,11 @@ class FieldsetMigrator extends Migrator
      */
     protected function parseFieldset()
     {
-        $this->schema = $this->getSourceYaml("settings/fieldsets/{$this->handle}.yaml");
+        if (! $this->files->exists($path = $this->sitePath("settings/fieldsets/{$this->handle}.yaml"))) {
+            throw new NotFoundException('Fieldset cannot be found at path [path].', $path);
+        }
+
+        $this->schema = $this->getSourceYaml($path);
 
         return $this;
     }
@@ -59,6 +84,11 @@ class FieldsetMigrator extends Migrator
      */
     protected function migrateSchema()
     {
+        // Temporary, until we implement sections in fieldsets!
+        if (isset($this->schema['sections']) && $this->shouldBeFlattened()) {
+            return $this->flattenSections();
+        }
+
         if (isset($this->schema['fields'])) {
             $this->schema['fields'] = $this->migrateFields($this->schema['fields']);
         }
@@ -424,16 +454,6 @@ class FieldsetMigrator extends Migrator
         unset($this->schema['create_title']);
 
         return $this;
-    }
-
-    /**
-     * Save migrated schema.
-     *
-     * @return $this
-     */
-    protected function saveMigratedSchema()
-    {
-        return $this->saveMigratedYaml($this->schema, resource_path("blueprints/{$this->handle}.yaml"));
     }
 
     /**

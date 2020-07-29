@@ -9,7 +9,7 @@ class MigrateFieldsetTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
-            'new' => resource_path('blueprints/post.yaml'),
+            'new' => resource_path('fieldsets/post.yaml'),
             'old' => $this->sitePath('settings/fieldsets/post.yaml'),
             'fieldsets' => $this->sitePath('settings/fieldsets'),
             'system' => $this->sitePath('settings/system.yaml'),
@@ -19,9 +19,9 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
-    public function it_can_migrate_a_fieldset_to_a_blueprint()
+    public function it_can_migrate_a_fieldset()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
@@ -35,7 +35,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -59,7 +59,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_assumes_type_text()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
@@ -68,7 +68,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -85,7 +85,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_can_migrate_nested_fields()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'prices' => [
@@ -102,7 +102,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -132,7 +132,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_can_migrate_nested_sets_of_fields()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'prices' => [
@@ -153,7 +153,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -187,7 +187,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_can_migrate_empty_sets()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'prices' => [
@@ -199,7 +199,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -220,7 +220,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_migrates_field_type_first()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'fields' => [
                 'title' => [
@@ -230,7 +230,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -247,7 +247,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_migrates_field_conditions()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Post',
             'fields' => [
                 'author_name' => [
@@ -270,7 +270,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Post',
             'fields' => [
                 [
@@ -306,7 +306,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_removes_hide_setting()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Gallery',
             'hide' => true,
             'fields' => [
@@ -317,7 +317,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Gallery',
             'fields' => [
                 [
@@ -334,7 +334,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_migrates_redactor_to_bard()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'content' => [
@@ -343,7 +343,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Posts',
             'fields' => [
                 [
@@ -367,7 +367,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]));
 
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'content' => [
@@ -378,7 +378,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ]);
 
-        $this->assertEquals($blueprint, [
+        $this->assertEquals($fieldset, [
             'title' => 'Posts',
             'fields' => [
                 [
@@ -397,7 +397,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_migrates_pages_to_entries()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'related' => [
@@ -423,13 +423,13 @@ class MigrateFieldsetTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $blueprint);
+        $this->assertEquals($expected, $fieldset);
     }
 
     /** @test */
     public function it_migrates_collection_to_entries()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'related' => [
@@ -460,13 +460,13 @@ class MigrateFieldsetTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $blueprint);
+        $this->assertEquals($expected, $fieldset);
     }
 
     /** @test */
     public function it_migrates_option_based_suggest_to_select()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'colours' => [
@@ -499,13 +499,13 @@ class MigrateFieldsetTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $blueprint);
+        $this->assertEquals($expected, $fieldset);
     }
 
     /** @test */
     public function it_migrates_option_based_suggest_to_multiple_select()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'colours' => [
@@ -537,7 +537,7 @@ class MigrateFieldsetTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $blueprint);
+        $this->assertEquals($expected, $fieldset);
     }
 
     /** @test */
@@ -562,7 +562,7 @@ class MigrateFieldsetTest extends TestCase
     /** @test */
     public function it_migrates_partial_to_import()
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'name' => [
@@ -590,10 +590,74 @@ class MigrateFieldsetTest extends TestCase
             ],
         ];
 
-        $this->assertEquals($expected, $blueprint);
+        $this->assertEquals($expected, $fieldset);
     }
 
-    private function migrateFieldsetToBlueprint($fieldsetConfig)
+    /**
+     * Temporary, until we implement sections in fieldsets!
+     *
+     * @test
+n    */
+    public function it_flattens_sections()
+    {
+        $this->files->put($this->paths('old'), <<<'EOT'
+title: Address
+sections:
+  main:
+    display: Main
+    fields:
+      street:
+        type: text
+        display: 'Street'
+      province:
+        type: text
+        display: 'Province'
+        width: 50
+  secondary:
+    display: Secondary
+    fields:
+      country:
+        type: text
+        display: 'Country'
+        width: 50
+EOT
+);
+
+        $expected = [
+            'title' => 'Address',
+            'fields' => [
+                [
+                    'handle' => 'street',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Street',
+                    ],
+                ],
+                [
+                    'handle' => 'province',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Province',
+                        'width' => 50,
+                    ],
+                ],
+                [
+                    'handle' => 'country',
+                    'field' => [
+                        'type' => 'text',
+                        'display' => 'Country',
+                        'width' => 50,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->artisan('statamic:migrate:fieldset', ['handle' => 'post', '--force' => true]);
+
+        $this->assertEquals($expected, YAML::parse($this->files->get($this->paths('new'))));
+    }
+
+    private function migrateFieldset($fieldsetConfig)
     {
         $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
 
@@ -604,13 +668,13 @@ class MigrateFieldsetTest extends TestCase
 
     private function migrateSuggestField($suggestConfig)
     {
-        $blueprint = $this->migrateFieldsetToBlueprint([
+        $fieldset = $this->migrateFieldset([
             'title' => 'Posts',
             'fields' => [
                 'test_suggest' => array_merge(['type' => 'suggest'], $suggestConfig),
             ],
         ]);
 
-        return collect($blueprint['fields'])->first()['field'];
+        return collect($fieldset['fields'])->first()['field'];
     }
 }
