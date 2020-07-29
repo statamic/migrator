@@ -11,45 +11,30 @@ trait GetsFieldsetHandles
     /**
      * Get fieldset handles.
      *
-     * @return \stdClass
+     * @return \Illuminate\Support\Collection
      */
     protected function getFieldsetHandles()
     {
-        if (! File::exists(base_path('site/settings/fieldsets'))) {
-            return (object) [
-                'standard' => collect(),
-                'partial' => collect(),
-            ];
-        }
-
-        $fieldsets = collect(File::files(base_path('site/settings/fieldsets')))
+        return collect(File::files(base_path('site/settings/fieldsets')))
             ->keyBy
             ->getFilenameWithoutExtension()
             ->map(function ($file) {
                 return YAML::parse($file->getContents());
-            });
-
-        $partial = $fieldsets
-            ->flatMap(function ($fieldset) {
-                return $this->getPartialFieldsetHandles($fieldset);
             })
+            ->flatMap(function ($fieldset) {
+                return $this->getPartialFieldsetImports($fieldset);
+            })
+            ->unique()
             ->values();
-
-        $standard = $fieldsets
-            ->keys()
-            ->diff($partial)
-            ->values();
-
-        return (object) compact('standard', 'partial');
     }
 
     /**
-     * Get partial fieldset handles.
+     * Get partial fieldset usages.
      *
      * @param array $fieldset
      * @return array
      */
-    protected function getPartialFieldsetHandles($fieldset)
+    protected function getPartialFieldsetImports($fieldset)
     {
         $flattened = Arr::dot($fieldset);
 
@@ -62,6 +47,8 @@ trait GetsFieldsetHandles
             })
             ->map(function ($fieldsetKey) use ($flattened) {
                 return $flattened[$fieldsetKey];
-            });
+            })
+            ->values()
+            ->all();
     }
 }
