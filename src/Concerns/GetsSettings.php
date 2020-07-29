@@ -29,4 +29,27 @@ trait GetsSettings
 
         return Arr::get($settings, $dottedPath, $default);
     }
+
+    /**
+     * Checks if fieldset is a non-existent default fieldset from settings.
+     *
+     * @return bool
+     */
+    protected function isNonExistentDefaultFieldset($handle, $defaultFieldsetSetting)
+    {
+        $defaultFieldsets = collect([
+            $this->getSetting($defaultFieldsetSetting),
+            $this->getSetting('theming.default_fieldset'),
+        ]);
+
+        if (! $defaultFieldsets->contains($handle)) {
+            return false;
+        }
+
+        return $defaultFieldsets
+            ->filter(function ($handle) {
+                return $this->files->exists($this->sitePath("settings/fieldsets/{$handle}.yaml"));
+            })
+            ->isEmpty();
+    }
 }
