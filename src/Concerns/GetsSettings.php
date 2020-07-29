@@ -33,6 +33,9 @@ trait GetsSettings
     /**
      * Checks if fieldset is a non-existent default fieldset from settings.
      *
+     * This is important because if a default fieldset is referenced but does not exist, the content
+     * referencing it should be using the default fieldset in core (which is just title, slug, and content).
+     *
      * @return bool
      */
     protected function isNonExistentDefaultFieldset($handle, $defaultFieldsetSetting)
