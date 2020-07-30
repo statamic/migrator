@@ -17,14 +17,18 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate fieldset as blueprint.
      *
-     * @param string $handle
+     * @param string $folder
+     * @param string $originalHandle
+     * @param string|null $newHandle
      * @return $this
      */
-    public static function asBlueprint($handle, $folder = null)
+    public static function asBlueprint($folder, $originalHandle, $newHandle = null)
     {
-        $relativePath = collect([$folder, $handle])->filter()->implode('/');
+        $relativePath = collect([$folder, $newHandle ?? $originalHandle])
+            ->filter()
+            ->implode('/');
 
-        return (new static($handle))->setNewPath(resource_path("blueprints/{$relativePath}.yaml"));
+        return (new static($originalHandle))->setNewPath(resource_path("blueprints/{$relativePath}.yaml"));
     }
 
     /**

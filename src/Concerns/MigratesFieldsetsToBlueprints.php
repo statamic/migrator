@@ -37,7 +37,7 @@ trait MigratesFieldsetsToBlueprints
     }
 
     /**
-     * Migrate fieldsets to blueprints.
+     * Migrate queued migratable fieldsets to blueprints.
      *
      * @param string $blueprintsFolder
      * @return $this
@@ -45,12 +45,27 @@ trait MigratesFieldsetsToBlueprints
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
         $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
-            try {
-                FieldsetMigrator::asBlueprint($handle, $blueprintsFolder)->migrate();
-            } catch (NotFoundException $exception) {
-                $this->addWarning($exception->getMessage());
-            }
+            $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
         });
+
+        return $this;
+    }
+
+    /**
+     * Migrate fieldset to blueprint.
+     *
+     * @param string $blueprintsFolder
+     * @param string $originalHandle
+     * @param string|null $newHandle
+     * @return $this
+     */
+    protected function migrateFieldsetToBlueprint($blueprintsFolder, $originalHandle, $newHandle = null)
+    {
+        try {
+            FieldsetMigrator::asBlueprint($blueprintsFolder, $originalHandle, $newHandle)->migrate();
+        } catch (NotFoundException $exception) {
+            $this->addWarning($exception->getMessage());
+        }
 
         return $this;
     }
