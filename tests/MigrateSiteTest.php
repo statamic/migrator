@@ -36,6 +36,11 @@ class MigrateSiteTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints'), $append])->filter()->implode('/');
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -46,24 +51,12 @@ class MigrateSiteTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_fieldsets_to_blueprints()
-    {
-        $this->assertCount(0, $this->files->files($this->paths('blueprints')));
-
-        $this->artisan('statamic:migrate:site');
-
-        $this->assertCount(14, $this->files->files($this->paths('blueprints')));
-    }
-
-    /** @test */
     public function it_migrates_fieldset_partials()
     {
-        $this->assertCount(0, $this->files->files($this->paths('blueprints')));
         $this->assertCount(0, $this->files->files($this->paths('fieldsets')));
 
         $this->artisan('statamic:migrate:site');
 
-        $this->assertFileExists($this->paths('blueprints').'/address.yaml');
         $this->assertFileExists($this->paths('fieldsets').'/address.yaml');
     }
 
