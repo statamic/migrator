@@ -3,7 +3,6 @@
 namespace Statamic\Migrator;
 
 use Statamic\Facades\Path;
-use Statamic\Migrator\Exceptions\NotFoundException;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
@@ -13,13 +12,13 @@ class PagesMigrator extends Migrator
         Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesFile,
+        Concerns\MigratesFieldsetsToBlueprints,
         Concerns\ThrowsFinalWarnings;
 
     protected $sites = [];
     protected $entries = [];
     protected $localizedEntries = [];
     protected $structure = [];
-    protected $usedFieldsets = [];
 
     /**
      * Perform migration.
@@ -32,7 +31,7 @@ class PagesMigrator extends Migrator
             ->parseTree()
             ->createYamlConfig()
             ->migratePagesToEntries()
-            ->migrateFieldsetsToBlueprints()
+            ->migrateFieldsetsToBlueprints('collections/pages')
             ->throwFinalWarnings();
     }
 
@@ -271,7 +270,7 @@ class PagesMigrator extends Migrator
             ?? $this->getSetting('theming.default_page_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
 
-        $this->usedFieldsets[] = $fieldset;
+        $this->addMigratableFieldset($fieldset);
 
         return $fieldset;
     }
@@ -304,34 +303,25 @@ class PagesMigrator extends Migrator
     }
 
     /**
-     * Migrate fieldsets to blueprints.
+     * Get migratable fieldsets.
      *
-     * @return $this
+     * @return \Illuminate\Support\Collection
      */
-    protected function migrateFieldsetsToBlueprints()
+    protected function getMigratableFieldsets()
     {
-        collect($this->usedFieldsets)
+        return collect($this->migratableFieldsets)
             ->merge($this->allFieldsets())
             ->filter()
             ->unique()
             ->reject(function ($handle) {
-                return $this->isNonExistentDefaultFieldset($handle, 'theming.default_page_fieldset');
-            })
-            ->each(function ($handle) {
-                try {
-                    FieldsetMigrator::asBlueprint($handle, 'collections/pages')->migrate();
-                } catch (NotFoundException $exception) {
-                    $this->addWarning($exception->getMessage());
-                }
+                return $this->isNonExistentDefaultFieldset($handle);
             });
-
-        return $this;
     }
 
     /**
      * Get all selectable fieldsets.
      *
-     * @return array
+     * @return \Illuminate\Support\Collection
      */
     protected function allFieldsets()
     {
@@ -344,6 +334,6 @@ class PagesMigrator extends Migrator
                 ->getFilenameWithoutExtension();
         }
 
-        return $fieldsets ?? [];
+        return $fieldsets ?? collect();
     }
 }

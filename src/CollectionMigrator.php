@@ -12,10 +12,10 @@ class CollectionMigrator extends Migrator
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesRoute,
         Concerns\MigratesFile,
+        Concerns\MigratesFieldsetsToBlueprints,
         Concerns\ThrowsFinalWarnings;
 
     protected $config;
-    protected $usedFieldsets;
     protected $availableTaxonomies;
     protected $usedTaxonomies;
     protected $entryOrder;
@@ -33,7 +33,7 @@ class CollectionMigrator extends Migrator
             ->migrateEntries($relativePath)
             ->migrateYamlConfig()
             ->deleteOldConfig()
-            ->migrateFieldsetsToBlueprints()
+            ->migrateFieldsetsToBlueprints("collections/{$this->handle}")
             ->throwFinalWarnings();
     }
 
@@ -156,7 +156,7 @@ class CollectionMigrator extends Migrator
             ?? $this->getSetting('theming.default_entry_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
 
-        $this->usedFieldsets[] = $fieldset;
+        $this->addMigratableFieldset($fieldset);
 
         return $fieldset;
     }
@@ -308,30 +308,6 @@ class CollectionMigrator extends Migrator
     protected function deleteOldConfig()
     {
         $this->files->delete($this->newPath('folder.yaml'));
-
-        return $this;
-    }
-
-    /**
-     * Migrate fieldsets to blueprints.
-     *
-     * @return $this
-     */
-    protected function migrateFieldsetsToBlueprints()
-    {
-        collect($this->usedFieldsets)
-            ->filter()
-            ->unique()
-            ->reject(function ($handle) {
-                return $this->isNonExistentDefaultFieldset($handle, 'theming.default_entry_fieldset');
-            })
-            ->each(function ($handle) {
-                try {
-                    FieldsetMigrator::asBlueprint($handle, "collections/{$this->handle}")->migrate();
-                } catch (NotFoundException $exception) {
-                    $this->addWarning($exception->getMessage());
-                }
-            });
 
         return $this;
     }
