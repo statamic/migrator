@@ -10,7 +10,9 @@ class TaxonomyMigrator extends Migrator
         Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesFile,
-        Concerns\MigratesRoute;
+        Concerns\MigratesRoute,
+        Concerns\MigratesFieldsetsToBlueprints,
+        Concerns\ThrowsFinalWarnings;
 
     protected $config;
 
@@ -27,7 +29,9 @@ class TaxonomyMigrator extends Migrator
             ->parseYamlConfig()
             ->copyDirectoryFromSiteToNewPath($relativePath)
             ->migrateTerms()
-            ->migrateYamlConfig();
+            ->migrateYamlConfig()
+            ->migrateFieldsetsToBlueprints("taxonomies/{$this->handle}")
+            ->throwFinalWarnings();
     }
 
     /**
@@ -121,10 +125,14 @@ class TaxonomyMigrator extends Migrator
      */
     protected function getTermFieldset($term)
     {
-        return $term['fieldset']
+        $fieldset = $term['fieldset']
             ?? $this->config['fieldset']
             ?? $this->getSetting('theming.default_term_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
+
+        $this->addMigratableFieldset($fieldset);
+
+        return $fieldset;
     }
 
     /**
@@ -172,16 +180,12 @@ class TaxonomyMigrator extends Migrator
             $this->config->put('sites', $this->getMigratedSiteKeys()->all());
         }
 
-        if ($fieldset = $this->config->get('fieldset')) {
-            $this->config->put('blueprints', [$fieldset]);
-            $this->config->forget('fieldset');
-        }
-
         if ($route = $this->migrateRoute("taxonomies.{$this->handle}")) {
             $this->config->put('route', $route);
         }
 
         $this->config->forget('slugs');
+        $this->config->forget('fieldset');
 
         $this->saveMigratedYaml($this->config, $this->newPath("../{$this->handle}.yaml"));
 

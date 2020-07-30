@@ -34,9 +34,6 @@ class MigrateLocalizedTaxonomyTest extends TestCase
                 'fr',
             ],
             'title' => 'Tags',
-            'blueprints' => [
-                'tag',
-            ],
             'route' => '/blog/tags/{slug}',
             'template' => 'blog/taxonomy',
         ];

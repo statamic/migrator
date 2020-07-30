@@ -4,21 +4,36 @@ namespace Tests;
 
 class MigrateTaxonomyTest extends TestCase
 {
-    protected function path($append = null)
+    protected function paths()
+    {
+        return [
+            'taxonomies' => base_path('content/taxonomies'),
+            'blueprints' => resource_path('blueprints/taxonomies'),
+        ];
+    }
+
+    protected function taxonomiesPath($append = null)
     {
         return collect([base_path('content/taxonomies'), $append])->filter()->implode('/');
+    }
+
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints/taxonomies'), $append])->filter()->implode('/');
     }
 
     /** @test */
     public function it_can_migrate_a_taxonomy()
     {
-        $this->assertFileNotExists($this->path('tags'));
-        $this->assertFileNotExists($this->path('tags.yaml'));
+        $this->assertFileNotExists($this->taxonomiesPath('tags'));
+        $this->assertFileNotExists($this->taxonomiesPath('tags.yaml'));
+        $this->assertFileNotExists($this->blueprintsPath('blueprints'));
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $this->assertFileExists($this->path('tags.yaml'));
-        $this->assertCount(2, $this->files->files($this->path('tags')));
+        $this->assertFileExists($this->taxonomiesPath('tags.yaml'));
+        $this->assertCount(2, $this->files->files($this->taxonomiesPath('tags')));
+        $this->assertCount(1, $this->files->files($this->blueprintsPath('tags')));
     }
 
     /** @test */
@@ -28,13 +43,10 @@ class MigrateTaxonomyTest extends TestCase
 
         $expected = [
             'title' => 'Tags',
-            'blueprints' => [
-                'tag',
-            ],
             'route' => '/blog/tags/{slug}',
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->path('tags.yaml'));
+        $this->assertParsedYamlEquals($expected, $this->taxonomiesPath('tags.yaml'));
     }
 
     /** @test */
@@ -44,7 +56,7 @@ class MigrateTaxonomyTest extends TestCase
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $this->assertParsedYamlNotHasKey('route', $this->path('tags.yaml'));
+        $this->assertParsedYamlNotHasKey('route', $this->taxonomiesPath('tags.yaml'));
     }
 
     /** @test */
@@ -54,7 +66,7 @@ class MigrateTaxonomyTest extends TestCase
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $this->assertFileNotExists($this->path('tags'));
+        $this->assertFileNotExists($this->taxonomiesPath('tags'));
     }
 
     /** @test */
@@ -71,36 +83,36 @@ EOT;
 
         $this->assertEquals(
             static::normalizeMultilineString($expected),
-            static::normalizeMultilineString($this->files->get($this->path('tags/spring.yaml')))
+            static::normalizeMultilineString($this->files->get($this->taxonomiesPath('tags/spring.yaml')))
         );
     }
 
     /** @test */
     public function it_migrates_into_empty_terms_folder_without_complaining()
     {
-        $this->files->makeDirectory($this->path('tags'));
+        $this->files->makeDirectory($this->taxonomiesPath('tags'));
 
-        $this->assertFileExists($this->path('tags'));
-        $this->assertFileNotExists($this->path('tags.yaml'));
+        $this->assertFileExists($this->taxonomiesPath('tags'));
+        $this->assertFileNotExists($this->taxonomiesPath('tags.yaml'));
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $this->assertFileExists($this->path('tags.yaml'));
-        $this->assertCount(2, $this->files->files($this->path('tags')));
+        $this->assertFileExists($this->taxonomiesPath('tags.yaml'));
+        $this->assertCount(2, $this->files->files($this->taxonomiesPath('tags')));
     }
 
     /** @test */
     public function it_wont_migrate_into_a_populated_terms_folder()
     {
-        $this->files->makeDirectory($this->path('tags'));
-        $this->files->put($this->path('tags/llamas.yaml'), '');
+        $this->files->makeDirectory($this->taxonomiesPath('tags'));
+        $this->files->put($this->taxonomiesPath('tags/llamas.yaml'), '');
 
-        $this->assertFileExists($this->path('tags/llamas.yaml'));
-        $this->assertFileNotExists($this->path('tags.yaml'));
+        $this->assertFileExists($this->taxonomiesPath('tags/llamas.yaml'));
+        $this->assertFileNotExists($this->taxonomiesPath('tags.yaml'));
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 
-        $this->assertFileNotExists($this->path('tags.yaml'));
-        $this->assertCount(1, $this->files->files($this->path('tags')));
+        $this->assertFileNotExists($this->taxonomiesPath('tags.yaml'));
+        $this->assertCount(1, $this->files->files($this->taxonomiesPath('tags')));
     }
 }
