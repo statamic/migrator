@@ -1,0 +1,15 @@
+title: Custom Asset
+hide: true
+fields:
+  title:
+    display: Title
+    type: text
+    instructions: The display name of the asset.
+  alt:
+    display: Alt Text
+    type: text
+    instructions: An alternate name for accessibility.
+  purchase:
+    display: Purchase Link
+    type: text
+    instructions: An optional purchase URL.
