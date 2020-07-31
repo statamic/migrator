@@ -36,7 +36,7 @@ class MigratePagesTest extends TestCase
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
         $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
         $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
-        $this->assertCount(4, $this->files->files($this->blueprintsPath('pages')));
+        $this->assertCount(5, $this->files->files($this->blueprintsPath('pages')));
     }
 
     /** @test */

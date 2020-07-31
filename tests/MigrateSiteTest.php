@@ -73,10 +73,10 @@ class MigrateSiteTest extends TestCase
 
         $this->assertFileExists($this->paths('blogCollectionConfig'));
         $this->assertCount(5, $this->files->files($this->paths('blog')));
-        $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/blog')));
+        $this->assertCount(3, $this->files->files($this->blueprintsPath('collections/blog')));
         $this->assertFileExists($this->paths('thingsCollectionConfig'));
         $this->assertCount(9, $this->files->files($this->paths('things')));
-        $this->assertCount(1, $this->files->files($this->blueprintsPath('collections/things')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/things')));
     }
 
     /** @test */
@@ -90,7 +90,7 @@ class MigrateSiteTest extends TestCase
 
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
         $this->assertCount(10, $this->files->files($this->paths('pages')));
-        $this->assertCount(4, $this->files->files($this->blueprintsPath('collections/pages')));
+        $this->assertCount(5, $this->files->files($this->blueprintsPath('collections/pages')));
     }
 
     /** @test */
@@ -104,7 +104,7 @@ class MigrateSiteTest extends TestCase
 
         $this->assertFileExists($this->paths('tagsTaxonomyConfig'));
         $this->assertCount(2, $this->files->files($this->paths('tags')));
-        $this->assertCount(1, $this->files->files($this->blueprintsPath('taxonomies/tags')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('taxonomies/tags')));
     }
 
     /** @test */

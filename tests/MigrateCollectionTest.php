@@ -49,7 +49,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertFileNotExists($this->collectionsPath('blog/folder.yaml'));
         $this->assertFileExists($this->collectionsPath('blog.yaml'));
         $this->assertCount(5, $this->files->files($this->collectionsPath('blog')));
-        $this->assertCount(2, $this->files->files($this->blueprintsPath('blog')));
+        $this->assertCount(3, $this->files->files($this->blueprintsPath('blog')));
     }
 
     /** @test */

@@ -33,7 +33,7 @@ class MigrateTaxonomyTest extends TestCase
 
         $this->assertFileExists($this->taxonomiesPath('tags.yaml'));
         $this->assertCount(2, $this->files->files($this->taxonomiesPath('tags')));
-        $this->assertCount(1, $this->files->files($this->blueprintsPath('tags')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('tags')));
     }
 
     /** @test */
