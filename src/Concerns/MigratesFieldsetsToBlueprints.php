@@ -45,7 +45,7 @@ trait MigratesFieldsetsToBlueprints
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
         if ($this->isNonExistentDefaultFieldset('default')) {
-            $this->copyDefaultBlueprint();
+            $this->copyDefaultBlueprint($blueprintsFolder);
         }
 
         $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
@@ -126,12 +126,20 @@ trait MigratesFieldsetsToBlueprints
 
     /**
      * Copy default blueprint.
+     *
+     * @param string $blueprintsFolder
      */
-    protected function copyDefaultBlueprint()
+    protected function copyDefaultBlueprint($blueprintsFolder)
     {
-        $this->files->copy(
-            __DIR__.'/../../resources/blueprints/default.yaml',
-            resource_path("blueprints/$blueprintsFolder/default.yaml")
-        );
+        $folder = resource_path("blueprints/{$blueprintsFolder}");
+
+        if (! $this->files->exists($folder)) {
+            $this->files->makeDirectory($folder, 0755, true);
+        }
+
+        $stub = __DIR__.'/../../resources/blueprints/default.yaml';
+        $path = $folder.'/default.yaml';
+
+        $this->files->copy($stub, $path);
     }
 }
