@@ -44,6 +44,10 @@ trait MigratesFieldsetsToBlueprints
      */
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
+        if ($this->isNonExistentDefaultFieldset('default')) {
+            $this->copyDefaultBlueprint();
+        }
+
         $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
             $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
         });
@@ -118,5 +122,16 @@ trait MigratesFieldsetsToBlueprints
         };
 
         return $container->getDefaultFieldsets();
+    }
+
+    /**
+     * Copy default blueprint.
+     */
+    protected function copyDefaultBlueprint()
+    {
+        $this->files->copy(
+            __DIR__.'/../../resources/blueprints/default.yaml',
+            resource_path("blueprints/$blueprintsFolder/default.yaml")
+        );
     }
 }
