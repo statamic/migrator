@@ -5,10 +5,13 @@ namespace Statamic\Migrator;
 class GlobalSetMigrator extends Migrator
 {
     use Concerns\MigratesFile,
-        Concerns\MigratesLocalizedContent;
+        Concerns\MigratesLocalizedContent,
+        Concerns\MigratesFieldsetsToBlueprints,
+        Concerns\ThrowsFinalWarnings;
 
     protected $set;
     protected $localizedSets;
+    protected $fieldset;
 
     /**
      * Perform migration.
@@ -20,7 +23,9 @@ class GlobalSetMigrator extends Migrator
             ->validateUnique()
             ->parseGlobalSet($relativePath)
             ->migrateGlobalSetSchema()
-            ->saveMigratedSet();
+            ->saveMigratedSet()
+            ->migrateFieldset()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -33,6 +38,8 @@ class GlobalSetMigrator extends Migrator
     {
         $this->set = $this->getSourceYaml($relativePath, true);
 
+        $this->fieldset = $this->set->get('fieldset');
+
         return $this;
     }
 
@@ -43,10 +50,9 @@ class GlobalSetMigrator extends Migrator
      */
     protected function migrateGlobalSetSchema()
     {
-        $metaKeys = ['blueprint', 'title'];
+        $metaKeys = ['title'];
 
         $this->set
-            ->put('blueprint', $this->set->get('fieldset', 'global'))
             ->forget('fieldset')
             ->forget('id');
 
@@ -124,5 +130,19 @@ class GlobalSetMigrator extends Migrator
         collect($this->localizedSets)->each(function ($set, $locale) {
             $this->saveMigratedYaml($set, base_path("content/globals/{$locale}/{$this->handle}.yaml"));
         });
+    }
+
+    /**
+     * Migrate fieldset.
+     *
+     * @return $this
+     */
+    protected function migrateFieldset()
+    {
+        if ($this->fieldset) {
+            $this->migrateFieldsetToBlueprint('globals', $this->fieldset, $this->handle);
+        }
+
+        return $this;
     }
 }
