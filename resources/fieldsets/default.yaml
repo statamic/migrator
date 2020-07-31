@@ -1,0 +1,12 @@
+title: Default
+fields:
+  title:
+    type: text
+    width: 66
+  slug:
+    type: text
+    width: 33
+  content:
+    type: markdown
+    display: Content
+    localizable: true
