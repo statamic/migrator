@@ -2,8 +2,6 @@
 
 namespace Statamic\Migrator;
 
-use Statamic\Support\Str;
-
 class FormMigrator extends Migrator
 {
     use Concerns\MigratesFile,
@@ -65,8 +63,6 @@ class FormMigrator extends Migrator
         unset($this->form['fields']);
         unset($this->form['columns']);
 
-        $this->form['blueprint'] = $this->migrateBlueprintHandle();
-
         return $this;
     }
 
@@ -114,29 +110,13 @@ class FormMigrator extends Migrator
     }
 
     /**
-     * Migrate blueprint handle.
-     *
-     * @return string
-     */
-    protected function migrateBlueprintHandle()
-    {
-        $suffix = Str::endsWith($this->handle, '_form')
-            ? ''
-            : '_form';
-
-        return $this->handle.$suffix;
-    }
-
-    /**
      * Get blueprint path.
      *
      * @return string
      */
     protected function blueprintPath()
     {
-        $handle = $this->migrateBlueprintHandle();
-
-        return resource_path("blueprints/{$handle}.yaml");
+        return resource_path("blueprints/forms/{$this->handle}.yaml");
     }
 
     /**

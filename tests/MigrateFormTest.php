@@ -7,7 +7,7 @@ class MigrateFormTest extends TestCase
     protected function paths($key = null)
     {
         $paths = [
-            'blueprint' => resource_path('blueprints/contact_form.yaml'),
+            'blueprint' => resource_path('blueprints/forms/contact.yaml'),
             'form' => resource_path('forms/contact.yaml'),
             'submissions' => storage_path('forms/contact'),
         ];
@@ -53,7 +53,6 @@ class MigrateFormTest extends TestCase
                     'template' => 'fan-mail',
                 ],
             ],
-            'blueprint' => 'contact_form',
         ];
 
         $this->assertParsedYamlEquals($expected, $this->paths('form'));
