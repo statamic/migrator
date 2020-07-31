@@ -25,7 +25,7 @@ class MigrateSiteTest extends TestCase
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
             'assetContainers' => base_path('content/assets'),
-            'forms' => resource_path('forms'),
+            'contactFormConfig' => resource_path('forms/contact.yaml'),
             'submissions' => storage_path('forms'),
             'views' => resource_path('views'),
             'roles' => resource_path('users/roles.yaml'),
@@ -128,6 +128,20 @@ class MigrateSiteTest extends TestCase
 
         $this->assertCount(2, $this->files->files($this->paths('globals')));
         $this->assertCount(1, $this->files->files($this->blueprintsPath('globals')));
+    }
+
+    /** @test */
+    public function it_migrates_forms()
+    {
+        $this->assertFileNotExists($this->paths('contactFormConfig'));
+        $this->assertFileNotExists($this->blueprintsPath('globals'));
+        $this->assertCount(0, $this->files->allFiles($this->paths('submissions')));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertFileExists($this->paths('contactFormConfig'));
+        $this->assertFileExists($this->blueprintsPath('forms/contact.yaml'));
+        $this->assertCount(2, $this->files->allFiles($this->paths('submissions')));
     }
 
     /** @test */
