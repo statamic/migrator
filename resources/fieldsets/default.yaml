@@ -1,12 +1,15 @@
 title: Default
-fields:
-  title:
-    type: text
-    width: 66
-  slug:
-    type: text
-    width: 33
-  content:
-    type: markdown
-    display: Content
-    localizable: true
+sections:
+  main:
+    display: Main
+    fields:
+      title:
+        type: text
+      content:
+        type: markdown
+        localizable: true
+  sidebar:
+    display: Sidebar
+    fields:
+      slug:
+        type: text
