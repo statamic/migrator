@@ -10,9 +10,12 @@ class UserMigrator extends Migrator
     use Concerns\GetsSettings,
         Concerns\MigratesContent,
         Concerns\MigratesFile,
-        Concerns\MigratesRoles;
+        Concerns\MigratesRoles,
+        Concerns\MigratesFieldsetsToBlueprints,
+        Concerns\ThrowsFinalWarnings;
 
     protected $user;
+    protected $fieldset;
 
     /**
      * Perform migration.
@@ -25,7 +28,9 @@ class UserMigrator extends Migrator
             ->setNewPathWithEmailAsHandle()
             ->validateUnique()
             ->migrateUserSchema()
-            ->saveMigratedYaml($this->user);
+            ->saveMigratedYaml($this->user)
+            ->migrateFieldset()
+            ->throwFinalWarnings();
     }
 
     /**
@@ -40,6 +45,8 @@ class UserMigrator extends Migrator
         if ($this->getSetting('users.login_type') === 'email') {
             $this->user['email'] = $this->handle;
         }
+
+        $this->fieldset = $this->files->exists($this->sitePath('settings/fieldsets/user.yaml'));
 
         return $this;
     }
@@ -96,9 +103,23 @@ class UserMigrator extends Migrator
 
         $user = $user->except('first_name', 'last_name', 'email')->all();
 
-        $this->user = $this->files->exists($this->sitePath('settings/fieldsets/user.yaml'))
+        $this->user = $this->fieldset
             ? $this->migrateContent($user, 'user', false)
             : $user;
+
+        return $this;
+    }
+
+    /**
+     * Migrate fieldset.
+     *
+     * @return $this
+     */
+    protected function migrateFieldset()
+    {
+        if ($this->fieldset) {
+            $this->migrateFieldsetToBlueprint(null, 'user');
+        }
 
         return $this;
     }

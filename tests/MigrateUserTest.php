@@ -12,6 +12,7 @@ class MigrateUserTest extends TestCase
             'old_username' => base_path('site/users/irmagobb.yaml'),
             'old_email' => base_path('site/users/irmagobb@example.com.yaml'),
             'new' => base_path('users/irmagobb@example.com.yaml'),
+            'blueprint' => resource_path('blueprints/user.yaml'),
         ];
 
         return $key ? $paths[$key] : $paths;
@@ -22,6 +23,7 @@ class MigrateUserTest extends TestCase
         $this->files->put($this->paths('old_username'), YAML::dump($userConfig));
 
         $this->assertFileNotExists($this->paths('new'));
+        $this->assertFileNotExists($this->paths('blueprint'));
 
         $this->artisan('statamic:migrate:user', ['handle' => 'irmagobb']);
 
@@ -46,6 +48,8 @@ class MigrateUserTest extends TestCase
             'password' => 'mrbeanisdreamy',
             'super' => true,
         ]);
+
+        $this->assertFileExists($this->paths('blueprint'));
     }
 
     /** @test */
@@ -181,5 +185,29 @@ EOT
             'super' => true,
             'headshot' => 'img/coffee-mug.jpg',
         ]);
+
+        $this->assertFileExists($this->paths('blueprint'));
+    }
+
+    /** @test */
+    public function it_can_migrate_without_user_fieldset()
+    {
+        $this->files->delete($this->sitePath('settings/fieldsets/user.yaml'));
+
+        $user = $this->migrateUser([
+            'first_name' => 'Irma',
+            'last_name' => 'Gobb',
+            'email' => 'irmagobb@example.com',
+            'password' => 'mrbeanisdreamy',
+            'super' => true,
+        ]);
+
+        $this->assertEquals($user, [
+            'name' => 'Irma Gobb',
+            'password' => 'mrbeanisdreamy',
+            'super' => true,
+        ]);
+
+        $this->assertFileNotExists($this->paths('blueprint'));
     }
 }
