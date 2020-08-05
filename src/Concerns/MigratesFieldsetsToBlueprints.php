@@ -3,6 +3,7 @@
 namespace Statamic\Migrator\Concerns;
 
 use Statamic\Migrator\FieldsetMigrator;
+use Statamic\Migrator\YAML;
 
 trait MigratesFieldsetsToBlueprints
 {
@@ -44,13 +45,11 @@ trait MigratesFieldsetsToBlueprints
      */
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
-        if ($this->isNonExistentDefaultFieldset('default')) {
-            $this->copyDefaultBlueprint($blueprintsFolder);
-        }
-
         $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
             $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
         });
+
+        $this->ensureDefaultBlueprint($blueprintsFolder);
 
         return $this;
     }
@@ -124,6 +123,30 @@ trait MigratesFieldsetsToBlueprints
         };
 
         return $container->getDefaultFieldsets();
+    }
+
+    /**
+     * Ensure default blueprint.
+     *
+     * @param string $blueprintsFolder
+     */
+    protected function ensureDefaultBlueprint($blueprintsFolder)
+    {
+        $defaultBlueprintPath = resource_path("blueprints/{$blueprintsFolder}/default.yaml");
+
+        if (! $this->files->exists($defaultBlueprintPath)) {
+            return $this->copyDefaultBlueprint($blueprintsFolder);
+        }
+
+        $blueprint = collect(YAML::parse($this->files->get($defaultBlueprintPath)));
+
+        if ($blueprint->get('order') == 1) {
+            return;
+        }
+
+        $blueprint = $blueprint->put('order', 1)->all();
+
+        $this->files->put($defaultBlueprintPath, YAML::dump($blueprint));
     }
 
     /**

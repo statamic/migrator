@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Statamic\Migrator\YAML;
+
 class MigrateTaxonomyTest extends TestCase
 {
     protected function paths()
@@ -34,6 +36,21 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertFileExists($this->taxonomiesPath('tags.yaml'));
         $this->assertCount(2, $this->files->files($this->taxonomiesPath('tags')));
         $this->assertCount(2, $this->files->files($this->blueprintsPath('tags')));
+        $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('tags/default.yaml'));
+    }
+
+    /** @test */
+    public function it_can_migrate_a_custom_default_blueprint()
+    {
+        $this->files->put($this->prepareFolder($this->blueprintsPath('tags/default.yaml')), YAML::dump([
+            'title' => 'Default',
+            'custom' => 'stuff',
+        ]));
+
+        $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
+
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('tags')));
+        $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('tags/default.yaml'));
     }
 
     /** @test */

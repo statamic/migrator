@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Statamic\Facades\Entry;
+use Statamic\Migrator\YAML;
 
 class MigratePagesTest extends TestCase
 {
@@ -25,7 +26,7 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_expected_number_of_files()
+    public function it_migrates_pages_to_a_collection()
     {
         $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
         $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
@@ -37,6 +38,21 @@ class MigratePagesTest extends TestCase
         $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
         $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
         $this->assertCount(5, $this->files->files($this->blueprintsPath('pages')));
+        $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('pages/default.yaml'));
+    }
+
+    /** @test */
+    public function it_can_migrate_a_custom_default_blueprint()
+    {
+        $this->files->put($this->prepareFolder($this->blueprintsPath('pages/default.yaml')), YAML::dump([
+            'title' => 'Default',
+            'custom' => 'stuff',
+        ]));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertCount(5, $this->files->files($this->blueprintsPath('pages')));
+        $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('pages/default.yaml'));
     }
 
     /** @test */

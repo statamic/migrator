@@ -50,6 +50,21 @@ class MigrateCollectionTest extends TestCase
         $this->assertFileExists($this->collectionsPath('blog.yaml'));
         $this->assertCount(5, $this->files->files($this->collectionsPath('blog')));
         $this->assertCount(3, $this->files->files($this->blueprintsPath('blog')));
+        $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('blog/default.yaml'));
+    }
+
+    /** @test */
+    public function it_can_migrate_a_custom_default_blueprint()
+    {
+        $this->files->put($this->prepareFolder($this->blueprintsPath('blog/default.yaml')), YAML::dump([
+            'title' => 'Default',
+            'custom' => 'stuff',
+        ]));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertCount(3, $this->files->files($this->blueprintsPath('blog')));
+        $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('blog/default.yaml'));
     }
 
     /** @test */
