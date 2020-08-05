@@ -66,7 +66,9 @@ trait MigratesFieldsetsToBlueprints
     protected function migrateFieldsetToBlueprint($blueprintsFolder, $originalHandle, $newHandle = null)
     {
         try {
-            FieldsetMigrator::asBlueprint($blueprintsFolder, $originalHandle, $newHandle)->migrate();
+            FieldsetMigrator::asBlueprint($blueprintsFolder, $originalHandle, $newHandle)
+                ->overwrite($this->overwrite)
+                ->migrate();
         } catch (NotFoundException $exception) {
             $this->addWarning($exception->getMessage());
         }
