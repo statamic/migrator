@@ -122,7 +122,7 @@ class CollectionMigrator extends Migrator
 
         if ($this->isMultisite() && $this->isLocalizedEntry($path)) {
             $entry['origin'] = $entry['id'];
-            $entry['id'] = Str::uuid();
+            $entry['id'] = (string) Str::uuid();
         }
 
         unset($entry['slug']);

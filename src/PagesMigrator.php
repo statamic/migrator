@@ -121,7 +121,7 @@ class PagesMigrator extends Migrator
             ->map(function ($page) use ($pageOrigin) {
                 return array_merge($page, [
                     'origin' => $pageOrigin['id'],
-                    'id' => Str::uuid(),
+                    'id' => (string) Str::uuid(),
                     'slug' => $page['slug'] ?? $pageOrigin['slug'],
                     'fieldset' => $pageOrigin['fieldset'],
                 ]);

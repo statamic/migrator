@@ -89,6 +89,7 @@ class MigrateLocalizedCollectionTest extends TestCase
 
         $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
         $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
+        $this->assertNotNull($frenchEntry['id']);
     }
 
     /** @test */
