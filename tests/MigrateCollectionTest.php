@@ -42,7 +42,7 @@ class MigrateCollectionTest extends TestCase
     {
         $this->assertFileNotExists($this->collectionsPath('blog'));
         $this->assertFileNotExists($this->collectionsPath('blog.yaml'));
-        $this->assertFileNotExists($this->blueprintsPath('blueprints'));
+        $this->assertFileNotExists($this->blueprintsPath('blog'));
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 

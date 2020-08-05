@@ -27,7 +27,7 @@ class MigrateTaxonomyTest extends TestCase
     {
         $this->assertFileNotExists($this->taxonomiesPath('tags'));
         $this->assertFileNotExists($this->taxonomiesPath('tags.yaml'));
-        $this->assertFileNotExists($this->blueprintsPath('blueprints'));
+        $this->assertFileNotExists($this->blueprintsPath('tags'));
 
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
 

@@ -29,7 +29,7 @@ class MigratePagesTest extends TestCase
     {
         $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
         $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
-        $this->assertFileNotExists($this->blueprintsPath('blueprints'));
+        $this->assertFileNotExists($this->blueprintsPath('pages'));
 
         $this->artisan('statamic:migrate:pages');
 
