@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator\Concerns;
 
+use Statamic\Migrator\Exceptions\MigratorWarningsException;
 use Statamic\Migrator\FieldsetMigrator;
 use Statamic\Migrator\YAML;
 
@@ -45,9 +46,13 @@ trait MigratesFieldsetsToBlueprints
      */
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
-        $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
-            $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
-        });
+        try {
+            $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
+                $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
+            });
+        } catch (MigratorWarningsException $exception) {
+            $this->mergeFromWarningsException($exception);
+        }
 
         $this->ensureDefaultBlueprint($blueprintsFolder);
 

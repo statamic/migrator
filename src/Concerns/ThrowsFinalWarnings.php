@@ -23,6 +23,24 @@ trait ThrowsFinalWarnings
     }
 
     /**
+     * Merge warnings from another thrown migrator warnings exception.
+     *
+     * @param MigratorWarningsException $exception
+     * @return $this
+     */
+    protected function mergeFromWarningsException(MigratorWarningsException $exception)
+    {
+        $exception->getWarnings()->each(function ($warning) {
+            $this->addWarning(
+                $warning->get('warning'),
+                $warning->get('extra')
+            );
+        });
+
+        return $this;
+    }
+
+    /**
      * Throw final warnings.
      *
      * @throws MigratorWarningsException
