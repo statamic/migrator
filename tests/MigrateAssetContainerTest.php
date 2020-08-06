@@ -23,12 +23,18 @@ class MigrateAssetContainerTest extends TestCase
         return [
             base_path('content/assets'),
             public_path('assets'),
+            resource_path('blueprints'),
         ];
     }
 
     protected function containerPath($append = null)
     {
         return collect([base_path('content/assets'), $append])->filter()->implode('/');
+    }
+
+    protected function blueprintPath($append = null)
+    {
+        return collect([resource_path('blueprints/assets'), $append])->filter()->implode('/');
     }
 
     /** @test */
@@ -44,6 +50,8 @@ class MigrateAssetContainerTest extends TestCase
         ];
 
         $this->assertParsedYamlEquals($expected, $this->containerPath('main.yaml'));
+
+        $this->assertFileNotExists($this->blueprintPath());
     }
 
     /** @test */
@@ -134,10 +142,10 @@ class MigrateAssetContainerTest extends TestCase
         $expected = [
             'title' => 'Secondary Assets',
             'disk' => 'assets_secondary',
-            'blueprint' => 'asset_fields',
         ];
 
         $this->assertParsedYamlEquals($expected, $this->containerPath('secondary.yaml'));
+        $this->assertFileExists($this->blueprintPath('secondary.yaml'));
 
         $meta = YAML::parse($this->files->get(public_path('assets/secondary/img/.meta/stetson.jpg.yaml')));
 
@@ -178,6 +186,7 @@ class MigrateAssetContainerTest extends TestCase
 
         // Assert no yaml config or assets get copied over.
         $this->assertFileNotExists($this->containerPath('secondary.yaml'));
+        $this->assertFileNotExists($this->blueprintPath('secondary.yaml'));
         $this->assertCount(0, $this->files->allFiles(base_path('content/assets')));
 
         // Assert meta is still generated.

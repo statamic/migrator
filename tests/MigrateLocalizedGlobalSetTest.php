@@ -24,7 +24,6 @@ class MigrateLocalizedGlobalSetTest extends TestCase
 
         $expectedSet = [
             'title' => 'Main Globals',
-            'blueprint' => 'global',
         ];
 
         $expectedEnglish = [
@@ -52,7 +51,6 @@ class MigrateLocalizedGlobalSetTest extends TestCase
 
         $expectedSet = [
             'title' => 'Main Globals',
-            'blueprint' => 'global',
         ];
 
         $expectedEnglish = [

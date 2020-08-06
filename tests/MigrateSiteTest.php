@@ -25,7 +25,7 @@ class MigrateSiteTest extends TestCase
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
             'assetContainers' => base_path('content/assets'),
-            'forms' => resource_path('forms'),
+            'contactFormConfig' => resource_path('forms/contact.yaml'),
             'submissions' => storage_path('forms'),
             'views' => resource_path('views'),
             'roles' => resource_path('users/roles.yaml'),
@@ -34,6 +34,11 @@ class MigrateSiteTest extends TestCase
         ];
 
         return $key ? $paths[$key] : $paths;
+    }
+
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints'), $append])->filter()->implode('/');
     }
 
     protected function setUp(): void
@@ -46,24 +51,12 @@ class MigrateSiteTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_fieldsets_to_blueprints()
-    {
-        $this->assertCount(0, $this->files->files($this->paths('blueprints')));
-
-        $this->artisan('statamic:migrate:site');
-
-        $this->assertCount(14, $this->files->files($this->paths('blueprints')));
-    }
-
-    /** @test */
     public function it_migrates_fieldset_partials()
     {
-        $this->assertCount(0, $this->files->files($this->paths('blueprints')));
         $this->assertCount(0, $this->files->files($this->paths('fieldsets')));
 
         $this->artisan('statamic:migrate:site');
 
-        $this->assertFileExists($this->paths('blueprints').'/address.yaml');
         $this->assertFileExists($this->paths('fieldsets').'/address.yaml');
     }
 
@@ -74,13 +67,16 @@ class MigrateSiteTest extends TestCase
         $this->assertFileNotExists($this->paths('blogCollectionConfig'));
         $this->assertFileNotExists($this->paths('things'));
         $this->assertFileNotExists($this->paths('thingsCollectionConfig'));
+        $this->assertFileNotExists($this->blueprintsPath('collections'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertFileExists($this->paths('blogCollectionConfig'));
         $this->assertCount(5, $this->files->files($this->paths('blog')));
+        $this->assertCount(3, $this->files->files($this->blueprintsPath('collections/blog')));
         $this->assertFileExists($this->paths('thingsCollectionConfig'));
         $this->assertCount(9, $this->files->files($this->paths('things')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/things')));
     }
 
     /** @test */
@@ -88,11 +84,13 @@ class MigrateSiteTest extends TestCase
     {
         $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
         $this->assertFileNotExists($this->paths('pages'));
+        $this->assertFileNotExists($this->blueprintsPath('collections'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
         $this->assertCount(10, $this->files->files($this->paths('pages')));
+        $this->assertCount(5, $this->files->files($this->blueprintsPath('collections/pages')));
     }
 
     /** @test */
@@ -100,11 +98,13 @@ class MigrateSiteTest extends TestCase
     {
         $this->assertFileNotExists($this->paths('tags'));
         $this->assertFileNotExists($this->paths('tagsTaxonomyConfig'));
+        $this->assertFileNotExists($this->blueprintsPath('taxonomies'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertFileExists($this->paths('tagsTaxonomyConfig'));
         $this->assertCount(2, $this->files->files($this->paths('tags')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('taxonomies/tags')));
     }
 
     /** @test */
@@ -115,26 +115,45 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(1, $this->files->files($this->paths('assetContainers')));
+        $this->assertFileNotExists($this->blueprintsPath('assets'));
     }
 
     /** @test */
     public function it_migrates_global_sets()
     {
         $this->assertCount(0, $this->files->files($this->paths('globals')));
+        $this->assertFileNotExists($this->blueprintsPath('globals'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('globals')));
+        $this->assertCount(1, $this->files->files($this->blueprintsPath('globals')));
+    }
+
+    /** @test */
+    public function it_migrates_forms()
+    {
+        $this->assertFileNotExists($this->paths('contactFormConfig'));
+        $this->assertFileNotExists($this->blueprintsPath('globals'));
+        $this->assertCount(0, $this->files->allFiles($this->paths('submissions')));
+
+        $this->artisan('statamic:migrate:site');
+
+        $this->assertFileExists($this->paths('contactFormConfig'));
+        $this->assertFileExists($this->blueprintsPath('forms/contact.yaml'));
+        $this->assertCount(2, $this->files->allFiles($this->paths('submissions')));
     }
 
     /** @test */
     public function it_migrates_users()
     {
         $this->assertCount(0, $this->files->files($this->paths('users')));
+        $this->assertFileNotExists($this->blueprintsPath('user.yaml'));
 
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('users')));
+        $this->assertFileExists($this->blueprintsPath('user.yaml'));
     }
 
     /** @test */

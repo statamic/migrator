@@ -49,9 +49,6 @@ class MigrateLocalizedCollectionTest extends TestCase
                 'default',
                 'fr',
             ],
-            'blueprints' => [
-                'content',
-            ],
             'template' => 'blog/post',
             'route' => '/blog/{year}/{month}/{day}/{slug}',
             'taxonomies' => [
@@ -92,6 +89,7 @@ class MigrateLocalizedCollectionTest extends TestCase
 
         $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
         $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
+        $this->assertNotNull($frenchEntry['id']);
     }
 
     /** @test */

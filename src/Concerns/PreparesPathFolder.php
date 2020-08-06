@@ -10,6 +10,7 @@ trait PreparesPathFolder
      * Prepare folder for file path.
      *
      * @param string $path
+     * @return string
      */
     protected function prepareFolder($path)
     {
@@ -18,6 +19,8 @@ trait PreparesPathFolder
         if (! $this->files->exists($folder)) {
             $this->files->makeDirectory($folder, 0755, true);
         }
+
+        return $path;
     }
 
     /**

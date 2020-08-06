@@ -17,8 +17,6 @@ class ThemeMigrator extends Migrator
 
     /**
      * Perform migration.
-     *
-     * @param string $handle
      */
     public function migrate()
     {

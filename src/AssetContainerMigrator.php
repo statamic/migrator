@@ -12,7 +12,9 @@ use Statamic\Support\Arr;
 
 class AssetContainerMigrator extends Migrator
 {
-    use Concerns\MigratesFile,
+    use Concerns\GetsSettings,
+        Concerns\MigratesFile,
+        Concerns\MigratesFieldsetsToBlueprints,
         Concerns\ThrowsFinalWarnings;
 
     protected $configurator;
@@ -22,11 +24,10 @@ class AssetContainerMigrator extends Migrator
     protected $localPath;
     protected $s3Path;
     protected $metaData;
+    protected $fieldset;
 
     /**
      * Perform migration.
-     *
-     * @param string $handle
      */
     public function migrate()
     {
@@ -49,6 +50,7 @@ class AssetContainerMigrator extends Migrator
             ->migrateDisk()
             ->migrateFolder()
             ->migrateMeta()
+            ->migrateFieldset()
             ->throwFinalWarnings();
     }
 
@@ -136,13 +138,11 @@ class AssetContainerMigrator extends Migrator
         $this->localPath = $this->parseLocalPath($config);
         $this->s3Path = $this->parseS3Path($config);
         $this->metaData = $this->parseMeta($config);
+        $this->fieldset = $this->parseFieldset($config);
 
         $config->put('disk', $this->disk);
 
-        if ($fieldset = $config->get('fieldset')) {
-            $config->put('blueprint', $fieldset);
-            $config->forget('fieldset');
-        }
+        $config->forget('fieldset');
 
         $this->container = $config->only('title', 'disk', 'blueprint')->all();
 
@@ -163,7 +163,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse local path.
      *
-     * @param string $config
+     * @param array $config
      * @return null|string
      */
     protected function parseLocalPath($config)
@@ -212,8 +212,8 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse meta.
      *
-     * @param string $config
-     * @return array
+     * @param array $config
+     * @return \Illuminate\Support\Collection
      */
     protected function parseMeta($config)
     {
@@ -233,6 +233,25 @@ class AssetContainerMigrator extends Migrator
 
                 return ['data' => $metaData];
             });
+    }
+
+    /**
+     * Parse fieldset.
+     *
+     * @param string $config
+     * @return string|null
+     */
+    protected function parseFieldset($config)
+    {
+        if ($fieldset = Arr::get($config, 'fieldset')) {
+            return $fieldset;
+        }
+
+        $defaultFieldset = $this->getSetting('theming.default_asset_fieldset');
+
+        return $this->files->exists($this->sitePath("settings/fieldsets/{$defaultFieldset}.yaml"))
+            ? $defaultFieldset
+            : null;
     }
 
     /**
@@ -433,5 +452,19 @@ class AssetContainerMigrator extends Migrator
     protected function migrateBlankMeta()
     {
         Artisan::call('statamic:assets:meta', ['container' => $this->handle]);
+    }
+
+    /**
+     * Migrate fieldset.
+     *
+     * @return $this
+     */
+    protected function migrateFieldset()
+    {
+        if ($this->fieldset) {
+            $this->migrateFieldsetToBlueprint('assets', $this->fieldset, $this->handle);
+        }
+
+        return $this;
     }
 }

@@ -143,6 +143,10 @@ class ContentMigrator
      */
     protected function importPartial($partialHandle, $fieldConfigs, $originalKey)
     {
+        if (is_null($partialHandle)) {
+            return $fieldConfigs;
+        }
+
         $partialFieldConfigs = $this->getFieldConfigs($partialHandle);
 
         Arr::forget($fieldConfigs, $originalKey);

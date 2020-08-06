@@ -14,7 +14,6 @@ use Statamic\Migrator\Exceptions\MigratorErrorException;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Migrator\Exceptions\MigratorWarningsException;
 use Statamic\Migrator\FieldsetMigrator;
-use Statamic\Migrator\FieldsetPartialMigrator;
 use Statamic\Migrator\FormMigrator;
 use Statamic\Migrator\GlobalSetMigrator;
 use Statamic\Migrator\GroupsMigrator;
@@ -144,14 +143,8 @@ class MigrateSite extends Command
      */
     protected function migrateFieldsets()
     {
-        $fieldsetHandles = $this->getFieldsetHandles();
-
-        $fieldsetHandles->standard->each(function ($handle) {
+        $this->getFieldsetHandles()->each(function ($handle) {
             $this->runMigratorOnHandle(FieldsetMigrator::class, $handle);
-        });
-
-        $fieldsetHandles->partial->each(function ($handle) {
-            $this->runMigratorOnHandle(FieldsetPartialMigrator::class, $handle);
         });
 
         return $this;
