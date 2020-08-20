@@ -512,6 +512,33 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
+    public function it_migrates_tags_to_taggable()
+    {
+        $fieldset = $this->migrateFieldset([
+            'title' => 'Posts',
+            'fields' => [
+                'tags' => [
+                    'type' => 'tags',
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'tags',
+                    'field' => [
+                        'type' => 'taggable',
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $fieldset);
+    }
+
+    /** @test */
     public function it_migrates_option_based_suggest_to_select()
     {
         $fieldset = $this->migrateFieldset([

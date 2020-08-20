@@ -375,6 +375,18 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate tags field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateTagsField($config, $handle)
+    {
+        return $config->put('type', 'taggable');
+    }
+
+    /**
      * Migrate suggest field.
      *
      * @param \Illuminate\Support\Collection $config
