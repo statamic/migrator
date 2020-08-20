@@ -429,11 +429,22 @@ class FieldsetMigrator extends Migrator
             case 'collections':
                 return $config->put('type', 'collections')->forget('mode');
             case 'collection':
-                return $config->put('type', 'entries')->forget('mode');
+                return $config
+                    ->put('type', 'entries')
+                    ->put('collections', Arr::wrap($config->get('collection')))
+                    ->filter()
+                    ->forget(['mode', 'collection']);
             case 'pages':
-                return $config->put('type', 'entries')->put('collections', ['pages'])->forget('mode');
+                return $config
+                    ->put('type', 'entries')
+                    ->put('collections', ['pages'])
+                    ->forget('mode');
             case 'taxonomy':
-                return $config->put('type', 'taxonomy')->forget('mode');
+                return $config
+                    ->put('type', 'terms')
+                    ->put('taxonomies', Arr::wrap($config->get('taxonomy')))
+                    ->filter()
+                    ->forget(['mode', 'taxonomy']);
             case 'form':
                 return $config->put('type', 'form')->forget('mode');
             case 'users':

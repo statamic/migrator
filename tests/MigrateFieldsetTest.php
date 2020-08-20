@@ -619,9 +619,32 @@ class MigrateFieldsetTest extends TestCase
     public function it_migrates_native_mode_based_suggests_to_appropriate_relationship_fields()
     {
         $this->assertEquals(['type' => 'collections'], $this->migrateSuggestField(['mode' => 'collections']));
-        $this->assertEquals(['type' => 'entries'], $this->migrateSuggestField(['mode' => 'collection']));
-        $this->assertEquals(['type' => 'entries', 'collections' => ['pages']], $this->migrateSuggestField(['mode' => 'pages']));
-        $this->assertEquals(['type' => 'taxonomy'], $this->migrateSuggestField(['mode' => 'taxonomy']));
+
+        $this->assertEquals(
+            ['type' => 'entries', 'collections' => ['blog']],
+            $this->migrateSuggestField(['mode' => 'collection', 'collection' => 'blog'])
+        );
+
+        $this->assertEquals(
+            ['type' => 'entries', 'collections' => ['blog']],
+            $this->migrateSuggestField(['mode' => 'collection', 'collection' => ['blog']])
+        );
+
+        $this->assertEquals(
+            ['type' => 'entries', 'collections' => ['pages']],
+            $this->migrateSuggestField(['mode' => 'pages'])
+        );
+
+        $this->assertEquals(
+            ['type' => 'terms', 'taxonomies' => ['tags']],
+            $this->migrateSuggestField(['mode' => 'taxonomy', 'taxonomy' => 'tags'])
+        );
+
+        $this->assertEquals(
+            ['type' => 'terms', 'taxonomies' => ['tags']],
+            $this->migrateSuggestField(['mode' => 'taxonomy', 'taxonomy' => ['tags']])
+        );
+
         $this->assertEquals(['type' => 'form'], $this->migrateSuggestField(['mode' => 'form']));
         $this->assertEquals(['type' => 'users'], $this->migrateSuggestField(['mode' => 'users']));
         $this->assertEquals(['type' => 'user_groups'], $this->migrateSuggestField(['mode' => 'user_groups']));
