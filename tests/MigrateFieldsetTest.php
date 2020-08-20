@@ -479,6 +479,39 @@ class MigrateFieldsetTest extends TestCase
     }
 
     /** @test */
+    public function it_migrates_taxonomy_to_terms()
+    {
+        $fieldset = $this->migrateFieldset([
+            'title' => 'Posts',
+            'fields' => [
+                'tags' => [
+                    'type' => 'taxonomy',
+                    'max_items' => 1,
+                    'taxonomy' => 'tags',
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'tags',
+                    'field' => [
+                        'type' => 'terms',
+                        'max_items' => 1,
+                        'taxonomies' => [
+                            'tags',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $fieldset);
+    }
+
+    /** @test */
     public function it_migrates_option_based_suggest_to_select()
     {
         $fieldset = $this->migrateFieldset([

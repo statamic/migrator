@@ -354,6 +354,27 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate taxonomy field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateTaxonomyField($config, $handle)
+    {
+        $this->addWarning(
+            "Taxonomy field [{$handle}] has been migrated to an terms field.",
+            "Not all config features and settings are compatible.\n".
+            'Please revise your entries field configuration as necessary.'
+        );
+
+        return $config
+            ->put('type', 'terms')
+            ->put('taxonomies', Arr::wrap($config->get('taxonomy')))
+            ->forget('taxonomy');
+    }
+
+    /**
      * Migrate suggest field.
      *
      * @param \Illuminate\Support\Collection $config
