@@ -440,6 +440,11 @@ class MigrateFieldsetTest extends TestCase
                         'products',
                     ],
                 ],
+                'single_collection' => [
+                    'type' => 'collection',
+                    'max_items' => 1,
+                    'collection' => 'blog',
+                ],
             ],
         ]);
 
@@ -454,6 +459,16 @@ class MigrateFieldsetTest extends TestCase
                         'collections' => [
                             'blog',
                             'products',
+                        ],
+                    ],
+                ],
+                [
+                    'handle' => 'single_collection',
+                    'field' => [
+                        'type' => 'entries',
+                        'max_items' => 1,
+                        'collections' => [
+                            'blog',
                         ],
                     ],
                 ],

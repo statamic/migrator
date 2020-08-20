@@ -349,7 +349,7 @@ class FieldsetMigrator extends Migrator
 
         return $config
             ->put('type', 'entries')
-            ->put('collections', $config->get('collection'))
+            ->put('collections', Arr::wrap($config->get('collection')))
             ->forget('collection');
     }
 
