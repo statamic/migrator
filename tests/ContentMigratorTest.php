@@ -125,39 +125,73 @@ class ContentMigratorTest extends TestCase
     {
         $content = $this
             ->setFields([
-                'tags' => [
+                'one_taxonomy' => [
                     'type' => 'taxonomy',
                     'taxonomy' => 'tags',
                 ],
-                'tag' => [
+                'one_taxonomy_single_value' => [
                     'type' => 'taxonomy',
                     'taxonomy' => 'tags',
                     'max_items' => 1,
                 ],
-                'suggest_tags' => [
+                'suggest_one_taxonomy' => [
                     'type' => 'suggest',
                     'mode' => 'taxonomy',
                     'taxonomy' => 'tags',
                 ],
-                'suggest_tag' => [
+                'suggest_one_taxonomy_single_value' => [
                     'type' => 'suggest',
                     'mode' => 'taxonomy',
                     'taxonomy' => 'tags',
                     'max_items' => 1,
+                ],
+                'multiple_taxonomies' => [
+                    'type' => 'taxonomy',
+                    'taxonomy' => ['tags', 'colours'],
+                ],
+                'multiple_taxonomies_single_value' => [
+                    'type' => 'taxonomy',
+                    'taxonomy' => ['tags', 'colours'],
+                    'max_items' => 1,
+                ],
+                'suggest_multiple_taxonomies' => [
+                    'type' => 'suggest',
+                    'mode' => 'taxonomy',
+                    'taxonomy' => ['tags', 'colours'],
+                ],
+                'suggest_multiple_taxonomies_single_value' => [
+                    'type' => 'suggest',
+                    'mode' => 'taxonomy',
+                    'taxonomy' => ['tags', 'colours'],
+                    'max_items' => 1,
+                ],
+                'tags' => [  // When field handle matches taxonomy handle, don't do anything with prefixes.
+                    'type' => 'taxonomy',
+                    'taxonomy' => 'tags',
                 ],
             ])
             ->migrateContent([
-                'tags' => ['tags/coffee', 'tags/frostburg-university'],
-                'tag' => 'tags/coffee',
-                'suggest_tags' => ['tags/coffee', 'tags/frostburg-university'],
-                'suggest_tag' => 'tags/coffee',
+                'one_taxonomy' => ['coffee', 'frostburg-university', 'tags/if-field-handle-does-not-match-taxonomy-handle-remove-prefix'],
+                'one_taxonomy_single_value' => 'coffee',
+                'suggest_one_taxonomy' => ['coffee', 'frostburg-university'],
+                'suggest_one_taxonomy_single_value' => 'coffee',
+                'multiple_taxonomies' => ['tags/coffee', 'tags/frostburg-university', 'colours/red'],
+                'multiple_taxonomies_single_value' => 'tags/coffee',
+                'suggest_multiple_taxonomies' => ['tags/coffee', 'tags/frostburg-university', 'colours/red'],
+                'suggest_multiple_taxonomies_single_value' => 'tags/coffee',
+                'tags' => ['one-with-slug', 'Anotha As Title'], // When field handle matches taxonomy handle, don't do anything with prefixes.
             ]);
 
         $expected = [
-            'tags' => ['tags::coffee', 'tags::frostburg-university'],
-            'tag' => 'tags::coffee',
-            'suggest_tags' => ['tags::coffee', 'tags::frostburg-university'],
-            'suggest_tag' => 'tags::coffee',
+            'one_taxonomy' => ['coffee', 'frostburg-university', 'if-field-handle-does-not-match-taxonomy-handle-remove-prefix'],
+            'one_taxonomy_single_value' => 'coffee',
+            'suggest_one_taxonomy' => ['coffee', 'frostburg-university'],
+            'suggest_one_taxonomy_single_value' => 'coffee',
+            'multiple_taxonomies' => ['tags::coffee', 'tags::frostburg-university', 'colours::red'],
+            'multiple_taxonomies_single_value' => 'tags::coffee',
+            'suggest_multiple_taxonomies' => ['tags::coffee', 'tags::frostburg-university', 'colours::red'],
+            'suggest_multiple_taxonomies_single_value' => 'tags::coffee',
+            'tags' => ['one-with-slug', 'Anotha As Title'],
             'blueprint' => 'speaker',
         ];
 

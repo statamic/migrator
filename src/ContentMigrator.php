@@ -236,15 +236,36 @@ class ContentMigrator
      */
     protected function migrateTaxonomyField($handle, $value, $config)
     {
-        $returnSingle = Arr::get($config, 'max_items', null) == 1;
+        $shouldReturnSingle = Arr::get($config, 'max_items', null) == 1;
 
-        $values = collect($value)->map(function ($term) {
-            return str_replace('/', '::', $term);
+        $values = collect($value)->map(function ($term) use ($handle, $config) {
+            return $this->migrateTermValue($term, $handle, $config);
         });
 
-        return $returnSingle
+        return $shouldReturnSingle
             ? $values->first()
             : $values->all();
+    }
+
+    /**
+     * Migrate term value.
+     *
+     * @param string $termValue
+     * @param string $fieldHandle
+     * @param array $fieldConfig
+     * @return string
+     */
+    protected function migrateTermValue($termValue, $fieldHandle, $fieldConfig)
+    {
+        $taxonomies = collect(Arr::get($fieldConfig, 'taxonomy'));
+
+        if ($taxonomies->count() === 1 && $taxonomies->first() === $fieldHandle) {
+            return $termValue;
+        }
+
+        return $taxonomies->count() > 1
+            ? str_replace('/', '::', $termValue)
+            : preg_replace('/[^\/]*\/(.*)/', '$1', $termValue);
     }
 
     /**
