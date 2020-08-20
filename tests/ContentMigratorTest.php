@@ -121,6 +121,50 @@ class ContentMigratorTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_term_fields()
+    {
+        $content = $this
+            ->setFields([
+                'tags' => [
+                    'type' => 'taxonomy',
+                    'taxonomy' => 'tags',
+                ],
+                'tag' => [
+                    'type' => 'taxonomy',
+                    'taxonomy' => 'tags',
+                    'max_items' => 1,
+                ],
+                'suggest_tags' => [
+                    'type' => 'suggest',
+                    'mode' => 'taxonomy',
+                    'taxonomy' => 'tags',
+                ],
+                'suggest_tag' => [
+                    'type' => 'suggest',
+                    'mode' => 'taxonomy',
+                    'taxonomy' => 'tags',
+                    'max_items' => 1,
+                ],
+            ])
+            ->migrateContent([
+                'tags' => ['tags/coffee', 'tags/frostburg-university'],
+                'tag' => 'tags/coffee',
+                'suggest_tags' => ['tags/coffee', 'tags/frostburg-university'],
+                'suggest_tag' => 'tags/coffee',
+            ]);
+
+        $expected = [
+            'tags' => ['tags::coffee', 'tags::frostburg-university'],
+            'tag' => 'tags::coffee',
+            'suggest_tags' => ['tags::coffee', 'tags::frostburg-university'],
+            'suggest_tag' => 'tags::coffee',
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
     public function it_can_migrate_when_fieldset_has_fields_in_sections()
     {
         $content = $this

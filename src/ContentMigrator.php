@@ -227,6 +227,44 @@ class ContentMigrator
     }
 
     /**
+     * Migrate taxonomy field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateTaxonomyField($handle, $value, $config)
+    {
+        $returnSingle = Arr::get($config, 'max_items', null) == 1;
+
+        $values = collect($value)->map(function ($term) {
+            return str_replace('/', '::', $term);
+        });
+
+        return $returnSingle
+            ? $values->first()
+            : $values->all();
+    }
+
+    /**
+     * Migrate taxonomy field.
+     *
+     * @param string $handle
+     * @param mixed $value
+     * @param array $config
+     * @return mixed
+     */
+    protected function migrateSuggestField($handle, $value, $config)
+    {
+        if (Arr::get($config, 'mode') === 'taxonomy') {
+            return $this->migrateTaxonomyField($handle, $value, $config);
+        }
+
+        return $value;
+    }
+
+    /**
      * Migrate replicator field.
      *
      * @param string $handle
