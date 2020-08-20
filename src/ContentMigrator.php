@@ -248,7 +248,7 @@ class ContentMigrator
     }
 
     /**
-     * Migrate taxonomy field.
+     * Migrate suggest field.
      *
      * @param string $handle
      * @param mixed $value
