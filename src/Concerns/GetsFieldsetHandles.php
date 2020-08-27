@@ -15,7 +15,11 @@ trait GetsFieldsetHandles
      */
     protected function getFieldsetHandles()
     {
-        return collect(File::files(base_path('site/settings/fieldsets')))
+        if (! $this->files->exists($path = base_path('site/settings/fieldsets'))) {
+            return collect();
+        }
+
+        return collect(File::files($path))
             ->keyBy
             ->getFilenameWithoutExtension()
             ->map(function ($file) {
