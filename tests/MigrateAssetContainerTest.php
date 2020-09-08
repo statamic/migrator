@@ -153,6 +153,10 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertEquals('A Hat', $meta['data']['title']);
         $this->assertEquals('fancy hat', $meta['data']['alt']);
         $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
+        $this->assertArrayHasKey('size', $meta);
+        $this->assertArrayHasKey('last_modified', $meta);
+        $this->assertArrayHasKey('width', $meta);
+        $this->assertArrayHasKey('height', $meta);
     }
 
     /** @test */
