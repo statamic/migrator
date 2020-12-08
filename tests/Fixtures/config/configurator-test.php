@@ -139,6 +139,9 @@ return [
 ]
 ],
 
+    'paths' => [
+        public_path('images'),
+    ],
 
     'pagination_size' => 50,
 

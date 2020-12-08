@@ -227,6 +227,18 @@ EOT
     ],
 EOT
         );
+
+        $this->configurator->merge('paths', [
+            "public_path('assets')",
+        ]);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'paths' => [
+        public_path('images'),
+        public_path('assets'),
+    ],
+EOT
+        );
     }
 
     /** @test */
