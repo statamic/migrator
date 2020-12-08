@@ -46,13 +46,28 @@ class SettingsMigrator extends Migrator
         $cp = $this->parseSettingsFile('cp.yaml');
 
         Configurator::file($configFile = 'statamic/cp.php')
-            ->set('start_page', $cp['start_page'] ?? false)
+            ->set('start_page', $this->migrateStartPage($cp['start_page']))
             ->set('date_format', $cp['date_format'] ?? false)
             ->merge('widgets', $cp['widgets'] ?? [])
             ->set('pagination_size', $cp['pagination_size'] ?? false)
             ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
+    }
+
+    /**
+     * Migrate start page.
+     *
+     * @param string|bool $startPage
+     * @return string|bool
+     */
+    protected function migrateStartPage($startPage)
+    {
+        if ($startPage === 'pages') {
+            return 'collections/pages';
+        }
+
+        return $startPage ?? false;
     }
 
     /**

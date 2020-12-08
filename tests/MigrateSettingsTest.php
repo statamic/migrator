@@ -79,6 +79,19 @@ EOT
     }
 
     /** @test */
+    public function it_migrates_cp_start_page_to_pages()
+    {
+        $this->files->put($this->sitePath('settings/cp.yaml'), 'start_page: pages');
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'cp']);
+
+        $this->assertConfigFileContains('cp.php', <<<'EOT'
+    'start_page' => 'collections/pages',
+EOT
+        );
+    }
+
+    /** @test */
     public function it_migrates_routes()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'routes']);
