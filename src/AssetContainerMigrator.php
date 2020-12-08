@@ -51,6 +51,7 @@ class AssetContainerMigrator extends Migrator
             ->migrateFolder()
             ->migrateMeta()
             ->migrateFieldset()
+            ->migrateGitPath()
             ->throwFinalWarnings();
     }
 
@@ -464,6 +465,24 @@ class AssetContainerMigrator extends Migrator
         if ($this->fieldset) {
             $this->migrateFieldsetToBlueprint('assets', $this->fieldset, $this->handle);
         }
+
+        return $this;
+    }
+
+    /**
+     * Migrate git path.
+     *
+     * @return $this
+     */
+    protected function migrateGitPath()
+    {
+        if ($this->driver !== 'local') {
+            return $this;
+        }
+
+        $path = "public_path('".$this->publicRelativePath()."')";
+
+        Configurator::file('statamic/git.php')->merge('paths', [$path]);
 
         return $this;
     }

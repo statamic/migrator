@@ -284,6 +284,8 @@ EOT
         $this->assertFilesystemDiskExists('public');
         $this->assertFilesystemDiskExists('s3');
         $this->assertFilesystemDiskExists('assets');
+
+        $this->assertGitConfigPathExists('assets');
     }
 
     /** @test */
@@ -346,6 +348,8 @@ EOT
         $this->assertFilesystemDiskExists('public');
         $this->assertFilesystemDiskExists('s3');
         $this->assertFilesystemDiskExists('assets');
+
+        $this->assertGitConfigPathNotExists('assets');
     }
 
     /** @test */
@@ -621,6 +625,34 @@ EOT;
     protected function assertFilesystemDiskNotExists($disk)
     {
         return $this->assertFalse(Arr::has(include config_path('filesystems.php'), "disks.{$disk}"));
+    }
+
+    /**
+     * Assert git config path exists.
+     *
+     * @param string $publicRelativePath
+     */
+    protected function assertGitConfigPathExists($publicRelativePath)
+    {
+        $configPath = config_path('statamic/git.php');
+
+        $this->assertStringContainsString("public_path('{$publicRelativePath}')", $this->files->get($configPath));
+
+        return $this->assertContains(public_path($publicRelativePath), Arr::get(include $configPath, 'paths'));
+    }
+
+    /**
+     * Assert git config path does not not exist.
+     *
+     * @param string $publicRelativePath
+     */
+    protected function assertGitConfigPathNotExists($publicRelativePath)
+    {
+        $configPath = config_path('statamic/git.php');
+
+        $this->assertStringNotContainsString("public_path('{$publicRelativePath}')", $this->files->get($configPath));
+
+        return $this->assertNotContains(public_path($publicRelativePath), Arr::get(include $configPath, 'paths'));
     }
 
     /**
