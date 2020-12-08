@@ -217,11 +217,9 @@ class CollectionMigrator extends Migrator
         }
 
         // If filename has order key, store order and remove order key.
-        if ($this->config->get('order') === 'number') {
-            if (preg_match($regex = '/^([0-9]+)\./', $filename, $matches)) {
-                $this->entryOrder[$matches[1]] = $entry['id'];
-                $filename = preg_replace($regex, '', $filename);
-            }
+        if ($this->config->get('order') === 'number' && preg_match($regex = '/^([0-9]+)\./', $filename, $matches)) {
+            $this->entryOrder[$matches[1]] = $entry['id'];
+            $filename = preg_replace($regex, '', $filename);
         }
 
         // If multisite, ensure site subfolder.
