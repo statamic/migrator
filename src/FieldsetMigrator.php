@@ -463,6 +463,30 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
+     * Migrate date field.
+     *
+     * @param \Illuminate\Support\Collection $config
+     * @param string $handle
+     * @return \Illuminate\Support\Collection
+     */
+    protected function migrateDateField($config, $handle)
+    {
+        if ($config->get('allow_time') === true) {
+            $config
+                ->put('time_enabled', true)
+                ->forget('allow_time');
+        }
+
+        if ($config->get('require_time') === true) {
+            $config
+                ->put('time_required', true)
+                ->forget('require_time');
+        }
+
+        return $config;
+    }
+
+    /**
      * Convert partial field to import.
      *
      * @param array $config

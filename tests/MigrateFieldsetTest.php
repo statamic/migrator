@@ -755,6 +755,46 @@ EOT
         $this->assertEquals($expected, YAML::parse($this->files->get($this->paths('new'))));
     }
 
+    /** @test */
+    public function it_migrates_date_field()
+    {
+        $fieldset = $this->migrateFieldset([
+            'title' => 'Posts',
+            'fields' => [
+                'birthday' => [
+                    'type' => 'date',
+                ],
+                'check_in' => [
+                    'type' => 'date',
+                    'allow_time' => true,
+                    'require_time' => true,
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'birthday',
+                    'field' => [
+                        'type' => 'date',
+                    ],
+                ],
+                [
+                    'handle' => 'check_in',
+                    'field' => [
+                        'type' => 'date',
+                        'time_enabled' => true,
+                        'time_required' => true,
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $fieldset);
+    }
+
     private function migrateFieldset($fieldsetConfig)
     {
         $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));
