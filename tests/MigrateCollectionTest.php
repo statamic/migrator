@@ -257,6 +257,7 @@ EOT
         $this->assertParsedYamlEquals($expectedConfig, $this->collectionsPath('favs.yaml'));
         $this->assertFileExists($this->collectionsPath('favs/red-shirt.md'));
         $this->assertFileExists($this->collectionsPath('favs/blue-shirt.md'));
+        $this->assertFileExists($this->collectionsPath('favs/purple-shirt.md'));
     }
 
     /** @test */
