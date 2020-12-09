@@ -8,6 +8,8 @@ use Statamic\Support\Str;
 
 class ContentMigrator
 {
+    use Concerns\GetsSettings;
+
     protected $fieldset;
     protected $addExplicitBlueprint = true;
     protected $fieldConfigs;
@@ -61,7 +63,8 @@ class ContentMigrator
         $this
             ->getFieldConfigs()
             ->migrateFields()
-            ->migrateFieldsetToBlueprint();
+            ->migrateFieldsetToBlueprint()
+            ->migrateLayout();
 
         return $this->content;
     }
@@ -382,6 +385,22 @@ class ContentMigrator
         }
 
         unset($this->content['fieldset']);
+
+        return $this;
+    }
+
+    /**
+     * Migrate layout.
+     *
+     * @return $this
+     */
+    protected function migrateLayout()
+    {
+        $defaultLayout = $this->getSetting('theming.default_layout', 'default');
+
+        if (isset($this->content['layout']) && $this->content['layout'] == $defaultLayout) {
+            unset($this->content['layout']);
+        }
 
         return $this;
     }

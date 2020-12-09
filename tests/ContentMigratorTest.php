@@ -591,4 +591,52 @@ class ContentMigratorTest extends TestCase
 
         $this->assertEquals($expected, $content);
     }
+
+    /** @test */
+    public function it_can_migrate_custom_layout()
+    {
+        $content = $this->migrateContent([
+            'layout' => 'custom',
+            'test' => 'data',
+        ]);
+
+        $expected = [
+            'layout' => 'custom',
+            'test' => 'data',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_removes_default_layout()
+    {
+        $content = $this->migrateContent([
+            'layout' => 'default',
+            'test' => 'data',
+        ]);
+
+        $expected = [
+            'test' => 'data',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
+    public function it_removes_custom_default_layout()
+    {
+        $this->files->put(base_path('site/settings/theming.yaml'), 'default_layout: custom_default');
+
+        $content = $this->migrateContent([
+            'layout' => 'custom_default',
+            'test' => 'data',
+        ]);
+
+        $expected = [
+            'test' => 'data',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
 }
