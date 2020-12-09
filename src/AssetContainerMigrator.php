@@ -87,7 +87,9 @@ class AssetContainerMigrator extends Migrator
      */
     protected function parseDiskKey()
     {
-        $this->disk = $this->diskExists('assets') || count($this->files->files($this->sitePath('content/assets'))) > 1
+        $exists = $this->overwrite ? false : $this->diskExists('assets');
+
+        $this->disk = $exists || count($this->files->files($this->sitePath('content/assets'))) > 1
             ? 'assets_'.strtolower($this->handle)
             : 'assets';
 

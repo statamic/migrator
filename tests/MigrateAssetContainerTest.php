@@ -120,6 +120,35 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
+    public function it_can_force_migrate_meta()
+    {
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+
+        $this->assertCount(0, $this->files->allFiles(public_path('assets'), true));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+
+        $this->files->put(public_path('assets/img/.meta/stetson.jpg.yaml'), <<<EOT
+data:
+  title: Test Title
+EOT
+        );
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main', '--force' => true]);
+
+        $meta = YAML::parse($this->files->get(public_path('assets/img/.meta/stetson.jpg.yaml')));
+
+        $this->assertArrayHasKey('data', $meta);
+        $this->assertArrayHasKey('size', $meta);
+        $this->assertArrayHasKey('last_modified', $meta);
+        $this->assertArrayHasKey('width', $meta);
+        $this->assertArrayHasKey('height', $meta);
+        $this->assertCount(2, $meta['data']);
+        $this->assertEquals('Fancy hat!', $meta['data']['alt']);
+        $this->assertEquals('15-24-1', $meta['data']['focus']);
+    }
+
+    /** @test */
     public function it_can_migrate_with_custom_fieldset_meta()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
