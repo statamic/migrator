@@ -98,6 +98,8 @@ class PagesMigrator extends Migrator
             ->map(function ($folder) use ($key, $entry) {
                 return $this->parsePageFolder($folder, "{$key}.{$entry}");
             })
+            ->filter()
+            ->values()
             ->all();
 
         $data = collect(compact('entry', 'children'))->filter()->all();
@@ -268,6 +270,9 @@ class PagesMigrator extends Migrator
     protected function migrateLocalizedTree($defaultTree, $site)
     {
         $dotted = collect(Arr::dot($defaultTree))
+            ->filter(function ($uuid) {
+                return is_string($uuid);
+            })
             ->map(function ($uuid) use ($site) {
                 return $this->localizedUuidMappings[$site][$uuid] ?? false;
             })
@@ -395,7 +400,7 @@ class PagesMigrator extends Migrator
      */
     protected function generateUuid($pageOrigin, $site)
     {
-        $uuid = UUID::generate("{$site}-{$pageOrigin['id']}");
+        $uuid = (string) UUID::generate("{$site}-{$pageOrigin['id']}");
 
         $this->localizedUuidMappings[$site][$pageOrigin['id']] = $uuid;
 
