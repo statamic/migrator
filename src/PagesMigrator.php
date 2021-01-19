@@ -2,6 +2,7 @@
 
 namespace Statamic\Migrator;
 
+use Facades\Statamic\Migrator\UUID;
 use Statamic\Facades\Path;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -19,6 +20,7 @@ class PagesMigrator extends Migrator
     protected $entries = [];
     protected $localizedEntries = [];
     protected $structure = [];
+    protected $localizedUuidMappings = [];
 
     /**
      * Perform migration.
@@ -92,7 +94,7 @@ class PagesMigrator extends Migrator
 
         $entry = $page['id'];
 
-        $children = collect($this->files->directories("$folder"))
+        $children = collect($this->files->directories($folder))
             ->map(function ($folder) use ($key, $entry) {
                 return $this->parsePageFolder($folder, "{$key}.{$entry}");
             })
@@ -117,13 +119,13 @@ class PagesMigrator extends Migrator
      */
     protected function parseLocalizedPagesInFolder($folder, $pageOrigin)
     {
-        $this->getLocalizedPagesInFolder($folder)
-            ->map(function ($page) use ($pageOrigin) {
+        $entries = $this->getLocalizedPagesInFolder($folder)
+            ->map(function ($page, $site) use ($pageOrigin) {
                 return array_merge($page, [
                     'origin' => $pageOrigin['id'],
-                    'id' => (string) Str::uuid(),
+                    'id' => $this->generateUuid($pageOrigin, $site),
                     'slug' => $page['slug'] ?? $pageOrigin['slug'],
-                    'fieldset' => $pageOrigin['fieldset'],
+                    'fieldset' => $pageOrigin['fieldset'] ?? null,
                 ]);
             })
             ->each(function ($page, $site) {
@@ -218,14 +220,61 @@ class PagesMigrator extends Migrator
      */
     protected function migrateStructure()
     {
+        return [
+            'root' => true,
+            'tree' => $this->isMultisite() ? $this->migrateLocalizedTrees() : $this->migrateTree(),
+        ];
+    }
+
+    /**
+     * Migrate tree.
+     *
+     * @return array
+     */
+    public function migrateTree()
+    {
         if ($home = $this->structure['root']['entry'] ?? false) {
             $tree = collect($this->structure['root']['children'] ?? [])->prepend(['entry' => $home])->all();
         }
 
-        return [
-            'root' => true,
-            'tree' => $tree ?? [],
-        ];
+        return $tree ?? [];
+    }
+
+    /**
+     * Migrate localized trees for multisite pages collection.
+     *
+     * @return array
+     */
+    protected function migrateLocalizedTrees()
+    {
+        $tree['default'] = $this->migrateTree();
+
+        $localizedTrees = collect($this->localizedUuidMappings)
+            ->map(function ($mappings, $site) use ($tree) {
+                return $this->migrateLocalizedTree($tree['default'], $site);
+            })
+            ->all();
+
+        return array_merge($tree, $localizedTrees);
+    }
+
+    /**
+     * Migrate localized tree off of default tree.
+     *
+     * @param array $defaultTree
+     * @param string $site
+     * @return array
+     */
+    protected function migrateLocalizedTree($defaultTree, $site)
+    {
+        $dotted = collect(Arr::dot($defaultTree))
+            ->map(function ($uuid) use ($site) {
+                return $this->localizedUuidMappings[$site][$uuid] ?? false;
+            })
+            ->filter()
+            ->all();
+
+        return array_values(Arr::undot($dotted));
     }
 
     /**
@@ -335,5 +384,21 @@ class PagesMigrator extends Migrator
         }
 
         return $fieldsets ?? collect();
+    }
+
+    /**
+     * Generate new UUID for localized entry.
+     *
+     * @param array $pageOrigin
+     * @param string $site
+     * @return string
+     */
+    protected function generateUuid($pageOrigin, $site)
+    {
+        $uuid = UUID::generate("{$site}-{$pageOrigin['id']}");
+
+        $this->localizedUuidMappings[$site][$pageOrigin['id']] = $uuid;
+
+        return $uuid;
     }
 }
