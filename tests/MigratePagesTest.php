@@ -42,6 +42,20 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
+    public function it_migrates_page_fieldset()
+    {
+        $this->assertFileNotExists($this->blueprintsPath('pages/gallery.yaml'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $path = $this->collectionsPath('pages/gallery.md');
+
+        $this->assertFileExists($this->blueprintsPath('pages/gallery.yaml'));
+        $this->assertParsedYamlContains(['blueprint' => 'gallery'], $path);
+        $this->assertParsedYamlNotHasKey('fieldset', $path);
+    }
+
+    /** @test */
     public function it_can_migrate_a_custom_default_blueprint()
     {
         $this->files->put($this->prepareFolder($this->blueprintsPath('pages/default.yaml')), YAML::dump([
