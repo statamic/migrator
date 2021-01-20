@@ -46,13 +46,13 @@ trait MigratesFieldsetsToBlueprints
      */
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
     {
-        try {
-            $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
+        $this->getMigratableFieldsets()->each(function ($handle) use ($blueprintsFolder) {
+            try {
                 $this->migrateFieldsetToBlueprint($blueprintsFolder, $handle);
-            });
-        } catch (MigratorWarningsException $exception) {
-            $this->mergeFromWarningsException($exception);
-        }
+            } catch (MigratorWarningsException $exception) {
+                $this->mergeFromWarningsException($exception);
+            }
+        });
 
         $this->ensureDefaultBlueprint($blueprintsFolder);
 
