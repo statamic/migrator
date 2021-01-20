@@ -41,6 +41,10 @@ class MigrateLocalizedPagesTest extends TestCase
         $expected = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
+            'sites' => [
+                'default',
+                'fr',
+            ],
             'structure' => [
                 'root' => true,
                 'tree' => [

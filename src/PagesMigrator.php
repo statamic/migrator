@@ -207,8 +207,16 @@ class PagesMigrator extends Migrator
         $config = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
-            'structure' => $this->migrateStructure(),
         ];
+
+        if ($this->isMultisite()) {
+            $config['sites'] = collect($this->localizedEntries)
+                ->keys()
+                ->prepend('default')
+                ->all();
+        }
+
+        $config['structure'] = $this->migrateStructure();
 
         $this->saveMigratedYaml($config, $this->newPath('../pages.yaml'));
 
