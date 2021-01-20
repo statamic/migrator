@@ -376,7 +376,7 @@ class PagesMigrator extends Migrator
             ->filter()
             ->unique()
             ->reject(function ($handle) {
-                return $this->isNonExistentDefaultFieldset($handle);
+                return $this->isNonExistentFieldset($handle) || $this->isNonExistentDefaultFieldset($handle);
             });
     }
 

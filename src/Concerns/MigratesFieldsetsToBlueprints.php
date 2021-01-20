@@ -34,7 +34,7 @@ trait MigratesFieldsetsToBlueprints
             ->filter()
             ->unique()
             ->reject(function ($handle) {
-                return $this->isNonExistentDefaultFieldset($handle);
+                return $this->isNonExistentFieldset($handle) || $this->isNonExistentDefaultFieldset($handle);
             });
     }
 
@@ -81,6 +81,17 @@ trait MigratesFieldsetsToBlueprints
     }
 
     /**
+     * Checks if fieldset is non-existent.
+     *
+     * @param string $handle
+     * @return bool
+     */
+    protected function isNonExistentFieldset($handle)
+    {
+        return ! $this->files->exists($this->sitePath("settings/fieldsets/{$handle}.yaml"));
+    }
+
+    /**
      * Checks if fieldset is a non-existent default fieldset from settings.
      *
      * This is important because if a default fieldset is referenced but does not exist, the content
@@ -91,7 +102,7 @@ trait MigratesFieldsetsToBlueprints
      */
     protected function isNonExistentDefaultFieldset($handle)
     {
-        $defaultFieldsets = $this->getDefaultFieldsets();
+        $defaultFieldsets = $this->getDefaultFieldsets()->filter();
 
         if (! $defaultFieldsets->contains($handle)) {
             return false;
