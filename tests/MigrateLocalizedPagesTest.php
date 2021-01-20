@@ -25,10 +25,10 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertFileExists($this->path('pages.yaml'));
 
         $this->assertCount(0, $this->files->files($this->path('pages')));
-        $this->assertCount(14, $this->files->allFiles($this->path('pages')));
+        $this->assertCount(17, $this->files->allFiles($this->path('pages')));
         $this->assertCount(2, $this->files->directories($this->path('pages')));
-        $this->assertCount(10, $this->files->files($this->path('pages/default')));
-        $this->assertCount(4, $this->files->files($this->path('pages/fr')));
+        $this->assertCount(11, $this->files->files($this->path('pages/default')));
+        $this->assertCount(6, $this->files->files($this->path('pages/fr')));
     }
 
     /** @test */
@@ -51,6 +51,7 @@ class MigrateLocalizedPagesTest extends TestCase
                             'children' => [
                                 ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
                                 ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
+                                ['entry' => '4ef748b3-97c5-acd4-be45-f8849e71ff02'],
                             ],
                         ],
                         ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
@@ -70,7 +71,13 @@ class MigrateLocalizedPagesTest extends TestCase
                     ],
                     'fr' => [
                         ['entry' => 'fr-db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
-                        ['entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a'],
+                        [
+                            'entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a',
+                            'children' => [
+                                ['entry' => 'fr-7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                                ['entry' => 'fr-4ef748b3-97c5-acd4-be45-f8849e71ff02'],
+                            ],
+                        ],
                         [
                             'entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc',
                             'children' => [

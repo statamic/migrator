@@ -279,7 +279,7 @@ class PagesMigrator extends Migrator
             ->filter()
             ->all();
 
-        return array_values(Arr::undot($dotted));
+        return $this->normalizeTree(Arr::undot($dotted));
     }
 
     /**
@@ -405,5 +405,28 @@ class PagesMigrator extends Migrator
         $this->localizedUuidMappings[$site][$pageOrigin['id']] = $uuid;
 
         return $uuid;
+    }
+
+    /**
+     * Recursively normalize tree keys.
+     *
+     * @param array $tree
+     * @return array
+     */
+    protected function normalizeTree($tree, $depth = 1)
+    {
+        if (! is_array($tree)) {
+            return $tree;
+        }
+
+        $branch = $depth === 1 ? array_values($tree) : $tree;
+
+        return collect($branch)
+            ->map(function ($value, $key) use ($depth) {
+                return $key === 'children'
+                    ? $this->normalizeTree(array_values($value), ++$depth)
+                    : $this->normalizeTree($value, ++$depth);
+            })
+            ->all();
     }
 }
