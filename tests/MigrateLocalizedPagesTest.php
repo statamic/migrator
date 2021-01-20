@@ -3,15 +3,29 @@
 namespace Tests;
 
 use Facades\Statamic\Migrator\UUID;
+use Statamic\Migrator\YAML;
 use Tests\Fakes\FakeUUID;
 
 class MigrateLocalizedPagesTest extends TestCase
 {
     protected $siteFixture = 'site-localized';
 
-    protected function path($append = null)
+    protected function paths()
+    {
+        return [
+            'collections' => base_path('content/collections'),
+            'blueprints' => resource_path('blueprints/collections'),
+        ];
+    }
+
+    protected function collectionsPath($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
+    }
+
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints/collections'), $append])->filter()->implode('/');
     }
 
     /** @test */
@@ -22,13 +36,13 @@ class MigrateLocalizedPagesTest extends TestCase
 
         $this->artisan('statamic:migrate:pages');
 
-        $this->assertFileExists($this->path('pages.yaml'));
+        $this->assertFileExists($this->collectionsPath('pages.yaml'));
 
-        $this->assertCount(0, $this->files->files($this->path('pages')));
-        $this->assertCount(17, $this->files->allFiles($this->path('pages')));
-        $this->assertCount(2, $this->files->directories($this->path('pages')));
-        $this->assertCount(11, $this->files->files($this->path('pages/default')));
-        $this->assertCount(6, $this->files->files($this->path('pages/fr')));
+        $this->assertCount(0, $this->files->files($this->collectionsPath('pages')));
+        $this->assertCount(17, $this->files->allFiles($this->collectionsPath('pages')));
+        $this->assertCount(2, $this->files->directories($this->collectionsPath('pages')));
+        $this->assertCount(11, $this->files->files($this->collectionsPath('pages/default')));
+        $this->assertCount(6, $this->files->files($this->collectionsPath('pages/fr')));
     }
 
     /** @test */
@@ -93,7 +107,42 @@ class MigrateLocalizedPagesTest extends TestCase
             ],
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->path('pages.yaml'));
+        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
+    }
+
+    /** @test */
+    public function it_can_migrate_a_localized_page()
+    {
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertFileNotExists($this->collectionsPath('pages/gallery.md'));
+        $this->assertFileExists($defaultPath = $this->collectionsPath('pages/default/gallery.md'));
+        $this->assertFileExists($frenchPath = $this->collectionsPath('pages/fr/les-gallery.md'));
+
+        $defaultEntry = YAML::parse($this->files->get($defaultPath));
+        $frenchEntry = YAML::parse($this->files->get($frenchPath));
+
+        $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
+        $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
+        $this->assertNotNull($frenchEntry['id']);
+    }
+
+    /** @test */
+    public function it_can_migrate_a_localized_page_fieldset()
+    {
+        $this->assertFileNotExists($this->blueprintsPath('pages/gallery.yaml'));
+
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertFileExists($this->blueprintsPath('pages/gallery.yaml'));
+
+        $defaultPath = $this->collectionsPath('pages/default/gallery.md');
+        $frenchPath = $this->collectionsPath('pages/fr/les-gallery.md');
+
+        $this->assertParsedYamlContains(['blueprint' => 'gallery'], $defaultPath);
+        $this->assertParsedYamlContains(['blueprint' => 'gallery'], $frenchPath);
+        $this->assertParsedYamlNotHasKey('fieldset', $defaultPath);
+        $this->assertParsedYamlNotHasKey('fieldset', $frenchPath);
     }
 
     /** @test */
@@ -101,7 +150,7 @@ class MigrateLocalizedPagesTest extends TestCase
     {
         $this->artisan('statamic:migrate:pages');
 
-        $this->assertParsedYamlContains(['avatar' => 'img/stetson.jpg'], $this->path('pages/default/about.md'));
-        $this->assertParsedYamlContains(['avatar' => 'img/coffee-mug.jpg'], $this->path('pages/fr/les-aboot.md'));
+        $this->assertParsedYamlContains(['avatar' => 'img/stetson.jpg'], $this->collectionsPath('pages/default/about.md'));
+        $this->assertParsedYamlContains(['avatar' => 'img/coffee-mug.jpg'], $this->collectionsPath('pages/fr/les-aboot.md'));
     }
 }

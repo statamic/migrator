@@ -147,6 +147,18 @@ class MigrateCollectionTest extends TestCase
         $path = $this->collectionsPath('blog/2017-09-28.what-i-did-last-summer.md');
 
         $this->assertParsedYamlHasKey('id', $path);
+    }
+
+    /** @test */
+    public function it_migrates_entry_fieldset()
+    {
+        $this->assertFileNotExists($this->blueprintsPath('blog/long_form.yaml'));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $path = $this->collectionsPath('blog/2017-09-28.what-i-did-last-summer.md');
+
+        $this->assertFileExists($this->blueprintsPath('blog/long_form.yaml'));
         $this->assertParsedYamlContains(['blueprint' => 'long_form'], $path);
         $this->assertParsedYamlNotHasKey('fieldset', $path);
     }

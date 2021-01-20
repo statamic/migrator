@@ -1,0 +1,16 @@
+title: Gallery
+fields:
+  title:
+    type: text
+    width: 66
+  slug:
+    type: text
+    width: 33
+  images:
+    type: assets
+    display: Images
+    container: main
+    folder: img
+  content:
+    type: markdown
+    display: Content

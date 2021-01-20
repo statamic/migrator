@@ -8,9 +8,22 @@ class MigrateLocalizedCollectionTest extends TestCase
 {
     protected $siteFixture = 'site-localized';
 
-    protected function path($append = null)
+    protected function paths()
+    {
+        return [
+            'collections' => base_path('content/collections'),
+            'blueprints' => resource_path('blueprints/collections'),
+        ];
+    }
+
+    protected function collectionsPath($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
+    }
+
+    protected function blueprintsPath($append = null)
+    {
+        return collect([resource_path('blueprints/collections'), $append])->filter()->implode('/');
     }
 
     private function migrateCollection($config)
@@ -23,20 +36,20 @@ class MigrateLocalizedCollectionTest extends TestCase
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'test']);
 
-        return YAML::parse($this->files->get($this->path('test.yaml')));
+        return YAML::parse($this->files->get($this->collectionsPath('test.yaml')));
     }
 
     /** @test */
     public function it_can_migrate_a_collection()
     {
-        $this->assertFileNotExists($this->path('blog'));
-        $this->assertFileNotExists($this->path('blog.yaml'));
+        $this->assertFileNotExists($this->collectionsPath('blog'));
+        $this->assertFileNotExists($this->collectionsPath('blog.yaml'));
 
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path('blog/folder.yaml'));
-        $this->assertFileExists($this->path('blog.yaml'));
-        $this->assertCount(3, $this->files->allFiles($this->path('blog')));
+        $this->assertFileNotExists($this->collectionsPath('blog/folder.yaml'));
+        $this->assertFileExists($this->collectionsPath('blog.yaml'));
+        $this->assertCount(3, $this->files->allFiles($this->collectionsPath('blog')));
     }
 
     /** @test */
@@ -62,7 +75,7 @@ class MigrateLocalizedCollectionTest extends TestCase
             'sort_dir' => 'desc',
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->path('blog.yaml'));
+        $this->assertParsedYamlEquals($expected, $this->collectionsPath('blog.yaml'));
     }
 
     /** @test */
@@ -70,9 +83,9 @@ class MigrateLocalizedCollectionTest extends TestCase
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path('blog/2017-03-08.spring-wonderful-spring.md'));
-        $this->assertFileNotExists($this->path('blog/_2017-03-08.spring-wonderful-spring.md'));
-        $this->assertFileExists($this->path('blog/default/2017-03-08.spring-wonderful-spring.md'));
+        $this->assertFileNotExists($this->collectionsPath('blog/2017-03-08.spring-wonderful-spring.md'));
+        $this->assertFileNotExists($this->collectionsPath('blog/_2017-03-08.spring-wonderful-spring.md'));
+        $this->assertFileExists($this->collectionsPath('blog/default/2017-03-08.spring-wonderful-spring.md'));
     }
 
     /** @test */
@@ -80,9 +93,9 @@ class MigrateLocalizedCollectionTest extends TestCase
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
-        $this->assertFileNotExists($this->path('blog/2017-07-31.english-fire.md'));
-        $this->assertFileExists($defaultPath = $this->path('blog/default/2017-07-31.english-fire.md'));
-        $this->assertFileExists($frenchPath = $this->path('blog/fr/2017-07-31.le-fire.md'));
+        $this->assertFileNotExists($this->collectionsPath('blog/2017-07-31.english-fire.md'));
+        $this->assertFileExists($defaultPath = $this->collectionsPath('blog/default/2017-07-31.english-fire.md'));
+        $this->assertFileExists($frenchPath = $this->collectionsPath('blog/fr/2017-07-31.le-fire.md'));
 
         $defaultEntry = YAML::parse($this->files->get($defaultPath));
         $frenchEntry = YAML::parse($this->files->get($frenchPath));
@@ -93,18 +106,36 @@ class MigrateLocalizedCollectionTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_a_localized_entry_fieldset()
+    {
+        $this->assertFileNotExists($this->blueprintsPath('blog/content.yaml'));
+
+        $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
+
+        $this->assertFileExists($this->blueprintsPath('blog/content.yaml'));
+
+        $defaultPath = $this->collectionsPath('blog/default/2017-07-31.english-fire.md');
+        $frenchPath = $this->collectionsPath('blog/fr/2017-07-31.le-fire.md');
+
+        $this->assertParsedYamlContains(['blueprint' => 'content'], $defaultPath);
+        $this->assertParsedYamlContains(['blueprint' => 'content'], $frenchPath);
+        $this->assertParsedYamlNotHasKey('fieldset', $defaultPath);
+        $this->assertParsedYamlNotHasKey('fieldset', $frenchPath);
+    }
+
+    /** @test */
     public function it_can_migrate_localized_entry_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
 
         $this->assertParsedYamlContains(
             ['image' => 'img/redwood-james-irvine-trail.jpg'],
-            $this->path('blog/default/2017-07-31.english-fire.md')
+            $this->collectionsPath('blog/default/2017-07-31.english-fire.md')
         );
 
         $this->assertParsedYamlContains(
             ['image' => 'img/coffee-mug.jpg'],
-            $this->path('blog/fr/2017-07-31.le-fire.md')
+            $this->collectionsPath('blog/fr/2017-07-31.le-fire.md')
         );
     }
 }
