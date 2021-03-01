@@ -62,7 +62,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 8) When you are finished and happy, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
 
     ```
-    composer remove statamic/migrator
+    composer remove statamic/migrator --dev
     ```
 
 9) Order pizza! 🍕 🤘 😎
