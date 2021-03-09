@@ -10,6 +10,7 @@ class MigrateCollectionTest extends TestCase
     {
         return [
             'collections' => base_path('content/collections'),
+            'trees' => base_path('content/trees/collections'),
             'blueprints' => resource_path('blueprints/collections'),
         ];
     }
@@ -17,6 +18,11 @@ class MigrateCollectionTest extends TestCase
     protected function collectionsPath($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
+    }
+
+    protected function treesPath($append = null)
+    {
+        return collect([base_path('content/trees/collections'), $append])->filter()->implode('/');
     }
 
     protected function blueprintsPath($append = null)
@@ -259,14 +265,18 @@ EOT
             'template' => 'blog/post',
             'structure' => [
                 'max_depth' => 1,
-                'tree' => [
-                    ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
-                    ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
-                ],
+            ],
+        ];
+
+        $expectedTree = [
+            'tree' => [
+                ['entry' => '93c5ea5e-581d-4074-af70-1eeae01d7880'],
+                ['entry' => '82f60ba2-6c16-4889-8420-d1c8e7adfa3d'],
             ],
         ];
 
         $this->assertParsedYamlEquals($expectedConfig, $this->collectionsPath('favs.yaml'));
+        $this->assertParsedYamlEquals($expectedTree, $this->treesPath('favs.yaml'));
         $this->assertFileExists($this->collectionsPath('favs/red-shirt.md'));
         $this->assertFileExists($this->collectionsPath('favs/blue-shirt.md'));
         $this->assertFileExists($this->collectionsPath('favs/purple-shirt.md'));

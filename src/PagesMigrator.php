@@ -32,6 +32,7 @@ class PagesMigrator extends Migrator
             ->validateUnique()
             ->parseTree()
             ->createYamlConfig()
+            ->createYamlTrees()
             ->migratePagesToEntries()
             ->migrateFieldsetsToBlueprints('collections/pages')
             ->throwFinalWarnings();
@@ -54,11 +55,19 @@ class PagesMigrator extends Migrator
      */
     protected function uniquePaths()
     {
-        return [
+        $paths = collect([
             $this->newPath(),
             $this->newPath('../pages.yaml'),
-            $this->newPath('../../structures/pages.yaml'),
-        ];
+            $this->newPath('../../trees/collections/pages.yaml'),
+        ]);
+
+        if ($this->isMultisite()) {
+            $this->getMigratedSiteKeys()->each(function ($site) use (&$paths) {
+                $paths->push($this->newPath("../../trees/collections/{$site}/pages.yaml"));
+            });
+        }
+
+        return $paths->all();
     }
 
     /**
@@ -207,6 +216,9 @@ class PagesMigrator extends Migrator
         $config = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
+            'structure' => [
+                'root' => true,
+            ],
         ];
 
         if ($this->isMultisite()) {
@@ -216,24 +228,27 @@ class PagesMigrator extends Migrator
                 ->all();
         }
 
-        $config['structure'] = $this->migrateStructure();
-
         $this->saveMigratedYaml($config, $this->newPath('../pages.yaml'));
 
         return $this;
     }
 
     /**
-     * Migrate structure.
+     * Create yaml tree(s).
      *
      * @return $this
      */
-    protected function migrateStructure()
+    protected function createYamlTrees()
     {
-        return [
-            'root' => true,
-            'tree' => $this->isMultisite() ? $this->migrateLocalizedTrees() : $this->migrateTree(),
-        ];
+        if (! $this->isMultisite()) {
+            return $this->saveMigratedYaml($this->migrateTree(), $this->newPath('../../trees/collections/pages.yaml'));
+        }
+
+        $this->migrateLocalizedTrees()->each(function ($tree, $site) {
+            $this->saveMigratedYaml($tree, $this->newPath("../../trees/collections/{$site}/pages.yaml"));
+        });
+
+        return $this;
     }
 
     /**
@@ -241,19 +256,21 @@ class PagesMigrator extends Migrator
      *
      * @return array
      */
-    public function migrateTree()
+    protected function migrateTree()
     {
         if ($home = $this->structure['root']['entry'] ?? false) {
             $tree = collect($this->structure['root']['children'] ?? [])->prepend(['entry' => $home])->all();
         }
 
-        return $tree ?? [];
+        return [
+            'tree' => $tree ?? [],
+        ];
     }
 
     /**
      * Migrate localized trees for multisite pages collection.
      *
-     * @return array
+     * @return \Illuminate\Support\Collection
      */
     protected function migrateLocalizedTrees()
     {
@@ -261,11 +278,11 @@ class PagesMigrator extends Migrator
 
         $localizedTrees = collect($this->localizedUuidMappings)
             ->map(function ($mappings, $site) use ($tree) {
-                return $this->migrateLocalizedTree($tree['default'], $site);
+                return $this->migrateLocalizedTree($tree['default']['tree'], $site);
             })
             ->all();
 
-        return array_merge($tree, $localizedTrees);
+        return collect(array_merge($tree, $localizedTrees));
     }
 
     /**
@@ -429,12 +446,16 @@ class PagesMigrator extends Migrator
 
         $branch = $depth === 1 ? array_values($tree) : $tree;
 
-        return collect($branch)
+        $normalized = collect($branch)
             ->map(function ($value, $key) use ($depth) {
                 return $key === 'children'
                     ? $this->normalizeTree(array_values($value), ++$depth)
                     : $this->normalizeTree($value, ++$depth);
             })
             ->all();
+
+        return $depth === 1
+            ? ['tree' => $normalized]
+            : $normalized;
     }
 }
