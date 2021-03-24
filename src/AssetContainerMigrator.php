@@ -4,6 +4,7 @@ namespace Statamic\Migrator;
 
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
+use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Exceptions\AlreadyExistsException;
 use Statamic\Migrator\Exceptions\FilesystemException;
@@ -454,7 +455,15 @@ class AssetContainerMigrator extends Migrator
      */
     protected function migrateBlankMeta()
     {
-        Artisan::call('statamic:assets:meta', ['container' => $this->handle]);
+        $container = AssetContainer::findByHandle($this->handle);
+
+        if (! $container) {
+            throw new \Exception;
+        }
+
+        $container->assets()->each(function ($asset) {
+            $asset->hydrate()->save();
+        });
     }
 
     /**

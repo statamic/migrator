@@ -105,6 +105,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertArrayHasKey('last_modified', $blankMeta);
         $this->assertArrayHasKey('width', $blankMeta);
         $this->assertArrayHasKey('height', $blankMeta);
+        $this->assertArrayHasKey('mime_type', $blankMeta);
         $this->assertEmpty($blankMeta['data']);
 
         $fullMeta = YAML::parse($this->files->get(public_path('assets/img/.meta/stetson.jpg.yaml')));
@@ -114,6 +115,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertArrayHasKey('last_modified', $fullMeta);
         $this->assertArrayHasKey('width', $fullMeta);
         $this->assertArrayHasKey('height', $fullMeta);
+        $this->assertArrayHasKey('mime_type', $fullMeta);
         $this->assertCount(2, $fullMeta['data']);
         $this->assertEquals('Fancy hat!', $fullMeta['data']['alt']);
         $this->assertEquals('15-24-1', $fullMeta['data']['focus']);
@@ -246,7 +248,10 @@ EOT
             ],
         ]));
 
-        // Fake S3 connection so that we can test `path` on `s3` driver.
+        // Fake container so that we can query it's assets.
+        $this->files->put(base_path('content/assets/secondary.yaml'), 'disk: assets_secondary');
+
+        // Fake S3 connection so that we can test `path` on `s3` driver without actually hitting s3.
         $this->configurator->mergeSpaciously('disks', [
             'assets_secondary' => [
                 'driver' => 'local',
