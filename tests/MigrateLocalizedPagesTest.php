@@ -14,6 +14,7 @@ class MigrateLocalizedPagesTest extends TestCase
     {
         return [
             'collections' => base_path('content/collections'),
+            'trees' => base_path('content/trees/collections'),
             'blueprints' => resource_path('blueprints/collections'),
         ];
     }
@@ -21,6 +22,11 @@ class MigrateLocalizedPagesTest extends TestCase
     protected function collectionsPath($append = null)
     {
         return collect([base_path('content/collections'), $append])->filter()->implode('/');
+    }
+
+    protected function treesPath($append = null)
+    {
+        return collect([base_path('content/trees/collections'), $append])->filter()->implode('/');
     }
 
     protected function blueprintsPath($append = null)
@@ -52,7 +58,7 @@ class MigrateLocalizedPagesTest extends TestCase
 
         $this->artisan('statamic:migrate:pages');
 
-        $expected = [
+        $expectedConfig = [
             'title' => 'Pages',
             'route' => '{{ parent_uri }}/{{ slug }}',
             'sites' => [
@@ -61,53 +67,59 @@ class MigrateLocalizedPagesTest extends TestCase
             ],
             'structure' => [
                 'root' => true,
-                'tree' => [
-                    'default' => [
-                        ['entry' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
-                        [
-                            'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
-                            'children' => [
-                                ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
-                                ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
-                                ['entry' => '4ef748b3-97c5-acd4-be45-f8849e71ff02'],
-                            ],
-                        ],
-                        ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
-                        [
-                            'entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc',
-                            'children' => [
-                                [
-                                    'entry' => '1a45dfed-9d06-4493-83b1-dffe2522cbe7',
-                                    'children' => [
-                                        ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b'],
-                                    ],
-                                ],
-                            ],
-                        ],
-                        ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
-                        ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7'],
+            ],
+        ];
+
+        $expectedDefaultTree = [
+            'tree' => [
+                ['entry' => 'db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
+                [
+                    'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
+                    'children' => [
+                        ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                        ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
+                        ['entry' => '4ef748b3-97c5-acd4-be45-f8849e71ff02'],
                     ],
-                    'fr' => [
-                        ['entry' => 'fr-db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
+                ],
+                ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
+                [
+                    'entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc',
+                    'children' => [
                         [
-                            'entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a',
+                            'entry' => '1a45dfed-9d06-4493-83b1-dffe2522cbe7',
                             'children' => [
-                                ['entry' => 'fr-7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
-                                ['entry' => 'fr-4ef748b3-97c5-acd4-be45-f8849e71ff02'],
+                                ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b'],
                             ],
                         ],
-                        [
-                            'entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc',
-                            'children' => [
-                                ['entry' => 'fr-1a45dfed-9d06-4493-83b1-dffe2522cbe7'],
-                            ],
-                        ],
+                    ],
+                ],
+                ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
+                ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7'],
+            ],
+        ];
+
+        $expectedFrenchTree = [
+            'tree' => [
+                ['entry' => 'fr-db0ae4e3-4f10-4802-bc40-0b880cbf02c7'],
+                [
+                    'entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a',
+                    'children' => [
+                        ['entry' => 'fr-7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                        ['entry' => 'fr-4ef748b3-97c5-acd4-be45-f8849e71ff02'],
+                    ],
+                ],
+                [
+                    'entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc',
+                    'children' => [
+                        ['entry' => 'fr-1a45dfed-9d06-4493-83b1-dffe2522cbe7'],
                     ],
                 ],
             ],
         ];
 
-        $this->assertParsedYamlEquals($expected, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlEquals($expectedConfig, $this->collectionsPath('pages.yaml'));
+        $this->assertParsedYamlEquals($expectedDefaultTree, $this->treesPath('default/pages.yaml'));
+        $this->assertParsedYamlEquals($expectedFrenchTree, $this->treesPath('fr/pages.yaml'));
     }
 
     /** @test */

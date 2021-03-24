@@ -47,6 +47,7 @@ class CollectionMigrator extends Migrator
         return [
             $this->newPath(),
             $this->newPath("../{$this->handle}.yaml"),
+            $this->newPath("../../trees/collections/{$this->handle}.yaml"),
         ];
     }
 
@@ -264,8 +265,12 @@ class CollectionMigrator extends Migrator
         $this->config->forget('order');
 
         if ($this->entryOrder) {
-            $this->config->put('structure', $this->migrateEntryOrderToStructure());
+            $this->config->put('structure', ['max_depth' => 1]);
             $reservedKeys->push('structure');
+            $this->saveMigratedYaml(
+                $this->migrateEntryOrderToTree(),
+                $this->newPath("../../trees/collections/{$this->handle}.yaml")
+            );
         }
 
         if ($injectable = $this->config->except($reservedKeys)->all()) {
@@ -279,11 +284,11 @@ class CollectionMigrator extends Migrator
     }
 
     /**
-     * Migrate entry order to structure.
+     * Migrate entry order to tree.
      *
      * @return array
      */
-    protected function migrateEntryOrderToStructure()
+    protected function migrateEntryOrderToTree()
     {
         $tree = collect($this->entryOrder)
             ->sortKeys()
@@ -294,7 +299,6 @@ class CollectionMigrator extends Migrator
             ->all();
 
         return [
-            'max_depth' => 1,
             'tree' => $tree,
         ];
     }

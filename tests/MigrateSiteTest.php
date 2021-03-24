@@ -15,12 +15,17 @@ class MigrateSiteTest extends TestCase
             'users' => base_path('users'),
             'blueprints' => resource_path('blueprints'),
             'fieldsets' => resource_path('fieldsets'),
+            'trees' => base_path('content/trees'),
             'blog' => base_path('content/collections/blog'),
             'blogCollectionConfig' => base_path('content/collections/blog.yaml'),
             'things' => base_path('content/collections/things'),
             'thingsCollectionConfig' => base_path('content/collections/things.yaml'),
+            'favs' => base_path('content/collections/favs'),
+            'favsCollectionConfig' => base_path('content/collections/favs.yaml'),
+            'favsCollectionTree' => base_path('content/trees/collections/favs.yaml'),
             'pages' => base_path('content/collections/pages'),
             'pagesCollectionConfig' => base_path('content/collections/pages.yaml'),
+            'pagesCollectionTree' => base_path('content/trees/collections/pages.yaml'),
             'tags' => base_path('content/taxonomies/tags'),
             'tagsTaxonomyConfig' => base_path('content/taxonomies/tags.yaml'),
             'globals' => base_path('content/globals'),
@@ -67,6 +72,8 @@ class MigrateSiteTest extends TestCase
         $this->assertFileNotExists($this->paths('blogCollectionConfig'));
         $this->assertFileNotExists($this->paths('things'));
         $this->assertFileNotExists($this->paths('thingsCollectionConfig'));
+        $this->assertFileNotExists($this->paths('favs'));
+        $this->assertFileNotExists($this->paths('favsCollectionConfig'));
         $this->assertFileNotExists($this->blueprintsPath('collections'));
 
         $this->artisan('statamic:migrate:site');
@@ -77,6 +84,10 @@ class MigrateSiteTest extends TestCase
         $this->assertFileExists($this->paths('thingsCollectionConfig'));
         $this->assertCount(9, $this->files->files($this->paths('things')));
         $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/things')));
+        $this->assertFileExists($this->paths('favsCollectionConfig'));
+        $this->assertFileExists($this->paths('favsCollectionTree'));
+        $this->assertCount(3, $this->files->files($this->paths('favs')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/favs')));
     }
 
     /** @test */
@@ -89,6 +100,7 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertFileExists($this->paths('pagesCollectionConfig'));
+        $this->assertFileExists($this->paths('pagesCollectionTree'));
         $this->assertCount(10, $this->files->files($this->paths('pages')));
         $this->assertCount(5, $this->files->files($this->blueprintsPath('collections/pages')));
     }
