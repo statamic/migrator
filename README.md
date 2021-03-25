@@ -53,6 +53,8 @@ The site migrator is the recommended way to migrate your site.  To get started..
     php please migrate:site
     ```
 
+    > _**Note:**_ For transparency, Statamic pings home to record statistics about _how many things_ are migrated. This data is completely anonymous, but you can opt-out by adding `DISABLE_MIGRATOR_STATS=true` to your .env file!
+
 7) Address any errors and warnings, and re-run `migrate:site` until there are no remaining issues.
 
     - Use the `--force` flag if you would like to overwrite previously migrated files.
