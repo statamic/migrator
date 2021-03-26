@@ -124,52 +124,7 @@ class ContentMigratorTest extends TestCase
     public function it_can_migrate_term_fields()
     {
         $content = $this
-            ->setFields([
-                'one_taxonomy' => [
-                    'type' => 'taxonomy',
-                    'taxonomy' => 'tags',
-                ],
-                'one_taxonomy_single_value' => [
-                    'type' => 'taxonomy',
-                    'taxonomy' => 'tags',
-                    'max_items' => 1,
-                ],
-                'suggest_one_taxonomy' => [
-                    'type' => 'suggest',
-                    'mode' => 'taxonomy',
-                    'taxonomy' => 'tags',
-                ],
-                'suggest_one_taxonomy_single_value' => [
-                    'type' => 'suggest',
-                    'mode' => 'taxonomy',
-                    'taxonomy' => 'tags',
-                    'max_items' => 1,
-                ],
-                'multiple_taxonomies' => [
-                    'type' => 'taxonomy',
-                    'taxonomy' => ['tags', 'colours'],
-                ],
-                'multiple_taxonomies_single_value' => [
-                    'type' => 'taxonomy',
-                    'taxonomy' => ['tags', 'colours'],
-                    'max_items' => 1,
-                ],
-                'suggest_multiple_taxonomies' => [
-                    'type' => 'suggest',
-                    'mode' => 'taxonomy',
-                    'taxonomy' => ['tags', 'colours'],
-                ],
-                'suggest_multiple_taxonomies_single_value' => [
-                    'type' => 'suggest',
-                    'mode' => 'taxonomy',
-                    'taxonomy' => ['tags', 'colours'],
-                    'max_items' => 1,
-                ],
-                'tags' => [  // When field handle matches taxonomy handle, don't do anything with prefixes.
-                    'type' => 'taxonomy',
-                    'taxonomy' => 'tags',
-                ],
-            ])
+            ->setFields($this->termFields())
             ->migrateContent([
                 'one_taxonomy' => ['coffee', 'frostburg-university', 'tags/if-field-handle-does-not-match-taxonomy-handle-remove-prefix'],
                 'one_taxonomy_single_value' => 'coffee',
@@ -196,6 +151,92 @@ class ContentMigratorTest extends TestCase
         ];
 
         $this->assertEquals($expected, $content);
+    }
+
+    /**
+     * @test
+     * @see https://github.com/statamic/cms/issues/3432
+     **/
+    public function it_can_migrate_term_fields_with_empties()
+    {
+        $content = $this
+            ->setFields($this->termFields())
+            ->migrateContent([
+                'one_taxonomy' => [''],
+                'one_taxonomy_single_value' => '',
+                'suggest_one_taxonomy' => [''],
+                'suggest_one_taxonomy_single_value' => '',
+                'multiple_taxonomies' => [''],
+                'multiple_taxonomies_single_value' => '',
+                'suggest_multiple_taxonomies' => [''],
+                'suggest_multiple_taxonomies_single_value' => '',
+                'tags' => [''],
+            ]);
+
+        $expected = [
+            'one_taxonomy' => null,
+            'one_taxonomy_single_value' => null,
+            'suggest_one_taxonomy' => null,
+            'suggest_one_taxonomy_single_value' => null,
+            'multiple_taxonomies' => null,
+            'multiple_taxonomies_single_value' => null,
+            'suggest_multiple_taxonomies' => null,
+            'suggest_multiple_taxonomies_single_value' => null,
+            'tags' => null,
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    private function termFields()
+    {
+        return [
+            'one_taxonomy' => [
+                'type' => 'taxonomy',
+                'taxonomy' => 'tags',
+            ],
+            'one_taxonomy_single_value' => [
+                'type' => 'taxonomy',
+                'taxonomy' => 'tags',
+                'max_items' => 1,
+            ],
+            'suggest_one_taxonomy' => [
+                'type' => 'suggest',
+                'mode' => 'taxonomy',
+                'taxonomy' => 'tags',
+            ],
+            'suggest_one_taxonomy_single_value' => [
+                'type' => 'suggest',
+                'mode' => 'taxonomy',
+                'taxonomy' => 'tags',
+                'max_items' => 1,
+            ],
+            'multiple_taxonomies' => [
+                'type' => 'taxonomy',
+                'taxonomy' => ['tags', 'colours'],
+            ],
+            'multiple_taxonomies_single_value' => [
+                'type' => 'taxonomy',
+                'taxonomy' => ['tags', 'colours'],
+                'max_items' => 1,
+            ],
+            'suggest_multiple_taxonomies' => [
+                'type' => 'suggest',
+                'mode' => 'taxonomy',
+                'taxonomy' => ['tags', 'colours'],
+            ],
+            'suggest_multiple_taxonomies_single_value' => [
+                'type' => 'suggest',
+                'mode' => 'taxonomy',
+                'taxonomy' => ['tags', 'colours'],
+                'max_items' => 1,
+            ],
+            'tags' => [  // When field handle matches taxonomy handle, don't do anything with prefixes.
+                'type' => 'taxonomy',
+                'taxonomy' => 'tags',
+            ],
+        ];
     }
 
     /** @test */
