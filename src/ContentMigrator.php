@@ -3,6 +3,7 @@
 namespace Statamic\Migrator;
 
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Migrator\Exceptions\EmptyValueException;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
 
@@ -175,7 +176,11 @@ class ContentMigrator
     protected function migrateFields()
     {
         foreach ($this->content as $handle => $value) {
-            $this->content[$handle] = $this->migrateField($handle, $value);
+            try {
+                $this->content[$handle] = $this->migrateField($handle, $value);
+            } catch (EmptyValueException $exception) {
+                unset($this->content[$handle]);
+            }
         }
 
         return $this;
@@ -246,7 +251,7 @@ class ContentMigrator
         })->filter()->values();
 
         if ($values->isEmpty()) {
-            return null;
+            throw new EmptyValueException;
         }
 
         return $shouldReturnSingle

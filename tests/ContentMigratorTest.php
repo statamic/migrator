@@ -157,8 +157,9 @@ class ContentMigratorTest extends TestCase
      * @test
      * @see https://github.com/statamic/cms/issues/3432
      **/
-    public function it_can_migrate_term_fields_with_empties()
+    public function it_removes_empty_term_fields()
     {
+        $this->withoutExceptionHandling();
         $content = $this
             ->setFields($this->termFields())
             ->migrateContent([
@@ -170,19 +171,11 @@ class ContentMigratorTest extends TestCase
                 'multiple_taxonomies_single_value' => '',
                 'suggest_multiple_taxonomies' => [''],
                 'suggest_multiple_taxonomies_single_value' => '',
-                'tags' => [''],
+                'tags' => ['not empty'], // Keep this one
             ]);
 
         $expected = [
-            'one_taxonomy' => null,
-            'one_taxonomy_single_value' => null,
-            'suggest_one_taxonomy' => null,
-            'suggest_one_taxonomy_single_value' => null,
-            'multiple_taxonomies' => null,
-            'multiple_taxonomies_single_value' => null,
-            'suggest_multiple_taxonomies' => null,
-            'suggest_multiple_taxonomies_single_value' => null,
-            'tags' => null,
+            'tags' => ['not empty'],
             'blueprint' => 'speaker',
         ];
 
