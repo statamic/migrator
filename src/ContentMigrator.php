@@ -243,7 +243,11 @@ class ContentMigrator
 
         $values = collect($value)->map(function ($term) use ($handle, $config) {
             return $this->migrateTermValue($term, $handle, $config);
-        });
+        })->filter()->values();
+
+        if ($values->isEmpty()) {
+            return null;
+        }
 
         return $shouldReturnSingle
             ? $values->first()
