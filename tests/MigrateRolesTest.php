@@ -30,10 +30,10 @@ class MigrateRolesTest extends TestCase
         $this->assertPermissionMigratesTo('cp:access', 'access cp');
         $this->assertPermissionMigratesTo('updater', 'view updates');
         $this->assertPermissionMigratesTo('updater:update', 'perform updates');
+        $this->assertPermissionMigratesTo('resolve_duplicates', 'resolve duplicate ids');
 
         // TODO: Do we need to migrate these from v2?
         // - 'content:view_drafts_on_frontend'
-        // - resolve_duplicates
         // - importer
     }
 

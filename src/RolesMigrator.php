@@ -131,6 +131,8 @@ class RolesMigrator extends Migrator
                 return 'view updates';
             case $permission === 'updater:update':
                 return 'perform updates';
+            case $permission === 'resolve_duplicates':
+                return 'resolve duplicate ids';
             case preg_match('/^users:(view|edit|create|delete|edit-passwords|edit-roles)$/', $permission, $matches):
                 return $this->migrateUserPermission($matches[1]);
             case $permission === 'forms':
