@@ -256,9 +256,16 @@ EOT
         $this->assertParsedYamlNotHasKey('sort_dir', $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
-    public function it_migrates_number_ordered_collection()
+    /**
+     * @test
+     * @dataProvider orderCollectionValues
+     **/
+    public function it_migrates_number_ordered_collection($order)
     {
+        $contents = file_get_contents($path = base_path('site/content/collections/favs/folder.yaml'));
+        $contents = str_replace('order: number', 'order: '.$order, $contents);
+        file_put_contents($path, $contents);
+
         $this->artisan('statamic:migrate:collection', ['handle' => 'favs']);
 
         $expectedConfig = [
@@ -280,6 +287,17 @@ EOT
         $this->assertFileExists($this->collectionsPath('favs/red-shirt.md'));
         $this->assertFileExists($this->collectionsPath('favs/blue-shirt.md'));
         $this->assertFileExists($this->collectionsPath('favs/purple-shirt.md'));
+    }
+
+    public function orderCollectionValues()
+    {
+        return [
+            'number' => ['number'],
+            'numbers' => ['numbers'],
+            'numbered' => ['numbered'],
+            'numeric' => ['numeric'],
+            'numerical' => ['numerical'],
+        ];
     }
 
     /** @test */
