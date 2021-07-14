@@ -139,7 +139,7 @@ class MigrateSiteTest extends TestCase
         $this->artisan('statamic:migrate:site');
 
         $this->assertCount(2, $this->files->files($this->paths('globals')));
-        $this->assertCount(1, $this->files->files($this->blueprintsPath('globals')));
+        $this->assertCount(2, $this->files->files($this->blueprintsPath('globals')));
     }
 
     /** @test */

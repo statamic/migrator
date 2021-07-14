@@ -38,7 +38,7 @@ class GlobalSetMigrator extends Migrator
     {
         $this->set = $this->getSourceYaml($relativePath, true);
 
-        $this->fieldset = $this->set->get('fieldset');
+        $this->fieldset = $this->set->get('fieldset', 'globals');
 
         return $this;
     }

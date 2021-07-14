@@ -69,8 +69,26 @@ class MigrateGlobalSetTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_without_fieldset()
+    public function it_can_implicitly_migrate_globals_blueprint()
     {
+        $this->assertFileNotExists($this->blueprintPath());
+
+        $set = $this->migrateGlobalSet([
+            'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
+            'title' => 'Global',
+            'site_title' => 'Frederick\'s Swap Shop',
+            'author' => 'Frederick Schwap',
+            // 'fieldset' => 'globals', // If this is not explicitly set, fall back to migrating `globals` fieldset
+        ]);
+
+        $this->assertFileExists($this->blueprintPath());
+    }
+
+    /** @test */
+    public function it_migrates_without_fieldset_when_one_does_not_exist()
+    {
+        $this->files->delete(base_path('site/settings/fieldsets/globals.yaml'));
+
         $this->assertFileNotExists($this->newPath());
         $this->assertFileNotExists($this->blueprintPath());
 
