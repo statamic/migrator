@@ -30,7 +30,7 @@ The site migrator is the recommended way to migrate your site.  To get started..
 1) Install a fresh instance of [Statamic v3](https://statamic.dev/installation) in a new location, and require the migrator:
 
     ```
-    composer require statamic/migrator --dev
+    composer require statamic/migrator --dev --with-all-dependencies
     ```
 
 2) Clear your new site to ensure all default content is removed prior to migration:
@@ -61,10 +61,11 @@ The site migrator is the recommended way to migrate your site.  To get started..
 
     - While we hope to automate most of the common tedious stuff for you, anything more custom may need to be manually migrated.  Checkout the [upgrade guide](https://statamic.dev/upgrade-guide) for more info on breaking changes.
 
-8) When you are finished and happy, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following command:
+8) When you are finished and happy, feel free to delete your `site` and asset container folders from your v3 project root, and then run the following commands:
 
     ```
     composer remove statamic/migrator --dev
+    composer update
     ```
 
 9) Order pizza! 🍕 🤘 😎
