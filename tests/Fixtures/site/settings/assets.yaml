@@ -1,0 +1,11 @@
+image_manipulation_presets:
+  sml:
+    w: 200
+    h: 200
+    q: 75
+    fit: crop
+  tall:
+    w: 200
+    h: 600
+    q: 75
+    fit: contain

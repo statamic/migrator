@@ -21,7 +21,7 @@ class SettingsMigrator extends Migrator
         }
 
         $this
-            // ->migrateAssets()
+            ->migrateAssets()
             // ->migrateCaching()
             ->migrateCp()
             // ->migrateDebug()
@@ -32,6 +32,24 @@ class SettingsMigrator extends Migrator
             // ->migrateTheming()
             ->migrateUsers()
             ->throwFinalWarnings();
+    }
+
+    /**
+     * Migrate assets settings.
+     *
+     * @return $this
+     */
+    protected function migrateAssets()
+    {
+        $this->validate('assets.php');
+
+        $assets = $this->parseSettingsFile('assets.yaml');
+
+        Configurator::file($configFile = 'statamic/assets.php')
+            ->set('image_manipulation.presets', $assets['image_manipulation_presets'] ?? false)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
+
+        return $this;
     }
 
     /**

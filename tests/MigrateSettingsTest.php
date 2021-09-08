@@ -25,6 +25,52 @@ class MigrateSettingsTest extends TestCase
     }
 
     /** @test */
+    public function it_migrates_assets_settings()
+    {
+        $this->assertConfigFileContains('assets.php', <<<'EOT'
+        'presets' => [
+            // 'small' => ['w' => 200, 'h' => 200, 'q' => 75, 'fit' => 'crop'],
+        ],
+EOT
+        );
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'assets']);
+
+        $this->assertConfigFileContains('assets.php', <<<'EOT'
+        'presets' => [
+            'sml' => [
+                'w' => 200,
+                'h' => 200,
+                'q' => 75,
+                'fit' => 'crop',
+            ],
+            'tall' => [
+                'w' => 200,
+                'h' => 600,
+                'q' => 75,
+                'fit' => 'contain',
+            ],
+        ],
+EOT
+        );
+    }
+
+    /** @test */
+    public function it_doesnt_touch_assets_config_if_empty()
+    {
+        $this->files->put($this->sitePath('settings/assets.yaml'), '');
+
+        $this->artisan('statamic:migrate:settings', ['handle' => 'assets']);
+
+        $this->assertConfigFileContains('assets.php', <<<'EOT'
+        'presets' => [
+            // 'small' => ['w' => 200, 'h' => 200, 'q' => 75, 'fit' => 'crop'],
+        ],
+EOT
+        );
+    }
+
+    /** @test */
     public function it_migrates_cp_settings()
     {
         $this->assertConfigFileContains('cp.php', <<<'EOT'

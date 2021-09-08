@@ -277,6 +277,7 @@ class MigrateSite extends Command
      */
     protected function migrateSettings()
     {
+        $this->runMigratorOnHandle(SettingsMigrator::class, 'assets');
         $this->runMigratorOnHandle(SettingsMigrator::class, 'cp');
         $this->runMigratorOnHandle(SettingsMigrator::class, 'routes');
         $this->runMigratorOnHandle(SettingsMigrator::class, 'system');

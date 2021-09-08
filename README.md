@@ -182,11 +182,13 @@ php please migrate:groups
 
 ### Settings migrator
 
-In v3, site settings are now stored in a conventional Laravel [config directory](https://statamic.dev/configuration).  We cannot guarantee a complete migration, but this migration attempts to transfer core settings where possible.  To migrate your site settings:
+In v3, site settings are now stored in a conventional Laravel [config directory](https://statamic.dev/configuration).  To migrate your site settings:
 
 ```
 php please migrate:settings
 ```
+
+Due to the fact that settings vary between v2 and v3, we cannot guarantee a complete migration of your settings, but we attempt to update the most obvious stuff for you. Be sure to double check that all of your important settings were migrated as needed!
 
 ### Theme migrator
 
