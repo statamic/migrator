@@ -795,6 +795,54 @@ EOT
         $this->assertEquals($expected, $fieldset);
     }
 
+    /** @test */
+    public function it_migrates_extention_validation()
+    {
+        $fieldset = $this->migrateFieldset([
+            'title' => 'Posts',
+            'fields' => [
+                'piped' => [
+                    'type' => 'any_type',
+                    'validate' => 'required|ext:jpg,jpeg,png,gif|min:3',
+                ],
+                'arrayed' => [
+                    'type' => 'any_type',
+                    'validate' => [
+                        'required',
+                        'ext:jpg,jpeg,png,gif',
+                        'min:3',
+                    ],
+                ],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'piped',
+                    'field' => [
+                        'type' => 'any_type',
+                        'validate' => 'required|mimes:jpg,jpeg,png,gif|min:3',
+                    ],
+                ],
+                [
+                    'handle' => 'arrayed',
+                    'field' => [
+                        'type' => 'any_type',
+                        'validate' => [
+                            'required',
+                            'mimes:jpg,jpeg,png,gif',
+                            'min:3',
+                        ],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $fieldset);
+    }
+
     private function migrateFieldset($fieldsetConfig)
     {
         $this->files->put($this->paths('old'), YAML::dump($fieldsetConfig));

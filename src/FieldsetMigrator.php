@@ -171,6 +171,10 @@ class FieldsetMigrator extends Migrator
             $config->put('sets', $this->migrateSets($sets));
         }
 
+        if ($validation = $config['validate'] ?? false) {
+            $config->put('validate', $this->migrateValidation($validation));
+        }
+
         if ($config['show_when'] ?? $config['hide_when'] ?? false) {
             $config = $this->migrateFieldConditions($config);
         }
@@ -199,6 +203,40 @@ class FieldsetMigrator extends Migrator
                 return collect($set)->put('fields', $this->migrateFields($set['fields'] ?? []))->all();
             })
             ->all();
+    }
+
+    /**
+     * Migrate field validation.
+     *
+     * @param string|array $validation
+     * @return string|array
+     */
+    protected function migrateValidation($validation)
+    {
+        $isString = is_string($validation);
+
+        $rules = collect($isString ? explode('|', $validation) : $validation)
+            ->map(function ($rule) {
+                $ruleType = explode(':', $rule)[0];
+                $migrateMethod = 'migrate'.ucfirst(strtolower($ruleType)).'Rule';
+
+                return method_exists($this, $migrateMethod)
+                    ? $this->{$migrateMethod}($rule)
+                    : $rule;
+            });
+
+        return $isString ? $rules->implode('|') : $rules->all();
+    }
+
+    /**
+     * Migrate 'ext' validation rule.
+     *
+     * @param string $rule
+     * @return string
+     */
+    protected function migrateExtRule($rule)
+    {
+        return str_replace('ext:', 'mimes:', $rule);
     }
 
     /**
