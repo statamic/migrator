@@ -78,7 +78,7 @@ class Configurator
     {
         $this->normalize();
 
-        if (! $allowFalsey && $value === false) {
+        if (! $allowFalsey && $value == false) {
             return $this;
         }
 

@@ -190,6 +190,44 @@ EOT
     }
 
     /** @test */
+    public function it_doesnt_set_if_falsey_value_is_passed()
+    {
+        $this->configurator->set('action', false);
+        $this->configurator->set('action', '');
+        $this->configurator->set('action', []);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'action' => '!',
+EOT
+        );
+    }
+
+    /** @test */
+    public function it_does_set_falsey_value_when_explicitly_allowed()
+    {
+        $this->configurator->set('action', false, true);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'action' => false,
+EOT
+        );
+
+        $this->configurator->set('action', '', true);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'action' => '',
+EOT
+        );
+
+        $this->configurator->set('action', [], true);
+
+        $this->assertConfigFileContains(<<<'EOT'
+    'action' => [],
+EOT
+        );
+    }
+
+    /** @test */
     public function it_can_merge_into_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
