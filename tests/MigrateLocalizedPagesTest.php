@@ -45,10 +45,10 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
 
         $this->assertCount(0, $this->files->files($this->collectionsPath('pages')));
-        $this->assertCount(17, $this->files->allFiles($this->collectionsPath('pages')));
+        $this->assertCount(22, $this->files->allFiles($this->collectionsPath('pages')));
         $this->assertCount(2, $this->files->directories($this->collectionsPath('pages')));
         $this->assertCount(11, $this->files->files($this->collectionsPath('pages/default')));
-        $this->assertCount(6, $this->files->files($this->collectionsPath('pages/fr')));
+        $this->assertCount(11, $this->files->files($this->collectionsPath('pages/fr')));
     }
 
     /** @test */
@@ -105,15 +105,24 @@ class MigrateLocalizedPagesTest extends TestCase
                     'entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a',
                     'children' => [
                         ['entry' => 'fr-7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
+                        ['entry' => 'fr-f748ceb3-97c5-45be-acd4-f88ff0249e71'],
                         ['entry' => 'fr-4ef748b3-97c5-acd4-be45-f8849e71ff02'],
                     ],
                 ],
+                ['entry' => 'fr-60962021-f154-4cd2-a1d7-035a12b6da9e'],
                 [
                     'entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc',
                     'children' => [
-                        ['entry' => 'fr-1a45dfed-9d06-4493-83b1-dffe2522cbe7'],
+                        [
+                            'entry' => 'fr-1a45dfed-9d06-4493-83b1-dffe2522cbe7',
+                            'children' => [
+                                ['entry' => 'fr-c50f5ee5-683d-4299-b16c-9271b7f9e41b'],
+                            ],
+                        ],
                     ],
                 ],
+                ['entry' => 'fr-26a4ce21-d768-440d-806b-213918df0ee0'],
+                ['entry' => 'fr-de627bca-7595-429e-9b41-ad58703916d7'],
             ],
         ];
 

@@ -130,7 +130,7 @@ class PagesMigrator extends Migrator
      */
     protected function parseLocalizedPagesInFolder($folder, $pageOrigin)
     {
-        $entries = $this->getLocalizedPagesInFolder($folder)
+        $this->getLocalizedPagesInFolder($folder)
             ->map(function ($page, $site) use ($pageOrigin) {
                 return array_merge($page, [
                     'origin' => $pageOrigin['id'],
@@ -173,7 +173,7 @@ class PagesMigrator extends Migrator
      */
     protected function getLocalizedPagesInFolder($folder)
     {
-        return collect($this->files->files($folder))
+        $explicitlyLocalizedPages = collect($this->files->files($folder))
             ->keyBy
             ->getFilenameWithoutExtension()
             ->filter(function ($file, $filename) {
@@ -188,6 +188,15 @@ class PagesMigrator extends Migrator
             ->map(function ($page) {
                 return YAML::parse($page->getContents());
             });
+
+        $implicitlyLocalizedPages = collect($this->sites)
+            ->flip()
+            ->forget('default')
+            ->map(function ($page) {
+                return [];
+            });
+
+        return $implicitlyLocalizedPages->merge($explicitlyLocalizedPages);
     }
 
     /**
