@@ -97,6 +97,7 @@ class PagesMigrator extends Migrator
             return [];
         }
 
+        $page['published'] = $this->migratePublishedStatus($page, $folder);
         $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
         $this->entries[] = $page;
@@ -104,6 +105,9 @@ class PagesMigrator extends Migrator
         $entry = $page['id'];
 
         $children = collect($this->files->directories($folder))
+            ->sortBy(function ($folder) {
+                return str_replace('/_', '/', $folder);
+            })
             ->map(function ($folder) use ($key, $entry) {
                 return $this->parsePageFolder($folder, "{$key}.{$entry}");
             })
@@ -130,18 +134,34 @@ class PagesMigrator extends Migrator
      */
     protected function parseLocalizedPagesInFolder($folder, $pageOrigin)
     {
-        $entries = $this->getLocalizedPagesInFolder($folder)
-            ->map(function ($page, $site) use ($pageOrigin) {
-                return array_merge($page, [
-                    'origin' => $pageOrigin['id'],
-                    'id' => $this->generateUuid($pageOrigin, $site),
-                    'slug' => $page['slug'] ?? $pageOrigin['slug'],
-                    'fieldset' => $pageOrigin['fieldset'] ?? null,
-                ]);
-            })
-            ->each(function ($page, $site) {
-                $this->localizedEntries[$site][] = $page;
-            });
+        $this->getLocalizedPagesInFolder($folder)->each(function ($page, $site) use ($pageOrigin) {
+            $this->localizedEntries[$site][] = $this->prepareLocalizedPage($page, $pageOrigin, $site);
+        });
+    }
+
+    /**
+     * Prepare localized page.
+     *
+     * @param array $page
+     * @param array $pageOrigin
+     * @param string $site
+     * @return array
+     */
+    protected function prepareLocalizedPage($page, $pageOrigin, $site)
+    {
+        $localized = [
+            'origin' => $pageOrigin['id'],
+            'id' => $this->generateUuid($pageOrigin, $site),
+            'slug' => $page['slug'] ?? $pageOrigin['slug'],
+            'fieldset' => $pageOrigin['fieldset'] ?? null,
+            'published' => isset($page['published']) ? $page['published'] : $pageOrigin['published'],
+        ];
+
+        $overriddenData = collect($localized)->reject(function ($value) {
+            return $value === null;
+        })->all();
+
+        return array_merge($page, $overriddenData);
     }
 
     /**
@@ -173,7 +193,7 @@ class PagesMigrator extends Migrator
      */
     protected function getLocalizedPagesInFolder($folder)
     {
-        return collect($this->files->files($folder))
+        $explicitlyLocalizedPages = collect($this->files->files($folder))
             ->keyBy
             ->getFilenameWithoutExtension()
             ->filter(function ($file, $filename) {
@@ -188,6 +208,30 @@ class PagesMigrator extends Migrator
             ->map(function ($page) {
                 return YAML::parse($page->getContents());
             });
+
+        $implicitlyLocalizedPages = collect($this->sites)
+            ->flip()
+            ->forget('default')
+            ->map(function ($page) {
+                return [];
+            });
+
+        return $implicitlyLocalizedPages->merge($explicitlyLocalizedPages);
+    }
+
+    /**
+     * Migrate page published status.
+     *
+     * @param string $folder
+     * @return bool
+     */
+    protected function migratePublishedStatus($page, $folder)
+    {
+        if ($published = Arr::get($page, 'published')) {
+            return (bool) $published;
+        }
+
+        return ! (bool) preg_match('/.*\/_[^_]*$/', Path::resolve($folder));
     }
 
     /**
@@ -345,7 +389,10 @@ class PagesMigrator extends Migrator
      */
     protected function getPageFieldset($page)
     {
+        $origin = $this->getOriginEntry($page);
+
         $fieldset = $page['fieldset']
+            ?? $origin['fieldset']
             ?? $this->getSetting('theming.default_page_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
 
@@ -457,5 +504,18 @@ class PagesMigrator extends Migrator
         return $depth === 1
             ? ['tree' => $normalized]
             : $normalized;
+    }
+
+    /**
+     * Get origin entry for localized entry.
+     *
+     * @param array $localizedEntry
+     * @return null|array
+     */
+    protected function getOriginEntry($localizedEntry)
+    {
+        return collect($this->entries)->first(function ($entry) use ($localizedEntry) {
+            return $entry['id'] === Arr::get($localizedEntry, 'origin');
+        });
     }
 }
