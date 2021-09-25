@@ -38,17 +38,17 @@ class MigrateLocalizedPagesTest extends TestCase
     public function it_migrates_expected_number_of_files()
     {
         $this->assertCount(2, $this->files->files($this->sitePath('content/pages')));
-        $this->assertCount(5, $this->files->directories($this->sitePath('content/pages')));
+        $this->assertCount(9, $this->files->directories($this->sitePath('content/pages')));
 
         $this->artisan('statamic:migrate:pages');
 
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
 
         $this->assertCount(0, $this->files->files($this->collectionsPath('pages')));
-        $this->assertCount(22, $this->files->allFiles($this->collectionsPath('pages')));
+        $this->assertCount(30, $this->files->allFiles($this->collectionsPath('pages')));
         $this->assertCount(2, $this->files->directories($this->collectionsPath('pages')));
-        $this->assertCount(11, $this->files->files($this->collectionsPath('pages/default')));
-        $this->assertCount(11, $this->files->files($this->collectionsPath('pages/fr')));
+        $this->assertCount(15, $this->files->files($this->collectionsPath('pages/default')));
+        $this->assertCount(15, $this->files->files($this->collectionsPath('pages/fr')));
     }
 
     /** @test */
@@ -95,6 +95,10 @@ class MigrateLocalizedPagesTest extends TestCase
                 ],
                 ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
                 ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7'],
+                ['entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a'],
+                ['entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc'],
+                ['entry' => '56b5f7a0-adcd-4490-bcaa-dad3b8feef6d'],
+                ['entry' => '2efee6c0-c3a5-44dc-a3db-a0af7fa73977'],
             ],
         ];
 
@@ -123,6 +127,10 @@ class MigrateLocalizedPagesTest extends TestCase
                 ],
                 ['entry' => 'fr-26a4ce21-d768-440d-806b-213918df0ee0'],
                 ['entry' => 'fr-de627bca-7595-429e-9b41-ad58703916d7'],
+                ['entry' => 'fr-72c016c6-cc0a-4928-b53b-3275f3f6da0a'],
+                ['entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc'],
+                ['entry' => 'fr-56b5f7a0-adcd-4490-bcaa-dad3b8feef6d'],
+                ['entry' => 'fr-2efee6c0-c3a5-44dc-a3db-a0af7fa73977'],
             ],
         ];
 
@@ -199,5 +207,23 @@ class MigrateLocalizedPagesTest extends TestCase
 
         $this->assertParsedYamlContains(['avatar' => 'img/stetson.jpg'], $this->collectionsPath('pages/default/about.md'));
         $this->assertParsedYamlContains(['avatar' => 'img/coffee-mug.jpg'], $this->collectionsPath('pages/fr/les-aboot.md'));
+    }
+
+    /** @test */
+    public function it_can_migrate_localized_published_statuses()
+    {
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertParsedYamlContains(['published' => true], $this->collectionsPath('pages/default/only-english.md'));
+        $this->assertParsedYamlContains(['published' => false], $this->collectionsPath('pages/fr/only-english.md'));
+
+        $this->assertParsedYamlContains(['published' => false], $this->collectionsPath('pages/default/only-french.md'));
+        $this->assertParsedYamlContains(['published' => true], $this->collectionsPath('pages/fr/only-french.md'));
+
+        $this->assertParsedYamlContains(['published' => true], $this->collectionsPath('pages/default/published-in-both.md'));
+        $this->assertParsedYamlContains(['published' => true], $this->collectionsPath('pages/fr/published-in-both.md'));
+
+        $this->assertParsedYamlContains(['published' => false], $this->collectionsPath('pages/default/published-in-neither.md'));
+        $this->assertParsedYamlContains(['published' => false], $this->collectionsPath('pages/fr/published-in-neither.md'));
     }
 }
