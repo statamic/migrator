@@ -132,7 +132,7 @@ class MigrateLocalizedPagesTest extends TestCase
     }
 
     /** @test */
-    public function it_can_migrate_a_localized_page()
+    public function it_can_migrate_an_explicitly_localized_page()
     {
         $this->artisan('statamic:migrate:pages');
 
@@ -146,6 +146,31 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
         $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
         $this->assertNotNull($frenchEntry['id']);
+        $this->assertArrayNotHasKey('fieldset', $defaultEntry);
+        $this->assertArrayNotHasKey('fieldset', $frenchEntry);
+    }
+
+    /** @test */
+    public function it_can_migrate_an_implicitly_localized_page()
+    {
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertFileNotExists($this->collectionsPath('pages/blog.md'));
+        $this->assertFileExists($defaultPath = $this->collectionsPath('pages/default/blog.md'));
+        $this->assertFileExists($frenchPath = $this->collectionsPath('pages/fr/blog.md'));
+
+        $defaultEntry = YAML::parse($this->files->get($defaultPath));
+        $frenchEntry = YAML::parse($this->files->get($frenchPath));
+
+        $expectedFrenchEntry = [
+            'id' => $frenchEntry['id'],
+            'origin' => '60962021-f154-4cd2-a1d7-035a12b6da9e',
+            'slug' => 'blog',
+        ];
+
+        $this->assertEquals($expectedFrenchEntry, $frenchEntry);
+        $this->assertNotEquals($defaultEntry['id'], $frenchEntry['id']);
+        $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
     }
 
     /** @test */
