@@ -97,6 +97,7 @@ class PagesMigrator extends Migrator
             return [];
         }
 
+        $page['published'] = $this->migratePublishedStatus($page, $folder);
         $page['slug'] = $this->migratePageSlug($page, $key, $folder);
 
         $this->entries[] = $page;
@@ -130,18 +131,34 @@ class PagesMigrator extends Migrator
      */
     protected function parseLocalizedPagesInFolder($folder, $pageOrigin)
     {
-        $this->getLocalizedPagesInFolder($folder)
-            ->map(function ($page, $site) use ($pageOrigin) {
-                return array_merge($page, array_filter([
-                    'origin' => $pageOrigin['id'],
-                    'id' => $this->generateUuid($pageOrigin, $site),
-                    'slug' => $page['slug'] ?? $pageOrigin['slug'],
-                    'fieldset' => $pageOrigin['fieldset'] ?? null,
-                ]));
-            })
-            ->each(function ($page, $site) {
-                $this->localizedEntries[$site][] = $page;
-            });
+        $this->getLocalizedPagesInFolder($folder)->each(function ($page, $site) use ($pageOrigin) {
+            $this->localizedEntries[$site][] = $this->prepareLocalizedPage($page, $pageOrigin, $site);
+        });
+    }
+
+    /**
+     * Prepare localized page.
+     *
+     * @param array $page
+     * @param array $pageOrigin
+     * @param string $site
+     * @return array
+     */
+    protected function prepareLocalizedPage($page, $pageOrigin, $site)
+    {
+        $localized = [
+            'origin' => $pageOrigin['id'],
+            'id' => $this->generateUuid($pageOrigin, $site),
+            'slug' => $page['slug'] ?? $pageOrigin['slug'],
+            'fieldset' => $pageOrigin['fieldset'] ?? null,
+            'published' => isset($page['published']) ? $page['published'] : $pageOrigin['published'],
+        ];
+
+        $overriddenData = collect($localized)->reject(function ($value) {
+            return $value === null;
+        })->all();
+
+        return array_merge($page, $overriddenData);
     }
 
     /**
@@ -197,6 +214,21 @@ class PagesMigrator extends Migrator
             });
 
         return $implicitlyLocalizedPages->merge($explicitlyLocalizedPages);
+    }
+
+    /**
+     * Migrate page published status.
+     *
+     * @param string $folder
+     * @return bool
+     */
+    protected function migratePublishedStatus($page, $folder)
+    {
+        if ($published = Arr::get($page, 'published')) {
+            return (bool) $published;
+        }
+
+        return ! (bool) preg_match('/.*\/_[^_]*$/', Path::resolve($folder));
     }
 
     /**
