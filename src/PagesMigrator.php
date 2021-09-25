@@ -132,12 +132,12 @@ class PagesMigrator extends Migrator
     {
         $this->getLocalizedPagesInFolder($folder)
             ->map(function ($page, $site) use ($pageOrigin) {
-                return array_merge($page, [
+                return array_merge($page, array_filter([
                     'origin' => $pageOrigin['id'],
                     'id' => $this->generateUuid($pageOrigin, $site),
                     'slug' => $page['slug'] ?? $pageOrigin['slug'],
                     'fieldset' => $pageOrigin['fieldset'] ?? null,
-                ]);
+                ]));
             })
             ->each(function ($page, $site) {
                 $this->localizedEntries[$site][] = $page;
