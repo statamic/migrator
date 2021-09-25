@@ -354,7 +354,10 @@ class PagesMigrator extends Migrator
      */
     protected function getPageFieldset($page)
     {
+        $origin = $this->getOriginEntry($page);
+
         $fieldset = $page['fieldset']
+            ?? $origin['fieldset']
             ?? $this->getSetting('theming.default_page_fieldset')
             ?? $this->getSetting('theming.default_fieldset');
 
@@ -466,5 +469,18 @@ class PagesMigrator extends Migrator
         return $depth === 1
             ? ['tree' => $normalized]
             : $normalized;
+    }
+
+    /**
+     * Get origin entry for localized entry.
+     *
+     * @param array $localizedEntry
+     * @return null|array
+     */
+    protected function getOriginEntry($localizedEntry)
+    {
+        return collect($this->entries)->first(function ($entry) use ($localizedEntry) {
+            return $entry['id'] === Arr::get($localizedEntry, 'origin');
+        });
     }
 }
