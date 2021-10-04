@@ -38,17 +38,17 @@ class MigrateLocalizedPagesTest extends TestCase
     public function it_migrates_expected_number_of_files()
     {
         $this->assertCount(2, $this->files->files($this->sitePath('content/pages')));
-        $this->assertCount(9, $this->files->directories($this->sitePath('content/pages')));
+        $this->assertCount(10, $this->files->directories($this->sitePath('content/pages')));
 
         $this->artisan('statamic:migrate:pages');
 
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
 
         $this->assertCount(0, $this->files->files($this->collectionsPath('pages')));
-        $this->assertCount(30, $this->files->allFiles($this->collectionsPath('pages')));
+        $this->assertCount(32, $this->files->allFiles($this->collectionsPath('pages')));
         $this->assertCount(2, $this->files->directories($this->collectionsPath('pages')));
-        $this->assertCount(15, $this->files->files($this->collectionsPath('pages/default')));
-        $this->assertCount(15, $this->files->files($this->collectionsPath('pages/fr')));
+        $this->assertCount(16, $this->files->files($this->collectionsPath('pages/default')));
+        $this->assertCount(16, $this->files->files($this->collectionsPath('pages/fr')));
     }
 
     /** @test */
@@ -99,6 +99,7 @@ class MigrateLocalizedPagesTest extends TestCase
                 ['entry' => '3cd2d431-699c-417c-8d57-9183cd17a6fc'],
                 ['entry' => '56b5f7a0-adcd-4490-bcaa-dad3b8feef6d'],
                 ['entry' => '2efee6c0-c3a5-44dc-a3db-a0af7fa73977'],
+                ['entry' => 'e2126a4c-8d76-d440-b806-df0ee0213918'],
             ],
         ];
 
@@ -131,6 +132,7 @@ class MigrateLocalizedPagesTest extends TestCase
                 ['entry' => 'fr-3cd2d431-699c-417c-8d57-9183cd17a6fc'],
                 ['entry' => 'fr-56b5f7a0-adcd-4490-bcaa-dad3b8feef6d'],
                 ['entry' => 'fr-2efee6c0-c3a5-44dc-a3db-a0af7fa73977'],
+                ['entry' => 'fr-e2126a4c-8d76-d440-b806-df0ee0213918'],
             ],
         ];
 
