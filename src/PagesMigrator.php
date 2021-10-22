@@ -412,7 +412,7 @@ class PagesMigrator extends Migrator
     protected function generateEntryPath($entry, $site = null, $number = 1)
     {
         $appended = $number > 1
-            ? "-{$number}"
+            ? ".{$number}"
             : null;
 
         $subFolder = $site

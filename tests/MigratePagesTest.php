@@ -41,7 +41,7 @@ class MigratePagesTest extends TestCase
         $this->artisan('statamic:migrate:pages');
 
         $this->assertFileExists($this->collectionsPath('pages.yaml'));
-        $this->assertCount(10, $this->files->files($this->collectionsPath('pages')));
+        $this->assertCount(11, $this->files->files($this->collectionsPath('pages')));
         $this->assertCount(0, $this->files->directories($this->collectionsPath('pages')));
         $this->assertCount(5, $this->files->files($this->blueprintsPath('pages')));
         $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('pages/default.yaml'));
@@ -95,7 +95,6 @@ class MigratePagesTest extends TestCase
                     'entry' => '72c016c6-cc0a-4928-b53b-3275f3f6da0a',
                     'children' => [
                         ['entry' => '7f48ceb3-97c5-45be-acd4-f88ff0284ed6'],
-                        ['entry' => 'f748ceb3-97c5-45be-acd4-f88ff0249e71'],
                     ],
                 ],
                 ['entry' => '60962021-f154-4cd2-a1d7-035a12b6da9e'],
@@ -108,9 +107,15 @@ class MigratePagesTest extends TestCase
                                 ['entry' => 'c50f5ee5-683d-4299-b16c-9271b7f9e41b'],
                             ],
                         ],
+                        ['entry' => '4313cd2d-9c69-7c41-78d5-17a6fc9183cd'],
                     ],
                 ],
-                ['entry' => '26a4ce21-d768-440d-806b-213918df0ee0'],
+                [
+                    'entry' => '26a4ce21-d768-440d-806b-213918df0ee0',
+                    'children' => [
+                        ['entry' => 'ce226a41-8d76-40d4-b806-8df391e00e21'],
+                    ],
+                ],
                 ['entry' => 'de627bca-7595-429e-9b41-ad58703916d7'],
             ],
         ];
@@ -166,24 +171,46 @@ class MigratePagesTest extends TestCase
     }
 
     /** @test */
-    public function it_migrates_root_page_handle_off_title_and_other_page_handles_off_v2_folder_name()
+    public function it_migrates_root_page_slug_off_title_and_other_page_slugs_off_v2_folder_name()
     {
         $this->artisan('statamic:migrate:pages');
 
         $expected = [
-            'about-sub-page-2', // There are two pages with this v2 folder name, so we should expect an incremented slug.
-            'about-sub-page',
             'about',
+            'about-sub-page',
             'blog',
-            'contact',
+            'contact', // Generated from /contact
+            'contact', // Generated from /gallery/contact
+            'contact', // Generated from /things/contact
+            'gallery',
             'gallery-sub-page',
             'gallery-sub-sub-page',
-            'gallery',
-            'home',
+            'home', // Generated from home page `title`
             'things',
         ];
 
-        $this->assertEquals($expected, Entry::all()->map->slug()->all());
+        $this->assertEquals($expected, Entry::all()->map->slug()->sort()->values()->all());
+    }
+
+    /** @test */
+    public function it_migrates_duplicate_slugs_at_different_uri_levels_by_incrementing_filenames()
+    {
+        $this->artisan('statamic:migrate:pages');
+
+        $this->assertEquals(
+            $this->collectionsPath('pages/contact.md'),
+            Entry::findByUri('/gallery/contact')->path()
+        );
+
+        $this->assertEquals(
+            $this->collectionsPath('pages/contact.2.md'),
+            Entry::findByUri('/things/contact')->path()
+        );
+
+        $this->assertEquals(
+            $this->collectionsPath('pages/contact.3.md'),
+            Entry::findByUri('/contact')->path()
+        );
     }
 
     /** @test */
