@@ -340,6 +340,7 @@ class AssetContainerMigrator extends Migrator
             'bucket' => "env('{$envPrefix}_AWS_BUCKET')",
             'url' => "env('{$envPrefix}_AWS_URL')",
             'endpoint' => "env('{$envPrefix}_AWS_ENDPOINT')",
+            'use_path_style_endpoint' => "env('{$envPrefix}_AWS_USE_PATH_STYLE_ENDPOINT', false)",
         ];
     }
 
