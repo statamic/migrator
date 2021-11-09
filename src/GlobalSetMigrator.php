@@ -5,6 +5,7 @@ namespace Statamic\Migrator;
 class GlobalSetMigrator extends Migrator
 {
     use Concerns\MigratesFile,
+        Concerns\MigratesContent,
         Concerns\MigratesLocalizedContent,
         Concerns\MigratesFieldsetsToBlueprints,
         Concerns\ThrowsFinalWarnings;
@@ -63,7 +64,7 @@ class GlobalSetMigrator extends Migrator
             $this->set = $meta;
             $this->localizedSets = $this->migrateLocalizedSets($data);
         } else {
-            $this->set = $meta->put('data', $data);
+            $this->set = $meta->put('data', $this->migrateSetData($data));
         }
 
         return $this;
@@ -77,12 +78,13 @@ class GlobalSetMigrator extends Migrator
      */
     protected function migrateLocalizedSets($data)
     {
-        $sets = ['default' => $data];
-
         return $this
             ->getMigratedSiteKeys()
             ->mapWithKeys(function ($site) use ($data) {
                 return [$site => $site === 'default' ? $data : $this->migrateLocalizedSet($site)];
+            })
+            ->map(function ($setData) {
+                return $this->migrateSetData($setData);
             })
             ->filter();
     }
@@ -104,6 +106,17 @@ class GlobalSetMigrator extends Migrator
         return $this->getSourceYaml($path, true)
             ->forget('id')
             ->put('origin', 'default');
+    }
+
+    /**
+     * Migrate set data.
+     *
+     * @param array $data
+     * @return array
+     */
+    protected function migrateSetData($data)
+    {
+        return $this->migrateContent($data, $this->fieldset, false);
     }
 
     /**

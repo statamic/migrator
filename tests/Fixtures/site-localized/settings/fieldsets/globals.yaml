@@ -12,4 +12,9 @@ sections:
       company:
         type: text
         display: Company
+      fav_tag:
+        max_items: 1
+        type: taxonomy
+        taxonomy: tags
+        display: Favourite Tag
 taxonomies: true

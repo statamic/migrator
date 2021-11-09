@@ -175,7 +175,7 @@ class ContentMigrator
      */
     protected function migrateFields()
     {
-        foreach ($this->content as $handle => $value) {
+        foreach ($this->content ?: [] as $handle => $value) {
             try {
                 $this->content[$handle] = $this->migrateField($handle, $value);
             } catch (EmptyValueException $exception) {

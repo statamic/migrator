@@ -9,3 +9,8 @@ fields:
     type: text
     display: Website Name
     localizable: true
+  fav_colour:
+    max_items: 1
+    type: taxonomy
+    taxonomy: colours
+    display: Favourite Colour

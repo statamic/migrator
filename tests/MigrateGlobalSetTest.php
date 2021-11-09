@@ -54,6 +54,7 @@ class MigrateGlobalSetTest extends TestCase
             'fieldset' => 'globals',
             'site_title' => 'Frederick\'s Swap Shop',
             'author' => 'Frederick Schwap',
+            'fav_colour' => 'colours/red', // this is a taxonomy field, with a value that needs to be migrated
         ]);
 
         $this->assertEquals($set, [
@@ -61,6 +62,7 @@ class MigrateGlobalSetTest extends TestCase
             'data' => [
                 'site_title' => 'Frederick\'s Swap Shop',
                 'author' => 'Frederick Schwap',
+                'fav_colour' => 'red',
             ],
         ]);
 
