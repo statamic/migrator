@@ -30,11 +30,13 @@ class MigrateLocalizedGlobalSetTest extends TestCase
             'site_name' => 'Redwood',
             'company' => 'Baller Inc',
             'author_name' => 'Niles Peppertrout',
+            'fav_tag' => 'coffee', // this is a taxonomy field, with a value that needs to be migrated
         ];
 
         $expectedFrench = [
             'origin' => 'default',
             'site_name' => 'La Redwoody',
+            'fav_tag' => 'spring', // this is a taxonomy field, with a value that needs to be migrated
         ];
 
         $this->assertParsedYamlEquals($expectedSet, $this->paths('set'));
@@ -57,6 +59,7 @@ class MigrateLocalizedGlobalSetTest extends TestCase
             'site_name' => 'Redwood',
             'company' => 'Baller Inc',
             'author_name' => 'Niles Peppertrout',
+            'fav_tag' => 'coffee', // this is a taxonomy field, with a value that needs to be migrated
         ];
 
         $this->assertParsedYamlEquals($expectedSet, $this->paths('set'));
