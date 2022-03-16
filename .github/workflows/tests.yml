@@ -12,15 +12,25 @@ jobs:
 
     strategy:
       matrix:
-        php: [8.0, 7.4, 7.3]
-        laravel: [8.*]
-        dependency-version: [prefer-lowest, prefer-stable]
+        php: [7.4, 8.0, 8.1]
+        laravel: [8.*, 9.*]
+        stability: [prefer-lowest, prefer-stable]
         os: [ubuntu-latest]
         include:
           - laravel: 8.*
-            testbench: 6.*
+            framework: ^8.24.0
+          - laravel: 9.*
+            framework: ^9.0
+          - os: windows-latest
+            php: 8.0
+            laravel: 8.*
+            framework: ^8.24.0
+            stability: prefer-stable
+        exclude:
+          - laravel: 9.*
+            php: 7.4
 
-    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.dependency-version }} - ${{ matrix.os }}
+    name: P${{ matrix.php }} - L${{ matrix.laravel }} - ${{ matrix.stability }} - ${{ matrix.os }}
 
     steps:
       - name: Checkout code
@@ -36,7 +46,7 @@ jobs:
       - name: Install dependencies
         run: |
           composer require "laravel/framework:${{ matrix.laravel }}" "orchestra/testbench:${{ matrix.testbench }}" ${{ matrix.additional-deps }} --no-interaction --no-update
-          composer update --${{ matrix.dependency-version }} --prefer-dist --no-interaction --no-suggest
+          composer update --${{ matrix.stability }} --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
         run: vendor/bin/phpunit
