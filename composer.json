@@ -2,7 +2,7 @@
     "name": "statamic/migrator",
     "type": "statamic-addon",
     "require": {
-        "friendsofphp/php-cs-fixer": "^2.18.0",
+        "friendsofphp/php-cs-fixer": "^3.7.0",
         "league/flysystem-aws-s3-v3": "~1.0",
         "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d"
     },
