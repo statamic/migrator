@@ -55,7 +55,7 @@ class Configurator
             '@PSR2' => true,
             'array_indentation' => true,
             'array_syntax' => ['syntax' => 'short'],
-            'trailing_comma_in_multiline_array' => true,
+            'trailing_comma_in_multiline' => ['elements' => ['arrays']],
             'binary_operator_spaces' => true,
         ]);
 
