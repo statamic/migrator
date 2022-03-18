@@ -633,7 +633,13 @@ EOT;
 
         $end = '];';
 
-        $irrelevantConfig = "'default' => env('FILESYSTEM_DRIVER', 'local'),";
+        $irrelevantConfig = "'default' => env('FILESYSTEM_DISK', 'local'),";
+
+        // Since we're still supporting Laravel 8 for Statamic 3.3;
+        // We can rip this out when we drop Laravel 8 support.
+        if (version_compare(app()->version(), '9', '<')) {
+            $irrelevantConfig = "'default' => env('FILESYSTEM_DRIVER', 'local'),";
+        }
 
         // Assert valid PHP array.
         $this->assertEquals('array', gettype(include $configPath));
