@@ -130,7 +130,7 @@ class MigrateAssetContainerTest extends TestCase
 
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
-        $this->files->put(public_path('assets/img/.meta/stetson.jpg.yaml'), <<<EOT
+        $this->files->put(public_path('assets/img/.meta/stetson.jpg.yaml'), <<<'EOT'
 data:
   title: Test Title
 EOT
@@ -284,6 +284,7 @@ EOT
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
         ],
 
         'public' => [
@@ -291,6 +292,7 @@ EOT
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -302,6 +304,7 @@ EOT
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
         'assets' => [
@@ -309,6 +312,7 @@ EOT
             'root' => public_path('assets'),
             'url' => '/assets',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
     ],
@@ -346,6 +350,7 @@ EOT
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
         ],
 
         'public' => [
@@ -353,6 +358,7 @@ EOT
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -364,6 +370,7 @@ EOT
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
         'assets' => [
@@ -375,6 +382,7 @@ EOT
             'url' => env('ASSETS_AWS_URL'),
             'endpoint' => env('ASSETS_AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('ASSETS_AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
     ],
@@ -396,6 +404,7 @@ EOT
             'assets' => [
                 'driver' => 'local',
                 'root' => "storage_path('app/some-other-user-assets-unrelated-to-statamic')",
+                'throw' => false,
             ],
         ]);
 
@@ -407,6 +416,7 @@ EOT
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
         ],
 
         'public' => [
@@ -414,6 +424,7 @@ EOT
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -425,11 +436,13 @@ EOT
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
         'assets' => [
             'driver' => 'local',
             'root' => storage_path('app/some-other-user-assets-unrelated-to-statamic'),
+            'throw' => false,
         ],
 
         'assets_main' => [
@@ -437,6 +450,7 @@ EOT
             'root' => public_path('assets/main'),
             'url' => '/assets/main',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
     ],
@@ -472,6 +486,7 @@ EOT
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
         ],
 
         'public' => [
@@ -479,6 +494,7 @@ EOT
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -490,6 +506,7 @@ EOT
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
         'assets_main' => [
@@ -497,6 +514,7 @@ EOT
             'root' => public_path('assets/main'),
             'url' => '/assets/main',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         'assets_cloud' => [
@@ -508,6 +526,7 @@ EOT
             'url' => env('ASSETS_CLOUD_AWS_URL'),
             'endpoint' => env('ASSETS_CLOUD_AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('ASSETS_CLOUD_AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
     ],
@@ -542,12 +561,14 @@ EOT
                     'root' => public_path('assets/main'),
                     'url' => '/assets/main/edited-route',
                     'visibility' => 'public',
+                    'throw' => false,
                 ],
                 'assets_cloud' => [
                     'driver' => 'local',
                     'root' => public_path('assets/cloud'),
                     'url' => '/assets/cloud/edited-route',
                     'visibility' => 'public',
+                    'throw' => false,
                 ],
             ])
             ->refresh();
@@ -564,6 +585,7 @@ EOT
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),
+            'throw' => false,
         ],
 
         'public' => [
@@ -571,6 +593,7 @@ EOT
             'root' => storage_path('app/public'),
             'url' => env('APP_URL').'/storage',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         's3' => [
@@ -582,6 +605,7 @@ EOT
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
         'assets_main' => [
@@ -589,6 +613,7 @@ EOT
             'root' => public_path('assets/main'),
             'url' => '/assets/main',
             'visibility' => 'public',
+            'throw' => false,
         ],
 
         'assets_cloud' => [
@@ -600,6 +625,7 @@ EOT
             'url' => env('ASSETS_CLOUD_AWS_URL'),
             'endpoint' => env('ASSETS_CLOUD_AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('ASSETS_CLOUD_AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 
     ],
@@ -623,7 +649,11 @@ EOT
     {
         $configPath = config_path('filesystems.php');
 
-        $config = $this->normalizeS3Config($this->files->get($configPath));
+        $config = $this->files->get($configPath);
+
+        $config = $this->normalizeLocalConfig($config);
+        $config = $this->normalizePublicConfig($config);
+        $config = $this->normalizeS3Config($config);
 
         $beginning = <<<'EOT'
 <?php
@@ -704,37 +734,79 @@ EOT;
     }
 
     /**
-     * Normalize s3 config for test assertions, since there are minor variations between laravel versions.
+     * Normalize `local` config for test assertions, since there are minor variations between laravel versions.
+     *
+     * @param string $config
+     */
+    protected function normalizeLocalConfig($config)
+    {
+        // Laravel 8 and earlier versions of 9
+        $variants[] = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+EOT;
+
+        // Current version
+        $current = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+            'throw' => false,
+        ],
+EOT;
+
+        foreach ($variants as $variant) {
+            $config = str_replace($variant, $current, $config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Normalize `public` config for test assertions, since there are minor variations between laravel versions.
+     *
+     * @param string $config
+     */
+    protected function normalizePublicConfig($config)
+    {
+        // Laravel 8 and earlier versions of 9
+        $variants[] = <<<'EOT'
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+EOT;
+
+        // Current version
+        $current = <<<'EOT'
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+EOT;
+
+        foreach ($variants as $variant) {
+            $config = str_replace($variant, $current, $config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Normalize `s3` config for test assertions, since there are minor variations between laravel versions.
      *
      * @param string $config
      */
     protected function normalizeS3Config($config)
     {
-        // Laravel 7.0
-        $variants[] = <<<'EOT'
-        's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'url' => env('AWS_URL'),
-        ],
-EOT;
-
-        // Laravel 7.3
-        $variants[] = <<<'EOT'
-        's3' => [
-            'driver' => 's3',
-            'key' => env('AWS_ACCESS_KEY_ID'),
-            'secret' => env('AWS_SECRET_ACCESS_KEY'),
-            'region' => env('AWS_DEFAULT_REGION'),
-            'bucket' => env('AWS_BUCKET'),
-            'endpoint' => env('AWS_URL'),
-        ],
-EOT;
-
-        // Laravel 7.4
+        // Earlier versions of Laravel 8
         $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
@@ -744,6 +816,20 @@ EOT;
             'bucket' => env('AWS_BUCKET'),
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
+        ],
+EOT;
+
+        // Laravel 8 and earlier versions of 9
+        $variants[] = <<<'EOT'
+        's3' => [
+            'driver' => 's3',
+            'key' => env('AWS_ACCESS_KEY_ID'),
+            'secret' => env('AWS_SECRET_ACCESS_KEY'),
+            'region' => env('AWS_DEFAULT_REGION'),
+            'bucket' => env('AWS_BUCKET'),
+            'url' => env('AWS_URL'),
+            'endpoint' => env('AWS_ENDPOINT'),
+            'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
         ],
 EOT;
 
@@ -758,6 +844,7 @@ EOT;
             'url' => env('AWS_URL'),
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
+            'throw' => false,
         ],
 EOT;
 
