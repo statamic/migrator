@@ -759,7 +759,7 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
@@ -794,7 +794,7 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
@@ -850,9 +850,18 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
+    }
+
+    protected function normalizeVariantInConfig($variant, $current, $config)
+    {
+        return str_replace(
+            $this->normalizeMultilineString($variant),
+            $this->normalizeMultilineString($current),
+            $this->normalizeMultilineString($config)
+        );
     }
 }
