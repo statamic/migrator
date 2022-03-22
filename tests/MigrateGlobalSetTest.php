@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
 class MigrateGlobalSetTest extends TestCase
@@ -16,17 +17,17 @@ class MigrateGlobalSetTest extends TestCase
 
     protected function originalPath()
     {
-        return base_path('site/content/globals/main.yaml');
+        return Path::tidy(base_path('site/content/globals/main.yaml'));
     }
 
     protected function newPath()
     {
-        return base_path('content/globals/main.yaml');
+        return Path::tidy(base_path('content/globals/main.yaml'));
     }
 
     protected function blueprintPath()
     {
-        return resource_path('blueprints/globals/main.yaml');
+        return Path::tidy(resource_path('blueprints/globals/main.yaml'));
     }
 
     private function migrateGlobalSet($globalSet)

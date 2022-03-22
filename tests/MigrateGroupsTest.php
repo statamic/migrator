@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
 
@@ -9,7 +10,7 @@ class MigrateGroupsTest extends TestCase
 {
     protected function path()
     {
-        return resource_path('users/groups.yaml');
+        return Path::tidy(resource_path('users/groups.yaml'));
     }
 
     /** @test */

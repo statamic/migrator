@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
 class MigrateLocalizedCollectionTest extends TestCase
@@ -18,12 +19,12 @@ class MigrateLocalizedCollectionTest extends TestCase
 
     protected function collectionsPath($append = null)
     {
-        return collect([base_path('content/collections'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/collections'), $append])->filter()->implode('/'));
     }
 
     protected function blueprintsPath($append = null)
     {
-        return collect([resource_path('blueprints/collections'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints/collections'), $append])->filter()->implode('/'));
     }
 
     private function migrateCollection($config)

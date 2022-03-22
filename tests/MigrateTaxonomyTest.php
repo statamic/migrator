@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
 class MigrateTaxonomyTest extends TestCase
@@ -16,12 +17,12 @@ class MigrateTaxonomyTest extends TestCase
 
     protected function taxonomiesPath($append = null)
     {
-        return collect([base_path('content/taxonomies'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/taxonomies'), $append])->filter()->implode('/'));
     }
 
     protected function blueprintsPath($append = null)
     {
-        return collect([resource_path('blueprints/taxonomies'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints/taxonomies'), $append])->filter()->implode('/'));
     }
 
     /** @test */

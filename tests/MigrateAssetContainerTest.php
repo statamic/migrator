@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Console\Processes\Process;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
@@ -29,12 +30,12 @@ class MigrateAssetContainerTest extends TestCase
 
     protected function containerPath($append = null)
     {
-        return collect([base_path('content/assets'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/assets'), $append])->filter()->implode('/'));
     }
 
     protected function blueprintPath($append = null)
     {
-        return collect([resource_path('blueprints/assets'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints/assets'), $append])->filter()->implode('/'));
     }
 
     /** @test */

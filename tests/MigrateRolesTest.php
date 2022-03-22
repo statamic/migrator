@@ -2,11 +2,13 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
+
 class MigrateRolesTest extends TestCase
 {
     protected function path()
     {
-        return resource_path('users/roles.yaml');
+        return Path::tidy(resource_path('users/roles.yaml'));
     }
 
     /** @test */

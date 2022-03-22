@@ -2,13 +2,15 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
+
 class MigrateLocalizedTaxonomyTest extends TestCase
 {
     protected $siteFixture = 'site-localized';
 
     protected function path($append = null)
     {
-        return collect([base_path('content/taxonomies'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/taxonomies'), $append])->filter()->implode('/'));
     }
 
     /** @test */
