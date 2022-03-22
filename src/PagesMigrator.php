@@ -106,7 +106,7 @@ class PagesMigrator extends Migrator
 
         $children = collect($this->files->directories($folder))
             ->sortBy(function ($folder) {
-                return str_replace('/_', '/', $folder);
+                return str_replace('/_', '/', Path::tidy($folder));
             }, SORT_NATURAL)
             ->map(function ($folder) use ($key, $entry) {
                 return $this->parsePageFolder($folder, "{$key}.{$entry}");
