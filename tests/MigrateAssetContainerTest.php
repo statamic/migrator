@@ -649,7 +649,11 @@ EOT
     {
         $configPath = config_path('filesystems.php');
 
-        $config = $this->normalizeS3Config($this->files->get($configPath));
+        $config = $this->files->get($configPath);
+
+        $config = $this->normalizeLocalConfig($config);
+        $config = $this->normalizePublicConfig($config);
+        $config = $this->normalizeS3Config($config);
 
         $beginning = <<<'EOT'
 <?php
@@ -730,13 +734,79 @@ EOT;
     }
 
     /**
-     * Normalize s3 config for test assertions, since there are minor variations between laravel versions.
+     * Normalize `local` config for test assertions, since there are minor variations between laravel versions.
+     *
+     * @param string $config
+     */
+    protected function normalizeLocalConfig($config)
+    {
+        // Laravel 8 and earlier versions of 9
+        $variants[] = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+        ],
+EOT;
+
+        // Current version
+        $current = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+            'throw' => false,
+        ],
+EOT;
+
+        foreach ($variants as $variant) {
+            $config = str_replace($variant, $current, $config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Normalize `public` config for test assertions, since there are minor variations between laravel versions.
+     *
+     * @param string $config
+     */
+    protected function normalizePublicConfig($config)
+    {
+        // Laravel 8 and earlier versions of 9
+        $variants[] = <<<'EOT'
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+        ],
+EOT;
+
+        // Current version
+        $current = <<<'EOT'
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+EOT;
+
+        foreach ($variants as $variant) {
+            $config = str_replace($variant, $current, $config);
+        }
+
+        return $config;
+    }
+
+    /**
+     * Normalize `s3` config for test assertions, since there are minor variations between laravel versions.
      *
      * @param string $config
      */
     protected function normalizeS3Config($config)
     {
-        // Earlier versions of Laravel 8.0
+        // Earlier versions of Laravel 8
         $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
@@ -749,7 +819,7 @@ EOT;
         ],
 EOT;
 
-        // Laravel 8.0 and earlier versions of 9.0
+        // Laravel 8 and earlier versions of 9
         $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
