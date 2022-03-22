@@ -2,7 +2,6 @@
 
 namespace Statamic\Migrator;
 
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 use Statamic\Facades\AssetContainer;
 use Statamic\Facades\Path;
@@ -320,6 +319,7 @@ class AssetContainerMigrator extends Migrator
             'root' => "public_path('{$path}')",
             'url' => "/{$path}",
             'visibility' => 'public',
+            'throw' => false,
         ];
     }
 
@@ -341,6 +341,7 @@ class AssetContainerMigrator extends Migrator
             'url' => "env('{$envPrefix}_AWS_URL')",
             'endpoint' => "env('{$envPrefix}_AWS_ENDPOINT')",
             'use_path_style_endpoint' => "env('{$envPrefix}_AWS_USE_PATH_STYLE_ENDPOINT', false)",
+            'throw' => false,
         ];
     }
 
