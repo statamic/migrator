@@ -277,6 +277,8 @@ EOT
     /** @test */
     public function it_migrates_disk_with_local_driver()
     {
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
         $this->assertFilesystemConfigFileContains(<<<'EOT'
