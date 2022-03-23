@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Concerns\PreparesPathFolder;
 use Statamic\Migrator\YAML;
 
@@ -70,7 +71,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $paths->push(base_path('site'));
 
-        return $paths;
+        return $paths->map(function ($path) {
+            return Path::tidy($path);
+        });
     }
 
     protected function restoreFilesystemConfig()

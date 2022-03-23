@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Console\Processes\Process;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 
 class ConfiguratorTest extends TestCase
@@ -20,7 +21,7 @@ class ConfiguratorTest extends TestCase
 
     protected function path()
     {
-        return config_path('statamic/configurator-test.php');
+        return Path::tidy(config_path('statamic/configurator-test.php'));
     }
 
     /** @test */

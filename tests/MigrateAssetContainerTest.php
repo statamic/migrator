@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Console\Processes\Process;
+use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
@@ -29,12 +30,12 @@ class MigrateAssetContainerTest extends TestCase
 
     protected function containerPath($append = null)
     {
-        return collect([base_path('content/assets'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/assets'), $append])->filter()->implode('/'));
     }
 
     protected function blueprintPath($append = null)
     {
-        return collect([resource_path('blueprints/assets'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints/assets'), $append])->filter()->implode('/'));
     }
 
     /** @test */
@@ -276,6 +277,8 @@ EOT
     /** @test */
     public function it_migrates_disk_with_local_driver()
     {
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
+
         $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
 
         $this->assertFilesystemConfigFileContains(<<<'EOT'
@@ -758,7 +761,7 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
@@ -793,7 +796,7 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
@@ -849,9 +852,18 @@ EOT;
 EOT;
 
         foreach ($variants as $variant) {
-            $config = str_replace($variant, $current, $config);
+            $config = $this->normalizeVariantInConfig($variant, $current, $config);
         }
 
         return $config;
+    }
+
+    protected function normalizeVariantInConfig($variant, $current, $config)
+    {
+        return str_replace(
+            $this->normalizeMultilineString($variant),
+            $this->normalizeMultilineString($current),
+            $this->normalizeMultilineString($config)
+        );
     }
 }

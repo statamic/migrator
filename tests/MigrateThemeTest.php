@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
+
 class MigrateThemeTest extends TestCase
 {
     protected function paths($key = null)
@@ -16,12 +18,12 @@ class MigrateThemeTest extends TestCase
 
     protected function viewsPath($append = null)
     {
-        return collect([resource_path('views'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('views'), $append])->filter()->implode('/'));
     }
 
     protected function redwoodPath($append)
     {
-        return $this->sitePath("themes/redwood/{$append}");
+        return Path::tidy($this->sitePath("themes/redwood/{$append}"));
     }
 
     /** @test */

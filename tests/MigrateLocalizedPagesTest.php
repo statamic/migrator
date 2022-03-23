@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Migrator\UUID;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Tests\Fakes\FakeUUID;
 
@@ -21,17 +22,17 @@ class MigrateLocalizedPagesTest extends TestCase
 
     protected function collectionsPath($append = null)
     {
-        return collect([base_path('content/collections'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/collections'), $append])->filter()->implode('/'));
     }
 
     protected function treesPath($append = null)
     {
-        return collect([base_path('content/trees/collections'), $append])->filter()->implode('/');
+        return Path::tidy(collect([base_path('content/trees/collections'), $append])->filter()->implode('/'));
     }
 
     protected function blueprintsPath($append = null)
     {
-        return collect([resource_path('blueprints/collections'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints/collections'), $append])->filter()->implode('/'));
     }
 
     /** @test */

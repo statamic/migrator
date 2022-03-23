@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
 
@@ -43,7 +44,7 @@ class MigrateSiteTest extends TestCase
 
     protected function blueprintsPath($append = null)
     {
-        return collect([resource_path('blueprints'), $append])->filter()->implode('/');
+        return Path::tidy(collect([resource_path('blueprints'), $append])->filter()->implode('/'));
     }
 
     protected function setUp(): void

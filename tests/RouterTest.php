@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Statamic\Facades\Path;
 use Statamic\Migrator\Router;
 use Statamic\Migrator\YAML;
 
@@ -20,7 +21,7 @@ class RouterTest extends TestCase
 
     protected function path()
     {
-        return base_path('routes/test.php');
+        return Path::tidy(base_path('routes/test.php'));
     }
 
     /** @test */

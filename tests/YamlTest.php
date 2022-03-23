@@ -3,13 +3,14 @@
 namespace Tests;
 
 use Exception;
+use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
 class YamlTest extends TestCase
 {
     public function path()
     {
-        return base_path('site/settings/system.yaml');
+        return Path::tidy(base_path('site/settings/system.yaml'));
     }
 
     /** @test */
