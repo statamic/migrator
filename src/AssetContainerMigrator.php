@@ -470,7 +470,7 @@ class AssetContainerMigrator extends Migrator
         }
 
         $container->assets()->each(function ($asset) {
-            $asset->hydrate()->save();
+            $asset->hydrate()->saveQuietly();
         });
     }
 
