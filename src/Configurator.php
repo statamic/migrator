@@ -20,7 +20,7 @@ class Configurator
     /**
      * Instantiate configurator.
      *
-     * @param string $configFile
+     * @param  string  $configFile
      */
     public function __construct($configFile)
     {
@@ -34,7 +34,7 @@ class Configurator
     /**
      * Instantiate configurator.
      *
-     * @param string $configFile
+     * @param  string  $configFile
      * @return static
      */
     public static function file($configFile)
@@ -69,9 +69,9 @@ class Configurator
     /**
      * Set config value.
      *
-     * @param string $key
-     * @param string $value
-     * @param bool $allowFalsey
+     * @param  string  $key
+     * @param  string  $value
+     * @param  bool  $allowFalsey
      * @return return $this
      */
     public function set($key, $value, $allowFalsey = false)
@@ -97,8 +97,8 @@ class Configurator
     /**
      * Merge into array config.
      *
-     * @param string $key
-     * @param array $value
+     * @param  string  $key
+     * @param  array  $value
      * @return return $this
      */
     public function merge($key, $items)
@@ -116,8 +116,8 @@ class Configurator
     /**
      * Merge spaciously into array config.
      *
-     * @param string $key
-     * @param array $value
+     * @param  string  $key
+     * @param  array  $value
      * @return return $this
      */
     public function mergeSpaciously($key, $items)
@@ -153,7 +153,7 @@ class Configurator
     /**
      * Run custom logic if no changes have been made to config file.
      *
-     * @param \Closure $closure
+     * @param  \Closure  $closure
      */
     public function ifNoChanges($closure)
     {
@@ -167,8 +167,8 @@ class Configurator
     /**
      * Attempt to set array config value.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return bool
      */
     protected function attemptToSetArrayValue($key, $value)
@@ -197,8 +197,8 @@ class Configurator
     /**
      * Attempt to set non-array config value.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return bool
      */
     protected function attemptToSetNonArrayValue($key, $value)
@@ -225,8 +225,8 @@ class Configurator
     /**
      * Attempt to set new config value.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return bool
      */
     protected function attemptToSetNewValue($key, $value)
@@ -253,10 +253,10 @@ class Configurator
     /**
      * Attempt to merge array config value.
      *
-     * @param string $key
-     * @param string $childKey
-     * @param mixed $value
-     * @param bool $spaciously
+     * @param  string  $key
+     * @param  string  $childKey
+     * @param  mixed  $value
+     * @param  bool  $spaciously
      * @return bool
      */
     protected function attemptToMergeIntoArray($key, $childKey, $value, $spaciously = false)
@@ -293,7 +293,7 @@ class Configurator
     /**
      * Determine if config already has key.
      *
-     * @param string $key
+     * @param  string  $key
      * @return bool
      */
     protected function configHasKey($key)
@@ -304,8 +304,8 @@ class Configurator
     /**
      * Determine if config already has array value.
      *
-     * @param string $key
-     * @param mixed $value
+     * @param  string  $key
+     * @param  mixed  $value
      * @return bool
      */
     protected function configHasArrayValue($key, $value)
@@ -316,8 +316,8 @@ class Configurator
     /**
      * Get from config by key.
      *
-     * @param string $key
-     * @param mixed $default
+     * @param  string  $key
+     * @param  mixed  $default
      * @return mixed
      */
     protected function configGet($key, $default = null)
@@ -338,10 +338,10 @@ class Configurator
     /**
      * Build pattern for config key.
      *
-     * @param string $pattern
-     * @param string $key
-     * @param bool $isArrayValue
-     * @param bool $matchParentCloser
+     * @param  string  $pattern
+     * @param  string  $key
+     * @param  bool  $isArrayValue
+     * @param  bool  $matchParentCloser
      * @return string
      */
     protected function buildPatternForKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
@@ -364,10 +364,10 @@ class Configurator
     /**
      * Build pattern for nested config key.
      *
-     * @param string $pattern
-     * @param string $key
-     * @param bool $isArrayValue
-     * @param bool $matchParentCloser
+     * @param  string  $pattern
+     * @param  string  $key
+     * @param  bool  $isArrayValue
+     * @param  bool  $matchParentCloser
      * @return string
      */
     protected function buildPatternForNestedKey($pattern, $key, $isArrayValue = false, $matchParentCloser = false)
@@ -394,9 +394,9 @@ class Configurator
     /**
      * Build ending group.
      *
-     * @param bool $isArrayValue
-     * @param int $indentation
-     * @param bool $matchParent
+     * @param  bool  $isArrayValue
+     * @param  int  $indentation
+     * @param  bool  $matchParent
      * @return string
      */
     protected function buildEndingGroup($isArrayValue, $indentation, $matchParent = false)
@@ -413,7 +413,7 @@ class Configurator
     /**
      * Export var as string.
      *
-     * @param mixed $value
+     * @param  mixed  $value
      * @return string
      */
     protected function varExport($value)

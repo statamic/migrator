@@ -43,7 +43,7 @@ class FormMigrator extends Migrator
     /**
      * Parse user.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return $this
      */
     protected function parseForm()
@@ -94,8 +94,8 @@ class FormMigrator extends Migrator
     /**
      * Migrate field.
      *
-     * @param array $field
-     * @param string $handle
+     * @param  array  $field
+     * @param  string  $handle
      * @return array
      */
     protected function migrateField($field, $handle)

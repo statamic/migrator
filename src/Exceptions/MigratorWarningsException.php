@@ -11,7 +11,7 @@ class MigratorWarningsException extends Exception
     /**
      * Ensure message is required.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct($warnings)
     {

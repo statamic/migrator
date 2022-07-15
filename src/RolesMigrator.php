@@ -27,8 +27,9 @@ class RolesMigrator extends Migrator
     /**
      * Validate whether roles file has been modified.
      *
-     * @throws MigratorSkippedException
      * @return $this
+     *
+     * @throws MigratorSkippedException
      */
     protected function validate()
     {
@@ -79,7 +80,7 @@ class RolesMigrator extends Migrator
     /**
      * Migrate slug.
      *
-     * @param array $role
+     * @param  array  $role
      * @return string
      */
     public function migrateSlug($role)
@@ -90,7 +91,7 @@ class RolesMigrator extends Migrator
     /**
      * Migrate role.
      *
-     * @param array $role
+     * @param  array  $role
      * @return array
      */
     protected function migrateRole($role)
@@ -110,7 +111,7 @@ class RolesMigrator extends Migrator
     /**
      * Migrate permission.
      *
-     * @param string $permission
+     * @param  string  $permission
      * @return string|array
      */
     protected function migratePermission($permission)
@@ -145,8 +146,8 @@ class RolesMigrator extends Migrator
     /**
      * Migrate collection permission.
      *
-     * @param string $collection
-     * @param string $action
+     * @param  string  $collection
+     * @param  string  $action
      * @return string|array
      */
     protected function migrateCollectionPermission($collection, $action)
@@ -171,8 +172,8 @@ class RolesMigrator extends Migrator
     /**
      * Migrate taxonomy permission.
      *
-     * @param string $taxonomy
-     * @param string $action
+     * @param  string  $taxonomy
+     * @param  string  $action
      * @return string
      */
     protected function migrateTaxonomyPermission($taxonomy, $action)
@@ -183,8 +184,8 @@ class RolesMigrator extends Migrator
     /**
      * Migrate asset container permission.
      *
-     * @param string $container
-     * @param string $action
+     * @param  string  $container
+     * @param  string  $action
      * @return string|array
      */
     protected function migrateAssetContainerPermission($container, $action)
@@ -207,8 +208,8 @@ class RolesMigrator extends Migrator
     /**
      * Migrate global set permission.
      *
-     * @param string $globalSet
-     * @param string $action
+     * @param  string  $globalSet
+     * @param  string  $action
      * @return string|null
      */
     protected function migrateGlobalSetPermission($globalSet, $action)
@@ -223,7 +224,7 @@ class RolesMigrator extends Migrator
     /**
      * Migrate user permission.
      *
-     * @param string $action
+     * @param  string  $action
      * @return string
      */
     protected function migrateUserPermission($action)

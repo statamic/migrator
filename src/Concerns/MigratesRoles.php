@@ -11,7 +11,7 @@ trait MigratesRoles
     /**
      * Migrate role IDs to slugs.
      *
-     * @param array $roles
+     * @param  array  $roles
      * @return array
      */
     protected function migrateRoles($roles)
@@ -37,7 +37,7 @@ trait MigratesRoles
     /**
      * Migrate group IDs to slugs.
      *
-     * @param array $groups
+     * @param  array  $groups
      * @return array
      */
     protected function migrateGroups($groups)

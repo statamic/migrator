@@ -13,7 +13,7 @@ class YAML
     /**
      * Parse yaml.
      *
-     * @param string $str
+     * @param  string  $str
      * @return array
      */
     public static function parse($str)
@@ -50,7 +50,7 @@ class YAML
     /**
      * Parse symfony yaml.
      *
-     * @param array $str
+     * @param  array  $str
      * @return array
      */
     public static function symfony($str)
@@ -61,7 +61,7 @@ class YAML
     /**
      * Parse spyc yaml.
      *
-     * @param string $str
+     * @param  string  $str
      * @return array
      */
     public static function spyc($str)
@@ -86,8 +86,8 @@ class YAML
     /**
      * Defer all other calls to Statamic's YAML facade.
      *
-     * @param string $name
-     * @param array $arguments
+     * @param  string  $name
+     * @param  array  $arguments
      * @return mixed
      */
     public static function __callStatic($name, $arguments)

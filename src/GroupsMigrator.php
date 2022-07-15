@@ -28,8 +28,9 @@ class GroupsMigrator extends Migrator
     /**
      * Validate whether groups file has been modified.
      *
-     * @throws MigratorSkippedException
      * @return $this
+     *
+     * @throws MigratorSkippedException
      */
     protected function validate()
     {
@@ -80,7 +81,7 @@ class GroupsMigrator extends Migrator
     /**
      * Migrate slug.
      *
-     * @param array $group
+     * @param  array  $group
      * @return string
      */
     public function migrateSlug($group)
@@ -91,7 +92,7 @@ class GroupsMigrator extends Migrator
     /**
      * Migrate group.
      *
-     * @param array $group
+     * @param  array  $group
      * @return array
      */
     protected function migrateGroup($group)

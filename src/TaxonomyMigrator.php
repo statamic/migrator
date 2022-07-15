@@ -85,8 +85,8 @@ class TaxonomyMigrator extends Migrator
     /**
      * Migrate term.
      *
-     * @param \Illuminate\Support\Collection $term
-     * @param string $slug
+     * @param  \Illuminate\Support\Collection  $term
+     * @param  string  $slug
      * @return array
      */
     protected function migrateTerm($term, $slug)
@@ -118,7 +118,7 @@ class TaxonomyMigrator extends Migrator
     /**
      * Get term fieldset.
      *
-     * @param \Illuminate\Support\Collection $term
+     * @param  \Illuminate\Support\Collection  $term
      * @return string
      */
     protected function getTermFieldset($term)
@@ -136,7 +136,7 @@ class TaxonomyMigrator extends Migrator
     /**
      * Pull localized term content.
      *
-     * @param \Illuminate\Support\Collection $term
+     * @param  \Illuminate\Support\Collection  $term
      * @return \Illuminate\Support\Collection
      */
     protected function pullLocalizedTermContent($term)
@@ -154,9 +154,9 @@ class TaxonomyMigrator extends Migrator
     /**
      * Merge localized term slug into term's data.
      *
-     * @param array $term
-     * @param string $locale
-     * @param string $slug
+     * @param  array  $term
+     * @param  string  $locale
+     * @param  string  $slug
      * @return array
      */
     protected function mergeLocalizedTermSlug($term, $locale, $slug)
@@ -170,6 +170,7 @@ class TaxonomyMigrator extends Migrator
 
     /**
      * Migrate yaml config.
+     *
      * * @return $this
      */
     protected function migrateYamlConfig()

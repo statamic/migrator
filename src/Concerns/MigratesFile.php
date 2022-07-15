@@ -11,7 +11,7 @@ trait MigratesFile
     /**
      * Get yaml contents from relative site path, or absolute path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return array|\Illuminate\Support\Collection
      */
     protected function getSourceYaml($path, $collection = false)
@@ -24,8 +24,9 @@ trait MigratesFile
     /**
      * Get file contents from relative site path, or absolute path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
+     *
      * @throws NotFoundException
      */
     protected function getSourceContents($path)
@@ -46,8 +47,8 @@ trait MigratesFile
     /**
      * Save migrated file contents to yaml.
      *
-     * @param array|\Illuminate\Support\Collection $migrated
-     * @param string|null $path
+     * @param  array|\Illuminate\Support\Collection  $migrated
+     * @param  string|null  $path
      * @return $this
      */
     protected function saveMigratedYaml($migrated, $path = null)
@@ -60,8 +61,8 @@ trait MigratesFile
     /**
      * Save migrate file contents with yaml front matter.
      *
-     * @param array|\Illuminate\Support\Collection $migrated
-     * @param string|null $path
+     * @param  array|\Illuminate\Support\Collection  $migrated
+     * @param  string|null  $path
      * @return $this
      */
     protected function saveMigratedWithYamlFrontMatter($migrated, $path = null)
@@ -75,8 +76,8 @@ trait MigratesFile
     /**
      * Save migrated file contents.
      *
-     * @param string $migrated
-     * @param string|null $path
+     * @param  string  $migrated
+     * @param  string|null  $path
      * @return $this
      */
     protected function saveMigratedContents($migrated, $path = null)
@@ -97,7 +98,7 @@ trait MigratesFile
     /**
      * Allow our YAML wrapper to migrate a yaml file, updating document content and Spyc formatting as necessary.
      *
-     * @param string|null $path
+     * @param  string|null  $path
      */
     public function updateYaml($path)
     {

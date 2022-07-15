@@ -72,7 +72,7 @@ class ThemeMigrator extends Migrator
     /**
      * Get theme files from subfolder.
      *
-     * @param string $subFolder
+     * @param  string  $subFolder
      * @return array
      */
     protected function getThemeFiles($subFolder)
@@ -106,8 +106,8 @@ class ThemeMigrator extends Migrator
     /**
      * Migrate path.
      *
-     * @param \Symfony\Component\Finder\SplFileInfo $template
-     * @param bool $prepareFolder
+     * @param  \Symfony\Component\Finder\SplFileInfo  $template
+     * @param  bool  $prepareFolder
      * @return string
      */
     protected function migratePath($template, $prepareFolder = true)
@@ -133,7 +133,7 @@ class ThemeMigrator extends Migrator
     /**
      * Attempt changing `default` layout to `layout`, if possible.
      *
-     * @param string $filename
+     * @param  string  $filename
      * @return string
      */
     protected function migrateLayoutFilename($filename)
@@ -156,7 +156,7 @@ class ThemeMigrator extends Migrator
     /**
      * Convert extension.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function convertExtension($path)
@@ -171,7 +171,7 @@ class ThemeMigrator extends Migrator
     /**
      * Migrate template.
      *
-     * @param \Symfony\Component\Finder\SplFileInfo $template
+     * @param  \Symfony\Component\Finder\SplFileInfo  $template
      * @return string
      */
     protected function migrateTemplate($template)
@@ -186,7 +186,7 @@ class ThemeMigrator extends Migrator
     /**
      * Migrate antlers template.
      *
-     * @param string $template
+     * @param  string  $template
      * @return string
      */
     protected function migrateAntlersTemplate($template)
@@ -200,7 +200,7 @@ class ThemeMigrator extends Migrator
     /**
      * Migrate blade template.
      *
-     * @param string $template
+     * @param  string  $template
      * @return string
      */
     protected function migrateBladeTemplate($template)

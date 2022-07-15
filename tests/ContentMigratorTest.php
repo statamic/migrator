@@ -155,6 +155,7 @@ class ContentMigratorTest extends TestCase
 
     /**
      * @test
+     *
      * @see https://github.com/statamic/cms/issues/3432
      **/
     public function it_removes_empty_term_fields()

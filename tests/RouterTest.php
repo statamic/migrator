@@ -129,7 +129,7 @@ EOT
     /**
      * Assert routes file contains specific content.
      *
-     * @param string $content
+     * @param  string  $content
      */
     protected function assertRoutesFileContains($content)
     {
@@ -164,7 +164,7 @@ EOT;
     /**
      * Assert routes file contains specific content.
      *
-     * @param string $content
+     * @param  string  $content
      */
     protected function assertRoutesFileContainsOnlyOnce($content)
     {

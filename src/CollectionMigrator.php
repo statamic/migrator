@@ -82,7 +82,7 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate entries.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return $this
      */
     protected function migrateEntries($relativePath)
@@ -109,8 +109,8 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate entry.
      *
-     * @param array $entry
-     * @param string $path
+     * @param  array  $entry
+     * @param  string  $path
      * @return string
      */
     protected function migrateEntry($entry, $path)
@@ -136,7 +136,7 @@ class CollectionMigrator extends Migrator
     /**
      * Check if entry is a localized entry..
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function isLocalizedEntry($path)
@@ -147,7 +147,7 @@ class CollectionMigrator extends Migrator
     /**
      * Get entry fieldset.
      *
-     * @param array $entry
+     * @param  array  $entry
      * @return string
      */
     protected function getEntryFieldset($entry)
@@ -165,7 +165,7 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate used taxonomies.
      *
-     * @param mixed $entry
+     * @param  mixed  $entry
      */
     protected function migrateUsedTaxonomies($entry)
     {
@@ -188,8 +188,8 @@ class CollectionMigrator extends Migrator
     /**
      * Migrate path.
      *
-     * @param string $path
-     * @param array $entry
+     * @param  string  $path
+     * @param  array  $entry
      * @return $string
      */
     protected function migratePath($path, $entry)
@@ -319,7 +319,7 @@ class CollectionMigrator extends Migrator
     /**
      * Get relative path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function getRelativePath($path)

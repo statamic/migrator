@@ -24,7 +24,8 @@ trait MigratesLocalizedContent
     protected function getLocales()
     {
         // TODO: Figure out how to fix php 7.2 trait collision using trait aliasing?
-        $container = new class {
+        $container = new class
+        {
             use GetsSettings;
 
             public function getLocales()
@@ -78,7 +79,7 @@ trait MigratesLocalizedContent
     /**
      * Migrate site.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return string
      */
     protected function migrateSite($relativePath)
@@ -97,7 +98,7 @@ trait MigratesLocalizedContent
     /**
      * Migrate localized filename.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return string
      */
     protected function migrateLocalizedFilename($relativePath)

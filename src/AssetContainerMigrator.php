@@ -70,7 +70,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Determine whether to run on meta only.
      *
-     * @param bool $metaOnly
+     * @param  bool  $metaOnly
      * @return $this
      */
     public function metaOnly($metaOnly)
@@ -99,8 +99,9 @@ class AssetContainerMigrator extends Migrator
     /**
      * Validate unique.
      *
-     * @throws AlreadyExistsException
      * @return $this
+     *
+     * @throws AlreadyExistsException
      */
     protected function validateUnique()
     {
@@ -118,7 +119,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse asset container.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return $this
      */
     protected function parseAssetContainer($relativePath)
@@ -155,7 +156,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse disk driver.
      *
-     * @param array $config
+     * @param  array  $config
      * @return string
      */
     protected function parseDriver($config)
@@ -166,7 +167,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse local path.
      *
-     * @param array $config
+     * @param  array  $config
      * @return null|string
      */
     protected function parseLocalPath($config)
@@ -197,7 +198,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse S3 path.
      *
-     * @param array $config
+     * @param  array  $config
      * @return string
      */
     protected function parseS3Path($config)
@@ -219,7 +220,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse meta.
      *
-     * @param array $config
+     * @param  array  $config
      * @return \Illuminate\Support\Collection
      */
     protected function parseMeta($config)
@@ -245,7 +246,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Parse fieldset.
      *
-     * @param string $config
+     * @param  string  $config
      * @return string|null
      */
     protected function parseFieldset($config)
@@ -275,6 +276,7 @@ class AssetContainerMigrator extends Migrator
      * Migrate disk.
      *
      * @return $this
+     *
      * @throws \Exception
      */
     protected function migrateDisk()
@@ -352,7 +354,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Attempt disk replacement.
      *
-     * @param string $diskConfig
+     * @param  string  $diskConfig
      * @return bool
      */
     protected function attemptDiskReplacement($diskConfig)
@@ -379,7 +381,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Check if filesystem disk exists.
      *
-     * @param string $disk
+     * @param  string  $disk
      * @return bool
      */
     protected function diskExists($disk)
@@ -445,7 +447,7 @@ class AssetContainerMigrator extends Migrator
     /**
      * Get proper meta path for meta migration.
      *
-     * @param string $file
+     * @param  string  $file
      * @return string
      */
     protected function metaPath($file)

@@ -603,7 +603,7 @@ EOT
     /**
      * Assert config file is valid and contains specific content.
      *
-     * @param string $content
+     * @param  string  $content
      */
     protected function assertConfigFileContains($content)
     {

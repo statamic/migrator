@@ -13,7 +13,7 @@ class Router
     /**
      * Instantiate router.
      *
-     * @param string $routesFile
+     * @param  string  $routesFile
      */
     public function __construct($routesFile)
     {
@@ -25,7 +25,7 @@ class Router
     /**
      * Instantiate configurator.
      *
-     * @param string $configFile
+     * @param  string  $configFile
      * @return static
      */
     public static function file($configFile)
@@ -36,7 +36,7 @@ class Router
     /**
      * Append routes to routes file.
      *
-     * @param array $routes
+     * @param  array  $routes
      */
     public function appendRoutes($routes)
     {
@@ -64,8 +64,8 @@ class Router
     /**
      * Append controller route.
      *
-     * @param string $route
-     * @param string $controllerAction
+     * @param  string  $route
+     * @param  string  $controllerAction
      */
     public function appendControllerRoute($route, $controllerAction)
     {
@@ -77,8 +77,8 @@ class Router
     /**
      * Append template route with data.
      *
-     * @param string $route
-     * @param array $routeConfig
+     * @param  string  $route
+     * @param  array  $routeConfig
      */
     public function appendTemplateRouteWithData($route, $routeConfig)
     {
@@ -94,8 +94,8 @@ class Router
     /**
      * Append template route.
      *
-     * @param string $route
-     * @param string $controllerAction
+     * @param  string  $route
+     * @param  string  $controllerAction
      */
     public function appendTemplateRoute($route, $template)
     {
@@ -108,7 +108,7 @@ class Router
     /**
      * Append redirects to routes file.
      *
-     * @param array $redirects
+     * @param  array  $redirects
      */
     public function appendRedirects($redirects, $routeMethod = 'redirect')
     {
@@ -133,7 +133,7 @@ class Router
     /**
      * Append permanent redirects to routes file.
      *
-     * @param array $redirects
+     * @param  array  $redirects
      */
     public function appendPermanentRedirects($redirects)
     {
@@ -143,7 +143,7 @@ class Router
     /**
      * Has if routes file has any of the given route definitions from v2 routes array.
      *
-     * @param mixed $routes
+     * @param  mixed  $routes
      */
     public function has($routes)
     {
@@ -155,8 +155,8 @@ class Router
     /**
      * Check if routes file has any of the given route definitions.
      *
-     * @param string $routeMethod
-     * @param array $routes
+     * @param  string  $routeMethod
+     * @param  array  $routes
      */
     protected function hasAnyRouteDefinitions($routeMethod, $routes)
     {
@@ -184,7 +184,7 @@ class Router
     /**
      * Append content to routes file.
      *
-     * @param string $content
+     * @param  string  $content
      * @return $this
      */
     protected function append($content)
@@ -219,7 +219,7 @@ class Router
     /**
      * Check if routes file already contains the given content.
      *
-     * @param string $content
+     * @param  string  $content
      * @return bool
      */
     protected function routeContentAlreadyExists($content)
@@ -232,7 +232,7 @@ class Router
     /**
      * Normalize route.
      *
-     * @param string $route
+     * @param  string  $route
      * @return string
      */
     protected function normalizeRoute($route)
@@ -245,7 +245,7 @@ class Router
     /**
      * Normalize template.
      *
-     * @param string $template
+     * @param  string  $template
      * @return string
      */
     protected function normalizeTemplate($template)

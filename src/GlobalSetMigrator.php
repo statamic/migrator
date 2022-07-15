@@ -32,7 +32,7 @@ class GlobalSetMigrator extends Migrator
     /**
      * Parse global set.
      *
-     * @param string $relativePath
+     * @param  string  $relativePath
      * @return $this
      */
     protected function parseGlobalSet($relativePath)
@@ -73,7 +73,7 @@ class GlobalSetMigrator extends Migrator
     /**
      * Migrate localized sets.
      *
-     * @param array $data
+     * @param  array  $data
      * @return \Illuminate\Support\Collection
      */
     protected function migrateLocalizedSets($data)
@@ -92,7 +92,7 @@ class GlobalSetMigrator extends Migrator
     /**
      * Migrate specific localized set.
      *
-     * @param string $site
+     * @param  string  $site
      * @return \Illuminate\Support\Collection
      */
     protected function migrateLocalizedSet($site)
@@ -111,7 +111,7 @@ class GlobalSetMigrator extends Migrator
     /**
      * Migrate set data.
      *
-     * @param array $data
+     * @param  array  $data
      * @return array
      */
     protected function migrateSetData($data)

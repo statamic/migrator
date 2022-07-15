@@ -10,7 +10,7 @@ trait SubmitsStats
     /**
      * Attempt submitting anonymous stats.
      *
-     * @param array $stats
+     * @param  array  $stats
      */
     protected function attemptSubmitStats($stats)
     {

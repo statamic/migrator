@@ -13,7 +13,7 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Add fieldset to be migrated to a blueprint at the end of a migration.
      *
-     * @param string $handle
+     * @param  string  $handle
      * @return $this
      */
     protected function addMigratableFieldset($handle)
@@ -41,7 +41,7 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Migrate queued migratable fieldsets to blueprints.
      *
-     * @param string $blueprintsFolder
+     * @param  string  $blueprintsFolder
      * @return $this
      */
     protected function migrateFieldsetsToBlueprints($blueprintsFolder)
@@ -62,9 +62,9 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Migrate fieldset to blueprint.
      *
-     * @param string $blueprintsFolder
-     * @param string $originalHandle
-     * @param string|null $newHandle
+     * @param  string  $blueprintsFolder
+     * @param  string  $originalHandle
+     * @param  string|null  $newHandle
      * @return $this
      */
     protected function migrateFieldsetToBlueprint($blueprintsFolder, $originalHandle, $newHandle = null)
@@ -83,7 +83,7 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Checks if fieldset is non-existent.
      *
-     * @param string $handle
+     * @param  string  $handle
      * @return bool
      */
     protected function isNonExistentFieldset($handle)
@@ -97,7 +97,7 @@ trait MigratesFieldsetsToBlueprints
      * This is important because if a default fieldset is referenced but does not exist, the content
      * referencing it should be using the default fieldset in core (which is just title, slug, and content).
      *
-     * @param string $handle
+     * @param  string  $handle
      * @return bool
      */
     protected function isNonExistentDefaultFieldset($handle)
@@ -123,7 +123,8 @@ trait MigratesFieldsetsToBlueprints
     protected function getDefaultFieldsets()
     {
         // TODO: Figure out how to fix php 7.2 trait collision using trait aliasing?
-        $container = new class {
+        $container = new class
+        {
             use GetsSettings;
 
             public function getDefaultFieldsets()
@@ -144,7 +145,7 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Ensure default blueprint.
      *
-     * @param string $blueprintsFolder
+     * @param  string  $blueprintsFolder
      */
     protected function ensureDefaultBlueprint($blueprintsFolder)
     {
@@ -168,7 +169,7 @@ trait MigratesFieldsetsToBlueprints
     /**
      * Copy default blueprint.
      *
-     * @param string $blueprintsFolder
+     * @param  string  $blueprintsFolder
      */
     protected function copyDefaultBlueprint($blueprintsFolder)
     {

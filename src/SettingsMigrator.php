@@ -76,7 +76,7 @@ class SettingsMigrator extends Migrator
     /**
      * Migrate start page.
      *
-     * @param string|bool $startPage
+     * @param  string|bool  $startPage
      * @return string|bool
      */
     protected function migrateStartPage($startPage)
@@ -130,7 +130,7 @@ class SettingsMigrator extends Migrator
     /**
      * Migrate locales to sites.
      *
-     * @param array $system
+     * @param  array  $system
      * @return array
      */
     protected function migrateLocales($system)
@@ -203,7 +203,7 @@ class SettingsMigrator extends Migrator
     /**
      * Validate statamic configs.
      *
-     * @param string|array $configFiles
+     * @param  string|array  $configFiles
      */
     protected function validate($configFiles)
     {
@@ -215,8 +215,9 @@ class SettingsMigrator extends Migrator
     /**
      * Validate fresh statamic config.
      *
-     * @throws AlreadyExistsException
      * @return $this
+     *
+     * @throws AlreadyExistsException
      */
     protected function validateFreshStatamicConfig($configFile)
     {
@@ -242,7 +243,7 @@ class SettingsMigrator extends Migrator
     /**
      * Parse settings file.
      *
-     * @param string $file
+     * @param  string  $file
      * @return $this
      */
     protected function parseSettingsFile($file)
@@ -259,7 +260,8 @@ class SettingsMigrator extends Migrator
     /**
      * Throw no changes exception.
      *
-     * @param string $configFile
+     * @param  string  $configFile
+     *
      * @throws MigratorSkippedException
      */
     protected function throwNoChangesException($configFile)

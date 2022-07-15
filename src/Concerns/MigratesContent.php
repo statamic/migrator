@@ -9,9 +9,9 @@ trait MigratesContent
     /**
      * Migrate content.
      *
-     * @param array $content
-     * @param string $fieldset
-     * @param bool $addExplicitBlueprint
+     * @param  array  $content
+     * @param  string  $fieldset
+     * @param  bool  $addExplicitBlueprint
      * @return array
      */
     protected function migrateContent($content, $fieldset, $addExplicitBlueprint = true)

@@ -34,7 +34,7 @@ class MigrateAssetContainer extends Command
     /**
      * Run migration.
      *
-     * @param string $handle
+     * @param  string  $handle
      */
     protected function runMigration($handle)
     {

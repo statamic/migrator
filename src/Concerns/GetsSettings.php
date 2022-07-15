@@ -11,8 +11,8 @@ trait GetsSettings
     /**
      * Get setting.
      *
-     * @param string $dottedPath
-     * @param mixed $default
+     * @param  string  $dottedPath
+     * @param  mixed  $default
      * @return mixed
      */
     protected function getSetting($dottedPath, $default = null)

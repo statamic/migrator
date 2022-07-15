@@ -18,7 +18,7 @@ class ContentMigrator
     /**
      * Instantiate content migrator.
      *
-     * @param string $fieldset
+     * @param  string  $fieldset
      */
     public function __construct(string $fieldset)
     {
@@ -30,7 +30,7 @@ class ContentMigrator
     /**
      * Instantiate content migrator.
      *
-     * @param string $fieldset
+     * @param  string  $fieldset
      * @return static
      */
     public static function usingFieldset(string $fieldset)
@@ -41,7 +41,7 @@ class ContentMigrator
     /**
      * Add explicit blueprint.
      *
-     * @param bool $addExplicitBlueprint
+     * @param  bool  $addExplicitBlueprint
      * @return $this
      */
     public function addExplicitBlueprint($addExplicitBlueprint = true)
@@ -54,7 +54,7 @@ class ContentMigrator
     /**
      * Migrate content.
      *
-     * @param array $content
+     * @param  array  $content
      * @return array
      */
     public function migrateContent($content)
@@ -73,7 +73,7 @@ class ContentMigrator
     /**
      * Get flattened field configs from fieldset.
      *
-     * @param string|null $fieldsetPartialHandle
+     * @param  string|null  $fieldsetPartialHandle
      * @return $this
      */
     protected function getFieldConfigs($fieldsetPartialHandle = null)
@@ -112,7 +112,7 @@ class ContentMigrator
     /**
      * Ensure partials are imported.
      *
-     * @param array $fieldConfigs
+     * @param  array  $fieldConfigs
      * @return array
      */
     protected function ensurePartialsAreImported($fieldConfigs)
@@ -140,9 +140,9 @@ class ContentMigrator
     /**
      * Import partial.
      *
-     * @param string $partialHandle
-     * @param array $fieldConfigs
-     * @param string $originalKey
+     * @param  string  $partialHandle
+     * @param  array  $fieldConfigs
+     * @param  string  $originalKey
      * @return array
      */
     protected function importPartial($partialHandle, $fieldConfigs, $originalKey)
@@ -189,8 +189,8 @@ class ContentMigrator
     /**
      * Migrate field.
      *
-     * @param string $handle
-     * @param mixed $value
+     * @param  string  $handle
+     * @param  mixed  $value
      * @return mixed
      */
     protected function migrateField($handle, $value, $config = null)
@@ -210,9 +210,9 @@ class ContentMigrator
     /**
      * Migrate assets field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateAssetsField($handle, $value, $config)
@@ -237,9 +237,9 @@ class ContentMigrator
     /**
      * Migrate taxonomy field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateTaxonomyField($handle, $value, $config)
@@ -262,9 +262,9 @@ class ContentMigrator
     /**
      * Migrate term value.
      *
-     * @param string $termValue
-     * @param string $fieldHandle
-     * @param array $fieldConfig
+     * @param  string  $termValue
+     * @param  string  $fieldHandle
+     * @param  array  $fieldConfig
      * @return string
      */
     protected function migrateTermValue($termValue, $fieldHandle, $fieldConfig)
@@ -283,9 +283,9 @@ class ContentMigrator
     /**
      * Migrate suggest field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateSuggestField($handle, $value, $config)
@@ -300,9 +300,9 @@ class ContentMigrator
     /**
      * Migrate replicator field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateReplicatorField($handle, $value, $config)
@@ -323,8 +323,8 @@ class ContentMigrator
     /**
      * Migrate replicator set.
      *
-     * @param array $set
-     * @param array $fieldConfigs
+     * @param  array  $set
+     * @param  array  $fieldConfigs
      * @return array
      */
     protected function migrateReplicatorSet($set, $fieldConfigs)
@@ -339,9 +339,9 @@ class ContentMigrator
     /**
      * Migrate bard field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateBardField($handle, $value, $config)
@@ -352,9 +352,9 @@ class ContentMigrator
     /**
      * Migrate grid field.
      *
-     * @param string $handle
-     * @param mixed $value
-     * @param array $config
+     * @param  string  $handle
+     * @param  mixed  $value
+     * @param  array  $config
      * @return mixed
      */
     protected function migrateGridField($handle, $value, $config)
@@ -369,8 +369,8 @@ class ContentMigrator
     /**
      * Migrate grid row.
      *
-     * @param array $row
-     * @param array $fieldConfigs
+     * @param  array  $row
+     * @param  array  $fieldConfigs
      * @return array
      */
     protected function migrateGridRow($row, $fieldConfigs)
@@ -417,7 +417,7 @@ class ContentMigrator
     /**
      * Get site path.
      *
-     * @param string|null $append
+     * @param  string|null  $append
      * @return string
      */
     protected function sitePath($append = null)
@@ -428,7 +428,7 @@ class ContentMigrator
     /**
      * Get field config.
      *
-     * @param string $handle
+     * @param  string  $handle
      */
     protected function getFieldConfig($handle)
     {
@@ -438,7 +438,7 @@ class ContentMigrator
     /**
      * Get fieldtype from config.
      *
-     * @param array $config
+     * @param  array  $config
      */
     protected function getFieldtype($config)
     {

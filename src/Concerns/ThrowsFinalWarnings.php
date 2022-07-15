@@ -11,8 +11,8 @@ trait ThrowsFinalWarnings
     /**
      * Add warning to be thrown at the end of a migration.
      *
-     * @param string $warning
-     * @param null|string $extra
+     * @param  string  $warning
+     * @param  null|string  $extra
      * @return $this
      */
     protected function addWarning($warning, $extra = null)
@@ -25,7 +25,7 @@ trait ThrowsFinalWarnings
     /**
      * Merge warnings from another thrown migrator warnings exception.
      *
-     * @param MigratorWarningsException $exception
+     * @param  MigratorWarningsException  $exception
      * @return $this
      */
     protected function mergeFromWarningsException(MigratorWarningsException $exception)

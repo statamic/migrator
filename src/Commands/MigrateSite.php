@@ -85,7 +85,7 @@ class MigrateSite extends Command
     /**
      * Create a new controller creator command instance.
      *
-     * @param Filesystem $files
+     * @param  Filesystem  $files
      */
     public function __construct(Filesystem $files)
     {
@@ -306,7 +306,7 @@ class MigrateSite extends Command
     /**
      * Get file handles from path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return \Illuminate\Support\Collection
      */
     protected function getFileHandlesFromPath($path)
@@ -323,7 +323,7 @@ class MigrateSite extends Command
     /**
      * Get folder handles from path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return \Illuminate\Support\Collection
      */
     protected function getFolderHandlesFromPath($path)
@@ -340,8 +340,8 @@ class MigrateSite extends Command
     /**
      * Run migrator on handle.
      *
-     * @param mixed $migrator
-     * @param mixed $handle
+     * @param  mixed  $migrator
+     * @param  mixed  $handle
      */
     protected function runMigratorOnHandle($migrator, $handle)
     {
@@ -355,8 +355,8 @@ class MigrateSite extends Command
     /**
      * Run migrator without handle (but can still pass one for command output).
      *
-     * @param string $migrator
-     * @param string|null $handle
+     * @param  string  $migrator
+     * @param  string|null  $handle
      */
     protected function runMigratorWithoutHandle($migrator, $handle = null)
     {
@@ -370,7 +370,7 @@ class MigrateSite extends Command
     /**
      * Try migration, with exception handling, and statistic recording.
      *
-     * @param \Closure $migration
+     * @param  \Closure  $migration
      */
     protected function tryMigration($migration, $descriptor, $handle)
     {
@@ -408,9 +408,9 @@ class MigrateSite extends Command
     /**
      * Output warnings.
      *
-     * @param string $descriptor
-     * @param string $handle
-     * @param \Illuminate\Support\Collection $warnings
+     * @param  string  $descriptor
+     * @param  string  $handle
+     * @param  \Illuminate\Support\Collection  $warnings
      */
     protected function outputMigrationWarnings($descriptor, $handle, $warnings)
     {
@@ -427,9 +427,9 @@ class MigrateSite extends Command
     /**
      * Log warnings.
      *
-     * @param string $descriptor
-     * @param string $handle
-     * @param \Illuminate\Support\Collection $warnings
+     * @param  string  $descriptor
+     * @param  string  $handle
+     * @param  \Illuminate\Support\Collection  $warnings
      */
     protected function logMigrationWarnings($descriptor, $handle, $warnings)
     {
@@ -448,9 +448,9 @@ class MigrateSite extends Command
     /**
      * Log error.
      *
-     * @param string $descriptor
-     * @param string $handle
-     * @param string $error
+     * @param  string  $descriptor
+     * @param  string  $handle
+     * @param  string  $error
      */
     protected function logError($descriptor, $handle, $error)
     {
@@ -464,9 +464,9 @@ class MigrateSite extends Command
     /**
      * Log exception.
      *
-     * @param string $descriptor
-     * @param string $handle
-     * @param string $exception
+     * @param  string  $descriptor
+     * @param  string  $handle
+     * @param  string  $exception
      */
     protected function logException($descriptor, $handle, $exception)
     {

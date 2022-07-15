@@ -35,7 +35,7 @@ trait GetsFieldsetHandles
     /**
      * Get partial fieldset usages.
      *
-     * @param array $fieldset
+     * @param  array  $fieldset
      * @return array
      */
     protected function getPartialFieldsetImports($fieldset)

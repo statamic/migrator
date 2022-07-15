@@ -662,7 +662,7 @@ EOT
     /**
      * Assert filesystem config file replacement is valid and contains specific content.
      *
-     * @param string $content
+     * @param  string  $content
      */
     protected function assertFilesystemConfigFileContains($content)
     {
@@ -707,7 +707,7 @@ EOT;
     /**
      * Assert filesystem disk array key exists.
      *
-     * @param string $disk
+     * @param  string  $disk
      */
     protected function assertFilesystemDiskExists($disk)
     {
@@ -717,7 +717,7 @@ EOT;
     /**
      * Assert filesystem disk array key does not exist.
      *
-     * @param string $disk
+     * @param  string  $disk
      */
     protected function assertFilesystemDiskNotExists($disk)
     {
@@ -727,7 +727,7 @@ EOT;
     /**
      * Assert git config path exists.
      *
-     * @param string $publicRelativePath
+     * @param  string  $publicRelativePath
      */
     protected function assertGitConfigPathExists($publicRelativePath)
     {
@@ -741,7 +741,7 @@ EOT;
     /**
      * Assert git config path does not not exist.
      *
-     * @param string $publicRelativePath
+     * @param  string  $publicRelativePath
      */
     protected function assertGitConfigPathNotExists($publicRelativePath)
     {
@@ -755,7 +755,7 @@ EOT;
     /**
      * Normalize `local` config for test assertions, since there are minor variations between laravel versions.
      *
-     * @param string $config
+     * @param  string  $config
      */
     protected function normalizeLocalConfig($config)
     {
@@ -786,7 +786,7 @@ EOT;
     /**
      * Normalize `public` config for test assertions, since there are minor variations between laravel versions.
      *
-     * @param string $config
+     * @param  string  $config
      */
     protected function normalizePublicConfig($config)
     {
@@ -821,7 +821,7 @@ EOT;
     /**
      * Normalize `s3` config for test assertions, since there are minor variations between laravel versions.
      *
-     * @param string $config
+     * @param  string  $config
      */
     protected function normalizeS3Config($config)
     {

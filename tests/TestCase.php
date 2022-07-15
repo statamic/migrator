@@ -145,7 +145,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = '') : void
+    public static function assertStringContainsString($needle, $haystack, $message = ''): void
     {
         parent::assertStringContainsString(
             static::normalizeMultilineString($needle),
@@ -157,7 +157,7 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * @deprecated
      */
-    public static function assertFileNotExists(string $filename, string $message = '') : void
+    public static function assertFileNotExists(string $filename, string $message = ''): void
     {
         method_exists(static::class, 'assertFileDoesNotExist')
             ? static::assertFileDoesNotExist($filename, $message)

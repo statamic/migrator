@@ -10,7 +10,7 @@ class MigratorErrorException extends Exception
     /**
      * Ensure message is required.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct($message)
     {
@@ -20,7 +20,7 @@ class MigratorErrorException extends Exception
     /**
      * Ensure relative path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return
      */
     protected function ensureRelativePath($path)
@@ -31,8 +31,8 @@ class MigratorErrorException extends Exception
     /**
      * Inject $path replacement into message '[path]'.
      *
-     * @param string $message
-     * @param string $path
+     * @param  string  $message
+     * @param  string  $path
      * @return string
      */
     protected function injectPathInMessage($message, $path)

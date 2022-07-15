@@ -10,8 +10,8 @@ trait MigratesRoute
     /**
      * Get route using dot notation.
      *
-     * @param string $key
-     * @param string|null $default
+     * @param  string  $key
+     * @param  string|null  $default
      * @return $this
      */
     protected function migrateRoute($key, $default = null)

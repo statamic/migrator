@@ -16,7 +16,7 @@ abstract class Migrator
     /**
      * Instantiate migrator.
      *
-     * @param string $handle
+     * @param  string  $handle
      */
     public function __construct($handle)
     {
@@ -27,7 +27,7 @@ abstract class Migrator
     /**
      * Instantiate migrator on handle.
      *
-     * @param string $handle
+     * @param  string  $handle
      * @return static
      */
     public static function handle($handle)
@@ -60,7 +60,7 @@ abstract class Migrator
     /**
      * Set whether files should be overwritten.
      *
-     * @param bool $overwrite
+     * @param  bool  $overwrite
      * @return $this
      */
     public function overwrite($overwrite)
@@ -78,7 +78,7 @@ abstract class Migrator
     /**
      * Set new path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return $this
      */
     protected function setNewPath($path)
@@ -91,7 +91,7 @@ abstract class Migrator
     /**
      * Get site path.
      *
-     * @param string|null $append
+     * @param  string|null  $append
      * @return string
      */
     protected function sitePath($append = null)
@@ -102,7 +102,7 @@ abstract class Migrator
     /**
      * Get new path.
      *
-     * @param string|null $append
+     * @param  string|null  $append
      * @return string
      */
     protected function newPath($append = null)
@@ -113,7 +113,7 @@ abstract class Migrator
     /**
      * Normalize path to help prevent errors in Windows.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function normalizePath($path)
@@ -124,8 +124,9 @@ abstract class Migrator
     /**
      * Validate unique.
      *
-     * @throws AlreadyExistsException
      * @return $this
+     *
+     * @throws AlreadyExistsException
      */
     protected function validateUnique()
     {
@@ -152,7 +153,7 @@ abstract class Migrator
     /**
      * Check if path exists (with files, if directory).
      *
-     * @param mixed $path
+     * @param  mixed  $path
      */
     protected function pathExists($path)
     {
@@ -178,8 +179,8 @@ abstract class Migrator
     /**
      * Copy directory from site path to new path.
      *
-     * @param string $sitePath
-     * @param string|null $newPath
+     * @param  string  $sitePath
+     * @param  string|null  $newPath
      * @return $this
      */
     protected function copyDirectoryFromSiteToNewPath($sitePath, $newPath = null)

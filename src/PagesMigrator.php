@@ -87,8 +87,8 @@ class PagesMigrator extends Migrator
     /**
      * Parse page folder.
      *
-     * @param string $folder
-     * @param string $key
+     * @param  string  $folder
+     * @param  string  $key
      * @return array
      */
     protected function parsePageFolder($folder, $key = 'root')
@@ -129,8 +129,8 @@ class PagesMigrator extends Migrator
     /**
      * Parse localized pages in folder.
      *
-     * @param string $folder
-     * @param array $pageOrigin
+     * @param  string  $folder
+     * @param  array  $pageOrigin
      */
     protected function parseLocalizedPagesInFolder($folder, $pageOrigin)
     {
@@ -142,9 +142,9 @@ class PagesMigrator extends Migrator
     /**
      * Prepare localized page.
      *
-     * @param array $page
-     * @param array $pageOrigin
-     * @param string $site
+     * @param  array  $page
+     * @param  array  $pageOrigin
+     * @param  string  $site
      * @return array
      */
     protected function prepareLocalizedPage($page, $pageOrigin, $site)
@@ -167,7 +167,7 @@ class PagesMigrator extends Migrator
     /**
      * Get page in folder.
      *
-     * @param string $folder
+     * @param  string  $folder
      * @return string|bool
      */
     protected function getPageInFolder($folder)
@@ -188,7 +188,7 @@ class PagesMigrator extends Migrator
     /**
      * Get localized pages in folder.
      *
-     * @param string $folder
+     * @param  string  $folder
      * @return \Illuminate\Support\Collection
      */
     protected function getLocalizedPagesInFolder($folder)
@@ -222,7 +222,7 @@ class PagesMigrator extends Migrator
     /**
      * Migrate page published status.
      *
-     * @param string $folder
+     * @param  string  $folder
      * @return bool
      */
     protected function migratePublishedStatus($page, $folder)
@@ -237,9 +237,9 @@ class PagesMigrator extends Migrator
     /**
      * Migrate page slug.
      *
-     * @param array $page
-     * @param string $key
-     * @param string $folder
+     * @param  array  $page
+     * @param  string  $key
+     * @param  string  $folder
      */
     protected function migratePageSlug($page, $key, $folder)
     {
@@ -332,8 +332,8 @@ class PagesMigrator extends Migrator
     /**
      * Migrate localized tree off of default tree.
      *
-     * @param array $defaultTree
-     * @param string $site
+     * @param  array  $defaultTree
+     * @param  string  $site
      * @return array
      */
     protected function migrateLocalizedTree($defaultTree, $site)
@@ -384,7 +384,7 @@ class PagesMigrator extends Migrator
     /**
      * Get page fieldset.
      *
-     * @param array $page
+     * @param  array  $page
      * @return string
      */
     protected function getPageFieldset($page)
@@ -404,9 +404,9 @@ class PagesMigrator extends Migrator
     /**
      * Generate entry path.
      *
-     * @param array $entry
-     * @param string|null $site
-     * @param int $number
+     * @param  array  $entry
+     * @param  string|null  $site
+     * @param  int  $number
      * @return string
      */
     protected function generateEntryPath($entry, $site = null, $number = 1)
@@ -466,8 +466,8 @@ class PagesMigrator extends Migrator
     /**
      * Generate new UUID for localized entry.
      *
-     * @param array $pageOrigin
-     * @param string $site
+     * @param  array  $pageOrigin
+     * @param  string  $site
      * @return string
      */
     protected function generateUuid($pageOrigin, $site)
@@ -482,7 +482,7 @@ class PagesMigrator extends Migrator
     /**
      * Recursively normalize tree keys.
      *
-     * @param array $tree
+     * @param  array  $tree
      * @return array
      */
     protected function normalizeTree($tree, $depth = 1)
@@ -509,7 +509,7 @@ class PagesMigrator extends Migrator
     /**
      * Get origin entry for localized entry.
      *
-     * @param array $localizedEntry
+     * @param  array  $localizedEntry
      * @return null|array
      */
     protected function getOriginEntry($localizedEntry)

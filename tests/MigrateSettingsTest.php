@@ -281,8 +281,8 @@ EOT
     /**
      * Assert config file is valid and contains specific content.
      *
-     * @param string $file
-     * @param string $content
+     * @param  string  $file
+     * @param  string  $content
      */
     protected function assertConfigFileContains($file, $content)
     {
@@ -310,7 +310,7 @@ EOT;
     /**
      * Assert routes file contains specific content.
      *
-     * @param string $content
+     * @param  string  $content
      */
     protected function assertRoutesFileContains($content)
     {

@@ -41,7 +41,7 @@ class Command extends IlluminateCommand
     /**
      * Run migration.
      *
-     * @param string|bool $handle
+     * @param  string|bool  $handle
      */
     protected function runMigration($handle)
     {
@@ -57,7 +57,7 @@ class Command extends IlluminateCommand
     /**
      * Output warnings.
      *
-     * @param \Illuminate\Support\Collection $warnings
+     * @param  \Illuminate\Support\Collection  $warnings
      */
     protected function outputWarnings($warnings)
     {

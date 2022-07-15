@@ -17,9 +17,9 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate fieldset as blueprint.
      *
-     * @param string $folder
-     * @param string $originalHandle
-     * @param string|null $newHandle
+     * @param  string  $folder
+     * @param  string  $originalHandle
+     * @param  string|null  $newHandle
      * @return $this
      */
     public static function asBlueprint($folder, $originalHandle, $newHandle = null)
@@ -49,7 +49,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Set new path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return $this
      */
     protected function setNewPath($path)
@@ -105,7 +105,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate sections.
      *
-     * @param array $sections
+     * @param  array  $sections
      * @return array
      */
     protected function migrateSections($sections)
@@ -120,7 +120,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate fields.
      *
-     * @param array $fields
+     * @param  array  $fields
      * @return array
      */
     protected function migrateFields($fields)
@@ -136,8 +136,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate field.
      *
-     * @param array $field
-     * @param string $handle
+     * @param  array  $field
+     * @param  string  $handle
      * @return array
      */
     protected function migrateField($field, $handle)
@@ -155,8 +155,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate field config.
      *
-     * @param array $config
-     * @param string $handle
+     * @param  array  $config
+     * @param  string  $handle
      * @return array
      */
     protected function migrateFieldConfig($config, $handle)
@@ -193,7 +193,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate replicator/bard/etc sets.
      *
-     * @param array $sets
+     * @param  array  $sets
      * @return array
      */
     protected function migrateSets($sets)
@@ -208,7 +208,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate field validation.
      *
-     * @param string|array $validation
+     * @param  string|array  $validation
      * @return string|array
      */
     protected function migrateValidation($validation)
@@ -231,7 +231,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate 'ext' validation rule.
      *
-     * @param string $rule
+     * @param  string  $rule
      * @return string
      */
     protected function migrateExtRule($rule)
@@ -242,7 +242,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate field conditions.
      *
-     * @param \Illuminate\Support\Collection $config
+     * @param  \Illuminate\Support\Collection  $config
      * @return \Illuminate\Support\Collection
      */
     public function migrateFieldConditions($config)
@@ -279,8 +279,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate redactor field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateRedactorField($config, $handle)
@@ -301,7 +301,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate redactor buttons.
      *
-     * @param \Illuminate\Support\Collection $config
+     * @param  \Illuminate\Support\Collection  $config
      * @return array
      */
     protected function migrateRedactorButtons($config)
@@ -328,7 +328,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Get redactor buttons from system config.
      *
-     * @param \Illuminate\Support\Collection $config
+     * @param  \Illuminate\Support\Collection  $config
      * @return \Illuminate\Support\Collection
      */
     protected function getRedactorButtons($config)
@@ -353,8 +353,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate pages field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migratePagesField($config, $handle)
@@ -373,8 +373,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate collection field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateCollectionField($config, $handle)
@@ -394,8 +394,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate taxonomy field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateTaxonomyField($config, $handle)
@@ -415,8 +415,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate tags field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateTagsField($config, $handle)
@@ -427,8 +427,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate suggest field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateSuggestField($config, $handle)
@@ -455,8 +455,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate suggest field with mode.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateSuggestFieldWithMode($config, $handle)
@@ -503,8 +503,8 @@ class FieldsetMigrator extends Migrator
     /**
      * Migrate date field.
      *
-     * @param \Illuminate\Support\Collection $config
-     * @param string $handle
+     * @param  \Illuminate\Support\Collection  $config
+     * @param  string  $handle
      * @return \Illuminate\Support\Collection
      */
     protected function migrateDateField($config, $handle)
@@ -527,7 +527,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Convert partial field to import.
      *
-     * @param array $config
+     * @param  array  $config
      * @return array
      */
     protected function convertPartialFieldToImport($config)
@@ -540,7 +540,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Normalize config and cast back to array.
      *
-     * @param \Illuminate\Support\Collection $config
+     * @param  \Illuminate\Support\Collection  $config
      * @return array
      */
     protected function normalizeConfigToArray($config)
@@ -567,7 +567,7 @@ class FieldsetMigrator extends Migrator
     /**
      * Get fieldtype.
      *
-     * @param array $config
+     * @param  array  $config
      * @return string
      */
     protected function getFieldtype($config)

@@ -9,7 +9,7 @@ trait PreparesPathFolder
     /**
      * Prepare folder for file path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function prepareFolder($path)
@@ -26,7 +26,7 @@ trait PreparesPathFolder
     /**
      * Delete folder for file path.
      *
-     * @param string $path
+     * @param  string  $path
      */
     protected function deleteFolder($path)
     {
@@ -40,7 +40,7 @@ trait PreparesPathFolder
     /**
      * Get folder from path.
      *
-     * @param string $path
+     * @param  string  $path
      * @return string
      */
     protected function getFolderFromPath($path)

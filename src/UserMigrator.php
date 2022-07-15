@@ -54,8 +54,9 @@ class UserMigrator extends Migrator
     /**
      * Validate email is present on user to be used as new handle.
      *
-     * @throws EmailRequiredException
      * @return $this
+     *
+     * @throws EmailRequiredException
      */
     protected function validateEmail()
     {
