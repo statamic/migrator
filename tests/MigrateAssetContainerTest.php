@@ -68,6 +68,22 @@ class MigrateAssetContainerTest extends TestCase
     }
 
     /** @test */
+    public function it_migrates_assets_folder_if_assets_are_left_in_original_site_nested_path()
+    {
+        $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
+            'path' => 'content/somewhere/nested',
+        ]));
+
+        $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('site/content/somewhere/nested'));
+
+        $this->assertCount(0, $this->files->allFiles(public_path('assets')));
+
+        $this->artisan('statamic:migrate:asset-container', ['handle' => 'main']);
+
+        $this->assertCount(3, $this->files->allFiles(public_path('assets')));
+    }
+
+    /** @test */
     public function it_migrates_multiple_assets_folders()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([

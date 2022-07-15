@@ -175,7 +175,11 @@ class AssetContainerMigrator extends Migrator
             return null;
         }
 
-        $path = Arr::get($config, 'path');
+        $configuredPath = Arr::get($config, 'path');
+
+        if ($this->files->exists($pathFromSite = base_path("site/{$configuredPath}"))) {
+            return $pathFromSite;
+        }
 
         $path = collect(explode('/', Arr::get($config, 'path')))->filter()->last();
 
