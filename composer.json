@@ -7,7 +7,7 @@
         "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d"
     },
     "require-dev": {
-        "statamic/cms": "^3.3.0",
+        "statamic/cms": "^3.3.21",
         "mockery/mockery": "^1.4.4",
         "orchestra/testbench": "^6.22.0 || ^7.0"
     },
