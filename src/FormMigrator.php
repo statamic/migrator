@@ -54,7 +54,7 @@ class FormMigrator extends Migrator
     }
 
     /**
-     * Migrate default v2 form schema to default v3 schema.
+     * Migrate default v2 form schema to new schema.
      *
      * @return $this
      */

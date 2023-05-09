@@ -45,7 +45,7 @@ class GlobalSetMigrator extends Migrator
     }
 
     /**
-     * Migrate default v2 global set schema to default v3 schema.
+     * Migrate default v2 global set schema to new schema.
      *
      * @return $this
      */

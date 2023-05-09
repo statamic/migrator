@@ -80,7 +80,7 @@ class FieldsetMigrator extends Migrator
     }
 
     /**
-     * Migrate v2 fieldset schema to v3 blueprint schema.
+     * Migrate v2 fieldset schema to new blueprint schema.
      *
      * @return $this
      */
