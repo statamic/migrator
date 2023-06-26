@@ -620,7 +620,9 @@ class ContentMigratorTest extends TestCase
             ]);
 
         $expected = [
-            'some_bard' => 'Well hello there!',
+            'some_bard' => [
+                ['type' => 'text', 'text' => 'Well hello there!'],
+            ],
             'blueprint' => 'speaker',
         ];
 

@@ -346,6 +346,13 @@ class ContentMigrator
      */
     protected function migrateBardField($handle, $value, $config)
     {
+        // If content was saved while bard had no sets, value may be a string, so we'll normalize to a bard text set...
+        if (is_string($value)) {
+            $value = [
+                ['type' => 'text', 'text' => $value],
+            ];
+        }
+
         return $this->migrateReplicatorField($handle, $value, $config);
     }
 
