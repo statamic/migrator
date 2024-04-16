@@ -290,7 +290,7 @@ EOT
         $this->assertFileExists($this->collectionsPath('favs/purple-shirt.md'));
     }
 
-    public function orderCollectionValues()
+    public static function orderCollectionValues()
     {
         return [
             'number' => ['number'],
