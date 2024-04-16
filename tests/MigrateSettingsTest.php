@@ -300,11 +300,11 @@ EOT;
         $this->assertEquals('array', gettype(include $config));
 
         // Assert begining and end of config is untouched.
-        $this->assertStringContainsString($beginning, $this->files->get($config));
-        $this->assertStringContainsString($end, $this->files->get($config));
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $this->files->get($config));
+        $this->assertStringContainsStringWithNormalizedLineEndings($end, $this->files->get($config));
 
         // Assert config file contains specific content.
-        return $this->assertStringContainsString($content, $this->files->get($config));
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $this->files->get($config));
     }
 
     /**
@@ -325,9 +325,9 @@ EOT;
         $end = '];';
 
         // Assert begining of routes file is untouched.
-        $this->assertStringContainsString($beginning, $contents);
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $contents);
 
         // Assert routes file contains specific content.
-        return $this->assertStringContainsString($content, $contents);
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $contents);
     }
 }
