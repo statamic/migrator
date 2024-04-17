@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Console\Processes\Process;
+use Illuminate\Support\Facades\File;
 
 class MigrateSettingsTest extends TestCase
 {
@@ -164,18 +165,12 @@ EOT
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
-
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
-    ],
-EOT
-        );
+        $this->assertSame(File::get(resource_path('sites.yaml')),
+            'default:
+  name: English
+  locale: en_US
+  url: /
+');
     }
 
     /** @test */
@@ -196,24 +191,16 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
-
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => env('APP_URL'),
-        ],
-
-        'fr' => [
-            'name' => 'French',
-            'locale' => 'fr_FR',
-            'url' => env('APP_URL_FR'),
-        ],
-
-    ],
-EOT
-        );
+        $this->assertSame(File::get(resource_path('sites.yaml')),
+            "default:
+  name: English
+  locale: en_US
+  url: '{env:APP_URL}'
+fr:
+  name: French
+  locale: fr_FR
+  url: '{env:APP_URL_FR}'
+");
     }
 
     /** @test */
@@ -223,18 +210,12 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
-
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
-    ],
-EOT
-        );
+        $this->assertSame(File::get(resource_path('sites.yaml')),
+            'default:
+  name: English
+  locale: en_US
+  url: /
+');
     }
 
     /** @test */

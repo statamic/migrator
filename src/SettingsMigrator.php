@@ -2,6 +2,9 @@
 
 namespace Statamic\Migrator;
 
+use Illuminate\Support\Facades\File;
+use Statamic\Facades\Site;
+use Statamic\Facades\YAML;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Support\Arr;
 
@@ -116,13 +119,12 @@ class SettingsMigrator extends Migrator
      */
     protected function migrateSystem()
     {
-        $this->validate(['system.php', 'sites.php']);
-
+        $this->validate(['system.php']);
         $system = $this->parseSettingsFile('system.yaml');
 
-        Configurator::file($configFile = 'statamic/sites.php')
-            ->mergeSpaciously('sites', $this->migrateLocales($system))
-            ->ifNoChanges($this->throwNoChangesException($configFile));
+        Site::setSites($this->migrateLocales($system))->save();
+
+        // File::put(resource_path('sites.yaml'), YAML::dump($this->migrateLocales($system)));
 
         return $this;
     }
