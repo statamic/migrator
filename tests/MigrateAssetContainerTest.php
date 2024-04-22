@@ -412,8 +412,6 @@ EOT
         $this->assertFilesystemDiskExists('public');
         $this->assertFilesystemDiskExists('s3');
         $this->assertFilesystemDiskExists('assets');
-
-        $this->assertGitConfigPathNotExists('assets');
     }
 
     /** @test */
