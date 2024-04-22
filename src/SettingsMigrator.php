@@ -4,7 +4,6 @@ namespace Statamic\Migrator;
 
 use Illuminate\Support\Facades\File;
 use Statamic\Facades\Site;
-use Statamic\Facades\YAML;
 use Statamic\Migrator\Exceptions\MigratorSkippedException;
 use Statamic\Support\Arr;
 
@@ -123,8 +122,6 @@ class SettingsMigrator extends Migrator
         $system = $this->parseSettingsFile('system.yaml');
 
         Site::setSites($this->migrateLocales($system))->save();
-
-        // File::put(resource_path('sites.yaml'), YAML::dump($this->migrateLocales($system)));
 
         return $this;
     }
