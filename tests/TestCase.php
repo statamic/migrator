@@ -155,6 +155,18 @@ class TestCase extends \Orchestra\Testbench\TestCase
     }
 
     /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertSameWithNormalizedLineEndings($needle, $haystack, $message = ''): void
+    {
+        static::assertSame(
+            static::normalizeMultilineString($needle),
+            static::normalizeMultilineString($haystack),
+            $message
+        );
+    }
+
+    /**
      * @deprecated
      */
     public static function assertFileNotExists(string $filename, string $message = ''): void
