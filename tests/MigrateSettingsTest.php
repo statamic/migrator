@@ -165,7 +165,7 @@ EOT
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertSame(File::get(resource_path('sites.yaml')),
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
             'default:
   name: English
   locale: en_US
@@ -191,7 +191,7 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertSame(File::get(resource_path('sites.yaml')),
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
             "default:
   name: English
   locale: en_US
@@ -210,7 +210,7 @@ fr:
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertSame(File::get(resource_path('sites.yaml')),
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
             'default:
   name: English
   locale: en_US
