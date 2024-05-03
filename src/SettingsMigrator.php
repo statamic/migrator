@@ -121,7 +121,11 @@ class SettingsMigrator extends Migrator
         $this->validate(['system.php']);
         $system = $this->parseSettingsFile('system.yaml');
 
-        Site::setSites($this->migrateLocales($system))->save();
+        Site::setSites($sites = $this->migrateLocales($system))->save();
+
+        Configurator::file($configFile = 'statamic/system.php')
+            ->set('multisite', count($sites) > 1)
+            ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
     }

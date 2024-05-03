@@ -171,6 +171,11 @@ EOT
   locale: en_US
   url: /
 ');
+
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => false,
+EOT
+        );
     }
 
     /** @test */
@@ -201,6 +206,11 @@ fr:
   locale: fr_FR
   url: '{env:APP_URL_FR}'
 ");
+
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => true,
+EOT
+);
     }
 
     /** @test */
@@ -216,6 +226,11 @@ fr:
   locale: en_US
   url: /
 ');
+
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => false,
+EOT
+        );
     }
 
     /** @test */
