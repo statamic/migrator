@@ -122,14 +122,14 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         $actual = str_replace("\r\n", "\n", $actual);
 
-        $this->assertStringContainsString($expected, $actual);
+        $this->assertStringContainsStringWithNormalizedLineEndings($expected, $actual);
     }
 
     protected function assertFileHasContent($expected, $path)
     {
         $this->assertFileExists($path);
 
-        $this->assertStringContainsString($expected, $this->files->get($path));
+        $this->assertStringContainsStringWithNormalizedLineEndings($expected, $this->files->get($path));
     }
 
     protected function sitePath($append = null)
@@ -145,9 +145,21 @@ class TestCase extends \Orchestra\Testbench\TestCase
     /**
      * Normalize line endings before performing assertion in windows.
      */
-    public static function assertStringContainsString($needle, $haystack, $message = ''): void
+    public static function assertStringContainsStringWithNormalizedLineEndings($needle, $haystack, $message = ''): void
     {
-        parent::assertStringContainsString(
+        static::assertStringContainsString(
+            static::normalizeMultilineString($needle),
+            static::normalizeMultilineString($haystack),
+            $message
+        );
+    }
+
+    /**
+     * Normalize line endings before performing assertion in windows.
+     */
+    public static function assertSameWithNormalizedLineEndings($needle, $haystack, $message = ''): void
+    {
+        static::assertSame(
             static::normalizeMultilineString($needle),
             static::normalizeMultilineString($haystack),
             $message

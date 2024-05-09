@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Console\Processes\Process;
+use Illuminate\Support\Facades\File;
 
 class MigrateSettingsTest extends TestCase
 {
@@ -164,16 +165,15 @@ EOT
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
+            'default:
+  name: English
+  locale: en_US
+  url: /
+');
 
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
-    ],
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => false,
 EOT
         );
     }
@@ -196,24 +196,21 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
+            "default:
+  name: English
+  locale: en_US
+  url: '{env:APP_URL}'
+fr:
+  name: French
+  locale: fr_FR
+  url: '{env:APP_URL_FR}'
+");
 
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => env('APP_URL'),
-        ],
-
-        'fr' => [
-            'name' => 'French',
-            'locale' => 'fr_FR',
-            'url' => env('APP_URL_FR'),
-        ],
-
-    ],
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => true,
 EOT
-        );
+);
     }
 
     /** @test */
@@ -223,16 +220,15 @@ EOT
 
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
-        $this->assertConfigFileContains('sites.php', <<<'EOT'
-    'sites' => [
+        $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
+            'default:
+  name: English
+  locale: en_US
+  url: /
+');
 
-        'default' => [
-            'name' => 'English',
-            'locale' => 'en_US',
-            'url' => '/',
-        ],
-
-    ],
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'multisite' => false,
 EOT
         );
     }
@@ -300,11 +296,11 @@ EOT;
         $this->assertEquals('array', gettype(include $config));
 
         // Assert begining and end of config is untouched.
-        $this->assertStringContainsString($beginning, $this->files->get($config));
-        $this->assertStringContainsString($end, $this->files->get($config));
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $this->files->get($config));
+        $this->assertStringContainsStringWithNormalizedLineEndings($end, $this->files->get($config));
 
         // Assert config file contains specific content.
-        return $this->assertStringContainsString($content, $this->files->get($config));
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $this->files->get($config));
     }
 
     /**
@@ -325,9 +321,9 @@ EOT;
         $end = '];';
 
         // Assert begining of routes file is untouched.
-        $this->assertStringContainsString($beginning, $contents);
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $contents);
 
         // Assert routes file contains specific content.
-        return $this->assertStringContainsString($content, $contents);
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $contents);
     }
 }

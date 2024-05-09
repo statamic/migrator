@@ -692,14 +692,14 @@ EOT;
         $this->assertEquals('array', gettype(include $configPath));
 
         // Assert begining and end of config is untouched.
-        $this->assertStringContainsString($beginning, $config);
-        $this->assertStringContainsString($end, $config);
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $config);
+        $this->assertStringContainsStringWithNormalizedLineEndings($end, $config);
 
         // Assert irrelevant config is untouched.
-        $this->assertStringContainsString($irrelevantConfig, $config);
+        $this->assertStringContainsStringWithNormalizedLineEndings($irrelevantConfig, $config);
 
         // Assert config file contains specific content.
-        return $this->assertStringContainsString($content, $config);
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $config);
     }
 
     /**
@@ -731,7 +731,7 @@ EOT;
     {
         $configPath = config_path('statamic/git.php');
 
-        $this->assertStringContainsString("public_path('{$publicRelativePath}')", $this->files->get($configPath));
+        $this->assertStringContainsStringWithNormalizedLineEndings("public_path('{$publicRelativePath}')", $this->files->get($configPath));
 
         return $this->assertContains(public_path($publicRelativePath), Arr::get(include $configPath, 'paths'));
     }

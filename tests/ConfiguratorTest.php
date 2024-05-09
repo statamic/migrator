@@ -638,13 +638,13 @@ EOT;
         $this->assertEquals('array', gettype(include $path));
 
         // Assert begining and end of config is untouched.
-        $this->assertStringContainsString($beginning, $contents);
-        $this->assertStringContainsString($end, $contents);
+        $this->assertStringContainsStringWithNormalizedLineEndings($beginning, $contents);
+        $this->assertStringContainsStringWithNormalizedLineEndings($end, $contents);
 
         // Assert irrelevant config is untouched.
-        $this->assertStringContainsString($extraConfig, $contents);
+        $this->assertStringContainsStringWithNormalizedLineEndings($extraConfig, $contents);
 
         // Assert config file contains specific content.
-        return $this->assertStringContainsString($content, $contents);
+        return $this->assertStringContainsStringWithNormalizedLineEndings($content, $contents);
     }
 }

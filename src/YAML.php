@@ -7,6 +7,7 @@ use Spyc;
 use Statamic\Facades\File;
 use Statamic\Facades\Pattern;
 use Statamic\Facades\YAML as StatamicYAML;
+use Statamic\Support\Arr;
 
 class YAML
 {
@@ -73,7 +74,7 @@ class YAML
         if (Pattern::startsWith($str, '---')) {
             $split = preg_split("/\n---/", $str, 2, PREG_SPLIT_NO_EMPTY);
             $str = $split[0];
-            $content = ltrim(array_get($split, 1, ''));
+            $content = ltrim(Arr::get($split, 1, ''));
         }
 
         $yaml = Spyc::YAMLLoadString($str);
