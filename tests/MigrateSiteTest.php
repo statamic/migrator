@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use Facades\Statamic\Console\Processes\Process;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
@@ -54,6 +55,8 @@ class MigrateSiteTest extends TestCase
         $this->files->copyDirectory(__DIR__.'/Fixtures/site', base_path('site'));
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
         $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->paths('routesFile'));
+
+        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
     }
 
     /** @test */
