@@ -630,6 +630,34 @@ class ContentMigratorTest extends TestCase
     }
 
     /** @test */
+    public function it_can_migrate_link_it_fields()
+    {
+        $content = $this
+            ->setFields([
+                'url' => ['type' => 'link_it'],
+                'asset' => ['type' => 'link_it', 'containers' => ['main']],
+                'term' => ['type' => 'link_it', 'taxonomies' => ['tags']],
+                'page' => ['type' => 'link_it'],
+            ])
+            ->migrateContent([
+                'url' => ['type' => 'url', 'url' => 'http://example.com'],
+                'asset' => ['type' => 'asset', 'asset' => ['/assets/img/coffee-mug.jpg'], 'container' => 'main'],
+                'term' => ['type' => 'term', 'term' => ['tags/coffee'], 'taxonomy' => 'tags'],
+                'page' => ['type' => 'page', 'page' => ['abc']],
+            ]);
+
+        $expected = [
+            'url' => ['type' => 'url', 'url' => 'http://example.com'],
+            'asset' => ['type' => 'asset', 'asset' => ['main::img/coffee-mug.jpg'], 'container' => 'main'],
+            'term' => ['type' => 'term', 'term' => ['tags::coffee'], 'taxonomy' => 'tags'],
+            'page' => ['type' => 'entry', 'entry' => ['abc']],
+            'blueprint' => 'speaker',
+        ];
+
+        $this->assertEquals($expected, $content);
+    }
+
+    /** @test */
     public function it_can_migrate_custom_layout()
     {
         $content = $this->migrateContent([
