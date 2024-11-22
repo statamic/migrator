@@ -181,7 +181,7 @@ class FieldsetMigrator extends Migrator
 
         $fieldtype = $config['type'] ?? 'text';
 
-        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
+        $migrateMethod = 'migrate'.str($fieldtype)->studly().'Field';
 
         if (method_exists($this, $migrateMethod)) {
             $config = $this->{$migrateMethod}($config, $handle);
@@ -519,6 +519,19 @@ class FieldsetMigrator extends Migrator
             $config
                 ->put('time_required', true)
                 ->forget('require_time');
+        }
+
+        return $config;
+    }
+
+    protected function migrateLinkitField($config, $handle)
+    {
+        // LinkIt in v2 always allowed pages without any extra config.
+        // In v3 it only deals with entries, so we'll add pages all the time.
+        if ($config->has('collections')) {
+            $config['collections'] = collect($config['collections'])->push('pages')->unique()->all();
+        } else {
+            $config['collections'] = ['pages'];
         }
 
         return $config;

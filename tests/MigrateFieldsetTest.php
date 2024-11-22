@@ -795,6 +795,41 @@ EOT
         $this->assertEquals($expected, $fieldset);
     }
 
+
+    /** @test */
+    public function it_migrates_link_it_field()
+    {
+        $fieldset = $this->migrateFieldset([
+            'title' => 'Posts',
+            'fields' => [
+                'url' => ['type' => 'link_it'],
+                'entries' => ['type' => 'link_it', 'collections' => ['blog', 'products']],
+            ],
+        ]);
+
+        $expected = [
+            'title' => 'Posts',
+            'fields' => [
+                [
+                    'handle' => 'url',
+                    'field' => [
+                        'type' => 'link_it',
+                        'collections' => ['pages']
+                    ],
+                ],
+                [
+                    'handle' => 'entries',
+                    'field' => [
+                        'type' => 'link_it',
+                        'collections' => ['blog', 'products', 'pages']
+                    ],
+                ],
+            ],
+        ];
+
+        $this->assertEquals($expected, $fieldset);
+    }
+
     /** @test */
     public function it_migrates_extention_validation()
     {

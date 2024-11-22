@@ -198,7 +198,7 @@ class ContentMigrator
         $config = $config ?? $this->getFieldConfig($handle);
         $fieldtype = $this->getFieldtype($config);
 
-        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
+        $migrateMethod = 'migrate'.str($fieldtype)->studly().'Field';
 
         if (method_exists($this, $migrateMethod)) {
             return $this->{$migrateMethod}($handle, $value, $config);
@@ -385,6 +385,27 @@ class ContentMigrator
         return collect($row)->map(function ($fieldValue, $fieldHandle) use ($fieldConfigs) {
             return $this->migrateField($fieldHandle, $fieldValue, Arr::get($fieldConfigs, $fieldHandle, []));
         })->all();
+    }
+
+    protected function migrateLinkitField($handle, $value, $config)
+    {
+        if ($value['type'] === 'asset') {
+            // Use Statamic's migration logic which handles URLs, but they are
+            // returned without container id prefixes, and LinkIt expects them.
+            $asset = $this->migrateAssetsField(null, $value['asset'], ['container' => $value['container']]);
+            $value['asset'] = collect($asset)->map(fn ($a) => $value['container'].'::'.$a)->all();
+        }
+
+        if ($value['type'] === 'term') {
+            $value['term'] = collect($value['term'])->map(fn ($t) => str($t)->replace('/', '::')->toString())->all();
+        }
+
+        if ($value['type'] === 'page') {
+            $value['type'] = 'entry';
+            $value['entry'] = Arr::pull($value, 'page');
+        }
+
+        return $value;
     }
 
     /**
