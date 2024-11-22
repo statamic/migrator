@@ -198,7 +198,7 @@ class ContentMigrator
         $config = $config ?? $this->getFieldConfig($handle);
         $fieldtype = $this->getFieldtype($config);
 
-        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
+        $migrateMethod = 'migrate'.str($fieldtype)->studly().'Field';
 
         if (method_exists($this, $migrateMethod)) {
             return $this->{$migrateMethod}($handle, $value, $config);

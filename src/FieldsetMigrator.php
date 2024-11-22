@@ -181,7 +181,7 @@ class FieldsetMigrator extends Migrator
 
         $fieldtype = $config['type'] ?? 'text';
 
-        $migrateMethod = 'migrate'.ucfirst(strtolower($fieldtype)).'Field';
+        $migrateMethod = 'migrate'.str($fieldtype)->studly().'Field';
 
         if (method_exists($this, $migrateMethod)) {
             $config = $this->{$migrateMethod}($config, $handle);
