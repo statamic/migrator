@@ -387,6 +387,27 @@ class ContentMigrator
         })->all();
     }
 
+    protected function migrateLinkitField($handle, $value, $config)
+    {
+        if ($value['type'] === 'asset') {
+            // Use Statamic's migration logic which handles URLs, but they are
+            // returned without container id prefixes, and LinkIt expects them.
+            $asset = $this->migrateAssetsField(null, $value['asset'], ['container' => $value['container']]);
+            $value['asset'] = collect($asset)->map(fn ($a) => $value['container'].'::'.$a)->all();
+        }
+
+        if ($value['type'] === 'term') {
+            $value['term'] = collect($value['term'])->map(fn ($t) => str($t)->replace('/', '::')->toString())->all();
+        }
+
+        if ($value['type'] === 'page') {
+            $value['type'] = 'entry';
+            $value['entry'] = Arr::pull($value, 'page');
+        }
+
+        return $value;
+    }
+
     /**
      * Migrate fieldset to blueprint.
      *

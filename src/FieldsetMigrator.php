@@ -524,6 +524,19 @@ class FieldsetMigrator extends Migrator
         return $config;
     }
 
+    protected function migrateLinkitField($config, $handle)
+    {
+        // LinkIt in v2 always allowed pages without any extra config.
+        // In v3 it only deals with entries, so we'll add pages all the time.
+        if ($config->has('collections')) {
+            $config['collections'] = collect($config['collections'])->push('pages')->unique()->all();
+        } else {
+            $config['collections'] = ['pages'];
+        }
+
+        return $config;
+    }
+
     /**
      * Convert partial field to import.
      *
