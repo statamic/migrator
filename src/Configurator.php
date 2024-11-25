@@ -61,7 +61,7 @@ class Configurator
 
         $this->preparePhpCsFixer();
 
-        Process::run(['vendor/bin/php-cs-fixer', 'fix', $path, '--rules', $rules]);
+        Process::run([getcwd().'/vendor/bin/php-cs-fixer', 'fix', $path, '--rules', $rules]);
 
         return $this;
     }
