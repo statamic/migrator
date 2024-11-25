@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Facades\Statamic\Console\Processes\Process;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
@@ -15,8 +14,6 @@ class MigrateAssetContainerTest extends TestCase
         parent::setUp();
 
         $this->configurator = Configurator::file('filesystems.php');
-
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
     }
 
     protected function paths()
