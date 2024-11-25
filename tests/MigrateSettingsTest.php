@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Facades\Statamic\Console\Processes\Process;
 use Illuminate\Support\Facades\File;
 
 class MigrateSettingsTest extends TestCase
@@ -19,8 +18,6 @@ class MigrateSettingsTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
 
         $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->paths('routesFile'));
     }

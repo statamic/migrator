@@ -2,7 +2,6 @@
 
 namespace Tests;
 
-use Facades\Statamic\Console\Processes\Process;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 
@@ -15,8 +14,6 @@ class ConfiguratorTest extends TestCase
         $this->files->copy(__DIR__.'/Fixtures/config/configurator-test.php', $this->path());
 
         $this->configurator = Configurator::file('statamic/configurator-test.php');
-
-        Process::swap(new \Statamic\Console\Processes\Process(__DIR__.'/../'));
     }
 
     protected function path()
