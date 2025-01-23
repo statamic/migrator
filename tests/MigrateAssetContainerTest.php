@@ -795,7 +795,7 @@ EOT;
             'root' => storage_path('app'),
             'throw' => false,
         ],
-        EOT;
+EOT;
 
         // Current version
         $current = <<<'EOT'
@@ -840,7 +840,7 @@ EOT;
             'visibility' => 'public',
             'throw' => false,
         ],
-        EOT;
+EOT;
 
         // Current version
         $current = <<<'EOT'
