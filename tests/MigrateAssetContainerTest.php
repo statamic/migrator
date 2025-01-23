@@ -788,7 +788,7 @@ EOT;
         ],
 EOT;
 
-        // Up through Larvavel 11.39
+        // Up until Laravel 11.39
         $variants[] = <<<'EOT'
         'local' => [
             'driver' => 'local',
@@ -831,7 +831,7 @@ EOT;
         ],
 EOT;
 
-        // Up through Larvavel 11.39
+        // Up until Laravel 11.39
         $variants[] = <<<'EOT'
         'public' => [
             'driver' => 'local',
@@ -895,7 +895,7 @@ EOT;
         ],
 EOT;
 
-        // Up through Larvavel 11.39
+        // Up until Laravel 11.39
         $variants[] = <<<'EOT'
         's3' => [
             'driver' => 's3',
