@@ -326,6 +326,7 @@ class AssetContainerMigrator extends Migrator
             'url' => "/{$path}",
             'visibility' => 'public',
             'throw' => false,
+            'report' => false,
         ];
     }
 
@@ -348,6 +349,7 @@ class AssetContainerMigrator extends Migrator
             'endpoint' => "env('{$envPrefix}_AWS_ENDPOINT')",
             'use_path_style_endpoint' => "env('{$envPrefix}_AWS_USE_PATH_STYLE_ENDPOINT', false)",
             'throw' => false,
+            'report' => false,
         ];
     }
 
