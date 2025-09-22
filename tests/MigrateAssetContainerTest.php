@@ -299,7 +299,8 @@ EOT
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -369,7 +370,8 @@ EOT
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -438,7 +440,8 @@ EOT
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -513,7 +516,8 @@ EOT
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -619,7 +623,8 @@ EOT
 
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
@@ -797,11 +802,22 @@ EOT;
         ],
 EOT;
 
+        // Up until Laravel 12
+        $variants[] = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app'),
+            'throw' => false,
+            'report' => false,
+        ],
+EOT;
+
         // Current version
         $current = <<<'EOT'
         'local' => [
             'driver' => 'local',
-            'root' => storage_path('app'),
+            'root' => storage_path('app/private'),
+            'serve' => true,
             'throw' => false,
             'report' => false,
         ],
