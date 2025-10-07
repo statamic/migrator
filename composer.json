@@ -7,7 +7,7 @@
         "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d"
     },
     "require-dev": {
-        "statamic/cms": "^5.41",
+        "statamic/cms": "^6.0",
         "mockery/mockery": "^1.4.4",
         "orchestra/testbench": "^8.28 || ^9.6.1 || ^10.0",
         "phpunit/phpunit": "^10.5.35 || ^11.0"
