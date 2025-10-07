@@ -84,11 +84,6 @@ EOT
         );
 
         $this->assertConfigFileContains('cp.php', <<<'EOT'
-    'date_format' => 'Y-m-d',
-EOT
-        );
-
-        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'widgets' => [
         'getting_started',
         [
