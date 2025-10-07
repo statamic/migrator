@@ -9,7 +9,7 @@
     "require-dev": {
         "statamic/cms": "^6.0",
         "mockery/mockery": "^1.4.4",
-        "orchestra/testbench": "^8.28 || ^9.6.1 || ^10.0",
+        "orchestra/testbench": "^9.6.1 || ^10.0",
         "phpunit/phpunit": "^10.5.35 || ^11.0"
     },
     "autoload": {
