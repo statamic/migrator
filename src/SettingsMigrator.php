@@ -124,6 +124,7 @@ class SettingsMigrator extends Migrator
 
         Configurator::file($configFile = 'statamic/system.php')
             ->set('multisite', count($sites) > 1)
+            ->set('display_timezone', $system['timezone'] ?? null)
             ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;

@@ -155,6 +155,11 @@ EOT
     /** @test */
     public function it_migrates_system_settings()
     {
+        $this->files->put($this->sitePath('settings/system.yaml'), <<<'EOT'
+timezone: 'America/New_York'
+EOT
+        );
+
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
         $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
@@ -166,6 +171,11 @@ EOT
 
         $this->assertConfigFileContains('system.php', <<<'EOT'
     'multisite' => false,
+EOT
+        );
+
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'display_timezone' => 'America/New_York',
 EOT
         );
     }
