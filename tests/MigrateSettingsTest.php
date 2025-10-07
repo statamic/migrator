@@ -276,11 +276,21 @@ EOT
     {
         $config = config_path("statamic/{$file}");
 
-        $beginning = <<<'EOT'
+        if ($file === 'cp.php') {
+            $beginning = <<<'EOT'
+<?php
+
+use Statamic\CP\Color;
+
+return [
+EOT;
+        } else {
+            $beginning = <<<'EOT'
 <?php
 
 return [
 EOT;
+        }
 
         $end = '];';
 
