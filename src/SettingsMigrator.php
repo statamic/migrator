@@ -67,7 +67,6 @@ class SettingsMigrator extends Migrator
 
         Configurator::file($configFile = 'statamic/cp.php')
             ->set('start_page', $this->migrateStartPage($cp['start_page'] ?? false))
-            ->set('date_format', $cp['date_format'] ?? false)
             ->merge('widgets', $cp['widgets'] ?? [])
             ->set('pagination_size', $cp['pagination_size'] ?? false)
             ->ifNoChanges($this->throwNoChangesException($configFile));
