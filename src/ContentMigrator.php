@@ -2,7 +2,9 @@
 
 namespace Statamic\Migrator;
 
+use Carbon\Carbon;
 use Illuminate\Filesystem\Filesystem;
+use Statamic\Fieldtypes\Date;
 use Statamic\Migrator\Exceptions\EmptyValueException;
 use Statamic\Support\Arr;
 use Statamic\Support\Str;
@@ -202,6 +204,21 @@ class ContentMigrator
 
         if (method_exists($this, $migrateMethod)) {
             return $this->{$migrateMethod}($handle, $value, $config);
+        }
+
+        return $value;
+    }
+
+    protected function migrateDateField($handle, $value, $config)
+    {
+        if (($originalTimezone = $this->getSetting('system.timezone', 'UTC')) !== 'UTC') {
+            $value = Carbon::parse($value, $originalTimezone)
+                ->utc()
+                ->format($config['format'] ?? Date::DEFAULT_DATETIME_FORMAT);
+
+            if (is_numeric($value)) {
+                $value = (int) $value;
+            }
         }
 
         return $value;
