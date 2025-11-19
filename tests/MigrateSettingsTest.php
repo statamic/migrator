@@ -72,7 +72,7 @@ EOT
     public function it_migrates_cp_settings()
     {
         $this->assertConfigFileContains('cp.php', <<<'EOT'
-        'getting_started',
+        //
 EOT
         );
 
@@ -85,7 +85,7 @@ EOT
 
         $this->assertConfigFileContains('cp.php', <<<'EOT'
     'widgets' => [
-        'getting_started',
+        //
         [
             'type' => 'collection',
             'collection' => 'blog',
