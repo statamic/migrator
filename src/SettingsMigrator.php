@@ -67,7 +67,6 @@ class SettingsMigrator extends Migrator
 
         Configurator::file($configFile = 'statamic/cp.php')
             ->set('start_page', $this->migrateStartPage($cp['start_page'] ?? false))
-            ->set('date_format', $cp['date_format'] ?? false)
             ->merge('widgets', $cp['widgets'] ?? [])
             ->set('pagination_size', $cp['pagination_size'] ?? false)
             ->ifNoChanges($this->throwNoChangesException($configFile));
@@ -125,6 +124,7 @@ class SettingsMigrator extends Migrator
 
         Configurator::file($configFile = 'statamic/system.php')
             ->set('multisite', count($sites) > 1)
+            ->set('display_timezone', $system['timezone'] ?? null)
             ->ifNoChanges($this->throwNoChangesException($configFile));
 
         return $this;
