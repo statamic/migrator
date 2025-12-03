@@ -3,7 +3,7 @@
     "type": "statamic-addon",
     "require": {
         "php": "^8.4",
-        "friendsofphp/php-cs-fixer": "^3.90.0",
+        "friendsofphp/php-cs-fixer": "^3.91.0",
         "illuminate/contracts": "12.*",
         "laravel/framework": "^12.0",
         "league/flysystem-aws-s3-v3": "~1.0 || ~3.0",
