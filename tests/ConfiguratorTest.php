@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 
@@ -21,7 +22,7 @@ class ConfiguratorTest extends TestCase
         return Path::tidy(config_path('statamic/configurator-test.php'));
     }
 
-    /** @test */
+    #[Test]
     public function it_normalizes_mangled_indentation_and_ensures_trailing_commas()
     {
         $this->configurator->normalize();
@@ -41,7 +42,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_string_value_to_something_new()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -70,7 +71,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_integer_value_to_something_new()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -86,7 +87,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_array_value_to_something_new()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -123,7 +124,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_nested_array_value_to_something_new()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -160,7 +161,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_set_completely_new_values()
     {
         $this->configurator->set('lol', 'catz');
@@ -187,7 +188,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_set_if_falsey_value_is_passed()
     {
         $this->configurator->set('action', false);
@@ -200,7 +201,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_does_set_falsey_value_when_explicitly_allowed()
     {
         $this->configurator->set('action', false, true);
@@ -225,7 +226,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_merge_into_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -277,7 +278,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_merge_into_nested_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -303,7 +304,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_spaciously_merge_into_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -350,7 +351,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_spaciously_merge_into_nested_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -378,7 +379,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_spaciously_merge_into_mangled_array()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -422,7 +423,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_refresh_config()
     {
         $this->configurator->merge('disks_spacious.local', [
@@ -436,7 +437,7 @@ EOT
         $this->assertEquals('beer', config('statamic.configurator-test.disks_spacious.local.root'));
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_merge_duplicate_values()
     {
         $this->assertConfigFileContains(<<<'EOT'
@@ -513,7 +514,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_can_merge_multiple_array_items_with_children()
     {
         $this->configurator->merge('widgets', [

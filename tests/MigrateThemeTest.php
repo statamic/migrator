@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 
 class MigrateThemeTest extends TestCase
@@ -26,7 +27,7 @@ class MigrateThemeTest extends TestCase
         return Path::tidy($this->sitePath("themes/redwood/{$append}"));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_views()
     {
         $this->assertCount(0, $this->files->allFiles($this->viewsPath()));
@@ -54,7 +55,7 @@ class MigrateThemeTest extends TestCase
         $this->assertEquals($expectedUserViews, $migratedUserViews);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_default_layout()
     {
         $this->assertCount(0, $this->files->allFiles($this->viewsPath()));
@@ -65,7 +66,7 @@ class MigrateThemeTest extends TestCase
         $this->assertFileExists($this->viewsPath('layouts/layout.antlers.html'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_custom_default_layout()
     {
         $this->files->put($this->sitePath('settings/theming.yaml'), 'default_layout: custom');
@@ -84,7 +85,7 @@ class MigrateThemeTest extends TestCase
         $this->assertFileExists($this->viewsPath('layouts/layout.antlers.html'));
     }
 
-    /** @test */
+    #[Test]
     public function it_leaves_blade_extension_alone()
     {
         $this->artisan('statamic:migrate:theme', ['handle' => 'redwood']);
@@ -92,7 +93,7 @@ class MigrateThemeTest extends TestCase
         $this->assertFileExists($this->viewsPath('not-antlers.blade.php'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_theme_partial_tags()
     {
         $this->assertFileHasContent('{{ theme:partial src="nav" }}', $this->redwoodPath('layouts/default.html'));
@@ -102,7 +103,7 @@ class MigrateThemeTest extends TestCase
         $this->assertFileHasContent('{{ partial:nav }}', $this->viewsPath('layouts/layout.antlers.html'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_blade_global_modify_calls()
     {
         $this->assertFileHasContent('{{ modify($content)->striptags() }}', $this->redwoodPath('templates/not-antlers.blade.php'));
@@ -112,7 +113,7 @@ class MigrateThemeTest extends TestCase
         $this->assertFileHasContent('{{ \Statamic\Modifiers\Modify::value($content)->striptags() }}', $this->viewsPath('not-antlers.blade.php'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_macros()
     {
         $this->assertFileNotExists($this->paths('macros'));

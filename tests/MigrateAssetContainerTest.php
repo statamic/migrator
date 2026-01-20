@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
@@ -35,7 +36,7 @@ class MigrateAssetContainerTest extends TestCase
         return Path::tidy(collect([resource_path('blueprints/assets'), $append])->filter()->implode('/'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
@@ -52,7 +53,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertFileNotExists($this->blueprintPath());
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_assets_folder()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
@@ -64,7 +65,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertCount(3, $this->files->allFiles(public_path('assets')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_assets_folder_if_assets_are_left_in_original_site_nested_path()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
@@ -80,7 +81,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertCount(3, $this->files->allFiles(public_path('assets')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_multiple_assets_folders()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
@@ -100,7 +101,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertCount(3, $this->files->allFiles(public_path('assets/secondary')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_meta()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
@@ -135,7 +136,7 @@ class MigrateAssetContainerTest extends TestCase
         $this->assertEquals('15-24-1', $fullMeta['data']['focus']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_force_migrate_meta()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
@@ -164,7 +165,7 @@ EOT
         $this->assertEquals('15-24-1', $meta['data']['focus']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_with_custom_fieldset_meta()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
@@ -204,7 +205,7 @@ EOT
         $this->assertArrayHasKey('height', $meta);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_only_meta()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
@@ -245,7 +246,7 @@ EOT
         $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_meta_into_s3_path()
     {
         $this->files->put($this->sitePath('content/assets/secondary.yaml'), YAML::dump([
@@ -287,7 +288,7 @@ EOT
         $this->assertEquals('amazon.texas/stetson', $meta['data']['purchase']);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_disk_with_local_driver()
     {
         $this->files->copyDirectory(__DIR__.'/Fixtures/assets', base_path('assets'));
@@ -348,7 +349,7 @@ EOT
         $this->assertGitConfigPathExists('assets');
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_disk_with_s3_driver()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), YAML::dump([
@@ -421,7 +422,7 @@ EOT
         $this->assertFilesystemDiskExists('assets');
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_disk_with_terser_key_when_assets_already_exists()
     {
         $this->configurator->mergeSpaciously('disks', [
@@ -495,7 +496,7 @@ EOT
         $this->assertFilesystemDiskExists('assets_main');
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_multiple_disks_with_terser_keys_only()
     {
         $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([
@@ -578,7 +579,7 @@ EOT
         $this->assertFilesystemDiskNotExists('assets');
     }
 
-    /** @test */
+    #[Test]
     public function it_overwrites_disks_when_forced()
     {
         $this->files->put($this->sitePath('content/assets/cloud.yaml'), YAML::dump([

@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Exception;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
@@ -13,7 +14,7 @@ class YamlTest extends TestCase
         return Path::tidy(base_path('site/settings/system.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_detects_parser()
     {
         $this->files->delete($this->path());
@@ -27,7 +28,7 @@ class YamlTest extends TestCase
         $this->assertEquals('symfony', YAML::detect());
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_symfonic_yaml()
     {
         $yaml = "description: '@seo:pro'\n";
@@ -37,7 +38,7 @@ class YamlTest extends TestCase
         $this->assertEquals(['description' => '@seo:pro'], Yaml::parse($yaml));
     }
 
-    /** @test */
+    #[Test]
     public function it_parses_spicey_yaml()
     {
         $yaml = "description: @seo:pro\n";
@@ -47,7 +48,7 @@ class YamlTest extends TestCase
         $this->assertEquals(['description' => '@seo:pro'], Yaml::parse($yaml));
     }
 
-    /** @test */
+    #[Test]
     public function it_cannot_parse_spicey_yaml_if_site_settings_explicitly_set_to_symfony()
     {
         $yaml = "description: @seo:pro\n";
@@ -59,14 +60,14 @@ class YamlTest extends TestCase
         YAML::parse($yaml);
     }
 
-    /** @test */
+    #[Test]
     public function it_falls_back_to_spicey_parsing_if_necesary_when_it_cannot_detect_site_settings()
     {
         $this->assertEquals(['description' => '@seo:pro'], Yaml::parse("description: '@seo:pro'\n"));
         $this->assertEquals(['description' => '@seo:pro'], Yaml::parse("description: @seo:pro\n"));
     }
 
-    /** @test */
+    #[Test]
     public function it_defers_to_statamic_yaml_facade_when_dumping()
     {
         $data = ['description' => '@seo:pro'];

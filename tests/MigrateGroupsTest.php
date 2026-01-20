@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Statamic\Support\Arr;
@@ -13,7 +14,7 @@ class MigrateGroupsTest extends TestCase
         return Path::tidy(resource_path('users/groups.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_groups()
     {
         $this->assertFileNotExists($this->path());
