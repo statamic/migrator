@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
+
 class MigrateLocalizedGlobalSetTest extends TestCase
 {
     protected $siteFixture = 'site-localized';
@@ -17,7 +19,7 @@ class MigrateLocalizedGlobalSetTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_global_set()
     {
         $this->artisan('statamic:migrate:global-set', ['handle' => 'global']);
@@ -44,7 +46,7 @@ class MigrateLocalizedGlobalSetTest extends TestCase
         $this->assertParsedYamlEquals($expectedFrench, $this->paths('fr'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_when_localized_data_does_not_exist()
     {
         $this->files->deleteDirectory($this->sitePath('content/globals/fr'));

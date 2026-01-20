@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
@@ -25,7 +26,7 @@ class MigrateTaxonomyTest extends TestCase
         return Path::tidy(collect([resource_path('blueprints/taxonomies'), $append])->filter()->implode('/'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_taxonomy()
     {
         $this->assertFileNotExists($this->taxonomiesPath('tags'));
@@ -40,7 +41,7 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('tags/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_custom_default_blueprint()
     {
         $this->files->put($this->prepareFolder($this->blueprintsPath('tags/default.yaml')), YAML::dump([
@@ -54,7 +55,7 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('tags/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -67,7 +68,7 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->taxonomiesPath('tags.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_without_a_route()
     {
         $this->files->delete($this->sitePath('settings/routes.yaml'));
@@ -77,7 +78,7 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertParsedYamlNotHasKey('route', $this->taxonomiesPath('tags.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_without_a_terms_folder()
     {
         $this->files->deleteDirectory($this->sitePath('content/taxonomies/tags'));
@@ -87,7 +88,7 @@ class MigrateTaxonomyTest extends TestCase
         $this->assertFileNotExists($this->taxonomiesPath('tags'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_term_content_under_content_key()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -105,7 +106,7 @@ EOT;
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_into_empty_terms_folder_without_complaining()
     {
         $this->files->makeDirectory($this->taxonomiesPath('tags'));
@@ -119,7 +120,7 @@ EOT;
         $this->assertCount(2, $this->files->files($this->taxonomiesPath('tags')));
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_migrate_into_a_populated_terms_folder()
     {
         $this->files->makeDirectory($this->taxonomiesPath('tags'));

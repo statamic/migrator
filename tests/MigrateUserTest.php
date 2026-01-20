@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Migrator\YAML;
 
 class MigrateUserTest extends TestCase
@@ -32,7 +33,7 @@ class MigrateUserTest extends TestCase
         return YAML::parse($this->files->get($this->paths('new')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_user()
     {
         $user = $this->migrateUser([
@@ -52,7 +53,7 @@ class MigrateUserTest extends TestCase
         $this->assertFileExists($this->paths('blueprint'));
     }
 
-    /** @test */
+    #[Test]
     public function it_requires_an_email_for_handle()
     {
         $this->files->put($this->paths('old_username'), YAML::dump([
@@ -65,7 +66,7 @@ class MigrateUserTest extends TestCase
         $this->assertFileNotExists($this->paths('new'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_email_from_filename()
     {
         $this->files->put($this->sitePath('settings/users.yaml'), 'login_type: email');
@@ -81,7 +82,7 @@ class MigrateUserTest extends TestCase
         $this->assertFileExists($this->paths('new'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_with_only_first_name()
     {
         $user = $this->migrateUser([
@@ -94,7 +95,7 @@ class MigrateUserTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_with_only_last_name()
     {
         $user = $this->migrateUser([
@@ -107,7 +108,7 @@ class MigrateUserTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_singular_name_field()
     {
         $user = $this->migrateUser([
@@ -120,7 +121,7 @@ class MigrateUserTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_roles()
     {
         $user = $this->migrateUser([
@@ -139,7 +140,7 @@ class MigrateUserTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_groups()
     {
         $user = $this->migrateUser([
@@ -158,7 +159,7 @@ class MigrateUserTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_user_content_with_custom_fieldset()
     {
         $this->files->put($this->sitePath('settings/fieldsets/user.yaml'), <<<'EOT'
@@ -189,7 +190,7 @@ EOT
         $this->assertFileExists($this->paths('blueprint'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_without_user_fieldset()
     {
         $this->files->delete($this->sitePath('settings/fieldsets/user.yaml'));

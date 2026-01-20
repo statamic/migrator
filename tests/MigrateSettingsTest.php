@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Illuminate\Support\Facades\File;
+use PHPUnit\Framework\Attributes\Test;
 
 class MigrateSettingsTest extends TestCase
 {
@@ -22,7 +23,7 @@ class MigrateSettingsTest extends TestCase
         $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->paths('routesFile'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_assets_settings()
     {
         $this->assertConfigFileContains('assets.php', <<<'EOT'
@@ -53,7 +54,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_doesnt_touch_assets_config_if_empty()
     {
         $this->files->put($this->sitePath('settings/assets.yaml'), '');
@@ -68,7 +69,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_cp_settings()
     {
         $this->assertConfigFileContains('cp.php', <<<'EOT'
@@ -122,7 +123,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_cp_start_page_to_pages()
     {
         $this->files->put($this->sitePath('settings/cp.yaml'), 'start_page: pages');
@@ -135,7 +136,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_routes()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'routes']);
@@ -157,7 +158,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_system_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
@@ -175,7 +176,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_multiple_locales_with_env_references()
     {
         $this->files->put($this->sitePath('settings/system.yaml'), <<<'EOT'
@@ -210,7 +211,7 @@ EOT
 );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_missing_locales_using_v2_default()
     {
         $this->files->put($this->sitePath('settings/system.yaml'), '');
@@ -230,7 +231,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_user_settings()
     {
         $this->artisan('statamic:migrate:settings', ['handle' => 'users']);
@@ -248,7 +249,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_empty_user_settings()
     {
         $this->files->put($this->sitePath('settings/users.yaml'), <<<'EOT'

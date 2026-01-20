@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Router;
 use Statamic\Migrator\YAML;
@@ -24,7 +25,7 @@ class RouterTest extends TestCase
         return Path::tidy(base_path('routes/test.php'));
     }
 
-    /** @test */
+    #[Test]
     public function it_appends_routes()
     {
         $router = $this->router->appendRoutes($this->oldRoutes['routes']);
@@ -43,7 +44,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_appends_redirects()
     {
         $router = $this->router->appendRedirects($this->oldRoutes['vanity']);
@@ -56,7 +57,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_appends_permanent_redirects()
     {
         $router = $this->router->appendPermanentRedirects($this->oldRoutes['redirect']);
@@ -70,7 +71,7 @@ EOT
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_detects_if_routes_file_already_has_any_of_the_given_routes()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
@@ -82,7 +83,7 @@ EOT
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
 
-    /** @test */
+    #[Test]
     public function it_detects_if_routes_file_already_has_any_of_the_given_redirects()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
@@ -94,7 +95,7 @@ EOT
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
 
-    /** @test */
+    #[Test]
     public function it_detects_if_routes_file_already_has_any_of_the_given_permanent_redirects()
     {
         $this->assertFalse($this->router->has($this->oldRoutes));
@@ -106,7 +107,7 @@ EOT
         $this->assertTrue($this->router->has($this->oldRoutes));
     }
 
-    /** @test */
+    #[Test]
     public function it_wont_append_the_same_route_twice()
     {
         $this->router->appendRoutes($this->oldRoutes['routes']);

@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
@@ -44,7 +46,7 @@ class MigrateCollectionTest extends TestCase
         return YAML::parse($this->files->get($this->collectionsPath('test.yaml')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_collection()
     {
         $this->assertFileNotExists($this->collectionsPath('blog'));
@@ -60,7 +62,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('blog/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_custom_default_blueprint()
     {
         $this->files->put($this->prepareFolder($this->blueprintsPath('blog/default.yaml')), YAML::dump([
@@ -74,7 +76,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('blog/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -96,7 +98,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_without_a_route()
     {
         $this->files->delete($this->sitePath('settings/routes.yaml'));
@@ -106,7 +108,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlNotHasKey('route', $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_wraps_non_reserved_config_with_inject()
     {
         $collection = $this->migrateCollection([
@@ -126,7 +128,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertEquals($expected, $collection);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_spicey_yaml()
     {
         $collection = $this->migrateCollection([
@@ -146,7 +148,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertEquals($expected, $collection);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_entry()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -156,7 +158,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlHasKey('id', $path);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_entry_fieldset()
     {
         $this->assertFileNotExists($this->blueprintsPath('blog/long_form.yaml'));
@@ -170,7 +172,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlNotHasKey('fieldset', $path);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_a_draft_entry()
     {
         $draftPath = 'blog/_2017-01-19.paperwork-and-snowshoeing.md';
@@ -185,7 +187,7 @@ class MigrateCollectionTest extends TestCase
         $this->assertParsedYamlContains(['published' => false], $this->collectionsPath($path));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_entry_content_as_document_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -200,7 +202,7 @@ EOT;
         $this->assertContainsIgnoringLineEndings($expected, $this->files->get($this->collectionsPath('blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_multiple_taxonomies_onto_collection()
     {
         $path = $this->sitePath('content/collections/blog/2017-07-31.fire-fire-looking-forward-to-hearing-from-you.md');
@@ -221,7 +223,7 @@ EOT
         $this->assertParsedYamlContains(['taxonomies' => ['colours', 'tags']], $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_will_not_migrate_taxonomies_if_none_are_referenced()
     {
         collect($this->files->allFiles($this->sitePath('content/collections/blog')))->each(function ($entry) {
@@ -233,7 +235,7 @@ EOT
         $this->assertParsedYamlNotHasKey('taxonomies', $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_if_taxonomies_are_missing()
     {
         $this->files->deleteDirectory($this->sitePath('content/taxonomies'));
@@ -243,7 +245,7 @@ EOT
         $this->assertParsedYamlNotHasKey('taxonomies', $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_will_not_migrate_date_settings_if_none_are_referenced()
     {
         $path = $this->sitePath('content/collections/blog/folder.yaml');
@@ -257,10 +259,8 @@ EOT
         $this->assertParsedYamlNotHasKey('sort_dir', $this->collectionsPath('blog.yaml'));
     }
 
-    /**
-     * @test
-     * @dataProvider orderCollectionValues
-     **/
+    #[Test]
+    #[DataProvider('orderCollectionValues')]
     public function it_migrates_number_ordered_collection($order)
     {
         $contents = file_get_contents($path = base_path('site/content/collections/favs/folder.yaml'));
@@ -301,7 +301,7 @@ EOT
         ];
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_textile_and_html_extensions()
     {
         $this->files->move(
@@ -322,7 +322,7 @@ EOT
         $this->assertFileExists($this->collectionsPath('blog/2017-01-19.paperwork-and-snowshoeing.md'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_entry_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);

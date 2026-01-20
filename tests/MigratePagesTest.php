@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Entry;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
@@ -32,7 +33,7 @@ class MigratePagesTest extends TestCase
         return Path::tidy(collect([resource_path('blueprints/collections'), $append])->filter()->implode('/'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_pages_to_a_collection()
     {
         $this->assertCount(1, $this->files->files($this->sitePath('content/pages')));
@@ -48,7 +49,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlContains(['order' => 1], $this->blueprintsPath('pages/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_page_fieldset()
     {
         $this->assertFileNotExists($this->blueprintsPath('pages/gallery.yaml'));
@@ -62,7 +63,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlNotHasKey('fieldset', $path);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_custom_default_blueprint()
     {
         $this->files->put($this->prepareFolder($this->blueprintsPath('pages/default.yaml')), YAML::dump([
@@ -76,7 +77,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlContains(['custom' => 'stuff', 'order' => 1], $this->blueprintsPath('pages/default.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:pages');
@@ -125,7 +126,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlEquals($expectedTree, $this->treesPath('pages.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_structure_if_there_are_no_pages()
     {
         $this->files->cleanDirectory(base_path('site/content/pages'));
@@ -146,7 +147,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlEquals($expectedTree, $this->treesPath('pages.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_structure_if_only_home_page_exists()
     {
         collect($this->files->directories($this->sitePath('content/pages')))->each(function ($directory) {
@@ -171,7 +172,7 @@ class MigratePagesTest extends TestCase
         $this->assertParsedYamlEquals($expectedTree, $this->treesPath('pages.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_root_page_slug_off_title_and_other_page_slugs_off_v2_folder_name()
     {
         $this->artisan('statamic:migrate:pages');
@@ -193,7 +194,7 @@ class MigratePagesTest extends TestCase
         $this->assertEquals($expected, Entry::all()->map->slug()->sort()->values()->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_duplicate_slugs_at_different_uri_levels_by_incrementing_filenames()
     {
         $this->artisan('statamic:migrate:pages');
@@ -214,7 +215,7 @@ class MigratePagesTest extends TestCase
         );
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_pages_without_order()
     {
         $this->files->moveDirectory($this->sitePath('content/pages/5.contact'), $this->sitePath('content/pages/contact'));
@@ -224,7 +225,7 @@ class MigratePagesTest extends TestCase
         $this->assertContains('contact', Entry::all()->map->slug()->all());
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_textile_and_html_extensions()
     {
         $this->files->move(
@@ -245,7 +246,7 @@ class MigratePagesTest extends TestCase
         $this->assertFileExists($this->collectionsPath('pages/gallery.md'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_page_content()
     {
         $this->artisan('statamic:migrate:pages');
