@@ -4,7 +4,7 @@
     "require": {
         "php": "^8.4",
         "friendsofphp/php-cs-fixer": "^3.80.0",
-        "laravel/framework": "^12.47",
+        "laravel/framework": "^12.0",
         "league/flysystem-aws-s3-v3": "~1.0 || ~3.0",
         "mustangostang/spyc": "dev-master#dfd9aadc1f5224065d55b42b712c7e99a50a3f4d"
     },
@@ -12,8 +12,7 @@
         "statamic/cms": "^5.71",
         "mockery/mockery": "^1.4.4",
         "orchestra/testbench": "^8.28 || ^9.6.1 || ^10.0",
-        "phpunit/phpunit": "^10.5.35 || ^11.0",
-        "nette/utils": "^4.0 <4.0.6"
+        "phpunit/phpunit": "^10.5.35 || ^11.0"
     },
     "autoload": {
         "psr-4": {
