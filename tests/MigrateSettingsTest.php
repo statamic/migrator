@@ -291,8 +291,6 @@ EOT
             $beginning = <<<'EOT'
 <?php
 
-use Statamic\CP\Color;
-
 return [
 EOT;
         } else {
