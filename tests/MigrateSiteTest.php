@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
@@ -56,7 +57,7 @@ class MigrateSiteTest extends TestCase
         $this->files->copy(__DIR__.'/Fixtures/routes/web.php', $this->paths('routesFile'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_fieldset_partials()
     {
         $this->assertCount(0, $this->files->files($this->paths('fieldsets')));
@@ -66,7 +67,7 @@ class MigrateSiteTest extends TestCase
         $this->assertFileExists($this->paths('fieldsets').'/address.yaml');
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_collections()
     {
         $this->assertFileNotExists($this->paths('blog'));
@@ -91,7 +92,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(2, $this->files->files($this->blueprintsPath('collections/favs')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_pages_to_a_collection()
     {
         $this->assertFileNotExists($this->paths('pagesCollectionConfig'));
@@ -106,7 +107,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(5, $this->files->files($this->blueprintsPath('collections/pages')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_taxonomies()
     {
         $this->assertFileNotExists($this->paths('tags'));
@@ -120,7 +121,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(2, $this->files->files($this->blueprintsPath('taxonomies/tags')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_asset_containers()
     {
         $this->assertCount(0, $this->files->files($this->paths('assetContainers')));
@@ -131,7 +132,7 @@ class MigrateSiteTest extends TestCase
         $this->assertFileNotExists($this->blueprintsPath('assets'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_global_sets()
     {
         $this->assertCount(0, $this->files->files($this->paths('globals')));
@@ -143,7 +144,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(2, $this->files->files($this->blueprintsPath('globals')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_forms()
     {
         $this->assertFileNotExists($this->paths('contactFormConfig'));
@@ -157,7 +158,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(2, $this->files->allFiles($this->paths('submissions')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_users()
     {
         $this->assertCount(0, $this->files->files($this->paths('users')));
@@ -169,7 +170,7 @@ class MigrateSiteTest extends TestCase
         $this->assertFileExists($this->blueprintsPath('user.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_roles()
     {
         $this->assertFileNotExists($this->paths('roles'));
@@ -179,7 +180,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(2, YAML::parse($this->files->get($this->paths('roles'))));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_groups()
     {
         $this->assertFileNotExists($this->paths('groups'));
@@ -189,7 +190,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(1, YAML::parse($this->files->get($this->paths('groups'))));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_settings()
     {
         $this->assertCount(0, config('statamic.cp.widgets'));
@@ -201,7 +202,7 @@ class MigrateSiteTest extends TestCase
         $this->assertCount(3, config('statamic.cp.widgets'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_theme()
     {
         $this->assertCount(0, $this->files->allFiles($this->paths('views')));

@@ -2,6 +2,8 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
+
 class MigrateFormTest extends TestCase
 {
     protected function paths($key = null)
@@ -15,7 +17,7 @@ class MigrateFormTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_form()
     {
         $this->assertFileNotExists($this->paths('form'));
@@ -58,7 +60,7 @@ class MigrateFormTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->paths('form'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_fields_to_blueprint()
     {
         $this->assertFileNotExists($this->paths('blueprint'));
@@ -108,7 +110,7 @@ class MigrateFormTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->paths('blueprint'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_submissions()
     {
         $this->assertCount(0, $this->files->files($this->paths('submissions')));

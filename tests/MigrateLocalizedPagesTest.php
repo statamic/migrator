@@ -3,6 +3,7 @@
 namespace Tests;
 
 use Facades\Statamic\Migrator\UUID;
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 use Tests\Fakes\FakeUUID;
@@ -35,7 +36,7 @@ class MigrateLocalizedPagesTest extends TestCase
         return Path::tidy(collect([resource_path('blueprints/collections'), $append])->filter()->implode('/'));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_expected_number_of_files()
     {
         $this->assertCount(2, $this->files->files($this->sitePath('content/pages')));
@@ -52,7 +53,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertCount(16, $this->files->files($this->collectionsPath('pages/fr')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         UUID::swap(new FakeUUID);
@@ -142,7 +143,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertParsedYamlEquals($expectedFrenchTree, $this->treesPath('fr/pages.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_an_explicitly_localized_page()
     {
         $this->artisan('statamic:migrate:pages');
@@ -161,7 +162,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertArrayNotHasKey('fieldset', $frenchEntry);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_an_implicitly_localized_page()
     {
         $this->artisan('statamic:migrate:pages');
@@ -185,7 +186,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertEquals($defaultEntry['id'], $frenchEntry['origin']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_page_fieldset()
     {
         $this->assertFileNotExists($this->blueprintsPath('pages/gallery.yaml'));
@@ -203,7 +204,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertParsedYamlNotHasKey('fieldset', $frenchPath);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_localized_page_content()
     {
         $this->artisan('statamic:migrate:pages');
@@ -212,7 +213,7 @@ class MigrateLocalizedPagesTest extends TestCase
         $this->assertParsedYamlContains(['avatar' => 'img/coffee-mug.jpg'], $this->collectionsPath('pages/fr/les-aboot.md'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_localized_published_statuses()
     {
         $this->artisan('statamic:migrate:pages');

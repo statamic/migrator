@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 
 class MigrateLocalizedTaxonomyTest extends TestCase
@@ -13,7 +14,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         return Path::tidy(collect([base_path('content/taxonomies'), $append])->filter()->implode('/'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_taxonomy()
     {
         $this->assertFileNotExists($this->path('tags'));
@@ -25,7 +26,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         $this->assertCount(4, $this->files->files($this->path('tags')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -43,7 +44,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->path('tags.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_term()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -65,7 +66,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->path('tags/coffee.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_term_with_partially_filled_content()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -83,7 +84,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->path('tags/harry-potter.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_term_without_localized_content()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);
@@ -96,7 +97,7 @@ class MigrateLocalizedTaxonomyTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->path('tags/spring.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_term_without_default_site_content()
     {
         $this->artisan('statamic:migrate:taxonomy', ['handle' => 'tags']);

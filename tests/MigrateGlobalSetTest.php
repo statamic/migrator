@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
@@ -50,7 +51,7 @@ class MigrateGlobalSetTest extends TestCase
         return [YAML::parse($this->files->get($this->newPath())), YAML::parse($this->files->get($this->variablesPath()))];
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_global_set()
     {
         $this->assertFileNotExists($this->newPath());
@@ -81,7 +82,7 @@ class MigrateGlobalSetTest extends TestCase
         $this->assertFileExists($this->blueprintPath());
     }
 
-    /** @test */
+    #[Test]
     public function it_can_implicitly_migrate_globals_blueprint()
     {
         $this->assertFileNotExists($this->blueprintPath());
@@ -97,7 +98,7 @@ class MigrateGlobalSetTest extends TestCase
         $this->assertFileExists($this->blueprintPath());
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_without_fieldset_when_one_does_not_exist()
     {
         $this->files->delete(base_path('site/settings/fieldsets/globals.yaml'));

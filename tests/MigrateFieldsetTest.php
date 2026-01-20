@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Migrator\YAML;
 
 class MigrateFieldsetTest extends TestCase
@@ -18,7 +19,7 @@ class MigrateFieldsetTest extends TestCase
         return $key ? $paths[$key] : $paths;
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_fieldset()
     {
         $fieldset = $this->migrateFieldset([
@@ -56,7 +57,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_assumes_type_text()
     {
         $fieldset = $this->migrateFieldset([
@@ -82,7 +83,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_nested_fields()
     {
         $fieldset = $this->migrateFieldset([
@@ -129,7 +130,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_nested_sets_of_fields()
     {
         $fieldset = $this->migrateFieldset([
@@ -184,7 +185,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_empty_sets()
     {
         $fieldset = $this->migrateFieldset([
@@ -217,7 +218,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_field_type_first()
     {
         $fieldset = $this->migrateFieldset([
@@ -244,7 +245,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_field_conditions()
     {
         $fieldset = $this->migrateFieldset([
@@ -303,7 +304,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_hide_setting()
     {
         $fieldset = $this->migrateFieldset([
@@ -331,7 +332,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_redactor_to_bard()
     {
         $fieldset = $this->migrateFieldset([
@@ -358,7 +359,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_redactor_with_custom_settings_to_bard()
     {
         $this->files->put($this->paths('system'), YAML::dump([
@@ -394,7 +395,7 @@ class MigrateFieldsetTest extends TestCase
         ]);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_pages_to_entries()
     {
         $fieldset = $this->migrateFieldset([
@@ -426,7 +427,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_collection_to_entries()
     {
         $fieldset = $this->migrateFieldset([
@@ -478,7 +479,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_taxonomy_to_terms()
     {
         $fieldset = $this->migrateFieldset([
@@ -511,7 +512,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_tags_to_taggable()
     {
         $fieldset = $this->migrateFieldset([
@@ -538,7 +539,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_option_based_suggest_to_select()
     {
         $fieldset = $this->migrateFieldset([
@@ -577,7 +578,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_option_based_suggest_to_multiple_select()
     {
         $fieldset = $this->migrateFieldset([
@@ -615,7 +616,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_native_mode_based_suggests_to_appropriate_relationship_fields()
     {
         $this->assertEquals(['type' => 'collections'], $this->migrateSuggestField(['mode' => 'collections']));
@@ -657,7 +658,7 @@ class MigrateFieldsetTest extends TestCase
         $this->assertEquals(['type' => 'suggest', 'mode' => 'colours'], $this->migrateSuggestField(['mode' => 'colours']));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_partial_to_import()
     {
         $fieldset = $this->migrateFieldset([
@@ -693,9 +694,8 @@ class MigrateFieldsetTest extends TestCase
 
     /**
      * Temporary, until we implement sections in fieldsets!
-     *
-     * @test
-n    */
+     */
+    #[Test]
     public function it_flattens_sections()
     {
         $this->files->put($this->paths('old'), <<<'EOT'
@@ -755,7 +755,7 @@ EOT
         $this->assertEquals($expected, YAML::parse($this->files->get($this->paths('new'))));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_date_field()
     {
         $fieldset = $this->migrateFieldset([
@@ -796,7 +796,7 @@ EOT
     }
 
 
-    /** @test */
+    #[Test]
     public function it_migrates_link_it_field()
     {
         $fieldset = $this->migrateFieldset([
@@ -830,7 +830,7 @@ EOT
         $this->assertEquals($expected, $fieldset);
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_extention_validation()
     {
         $fieldset = $this->migrateFieldset([

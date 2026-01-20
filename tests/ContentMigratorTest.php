@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Migrator\ContentMigrator;
 use Statamic\Migrator\YAML;
 
@@ -48,7 +49,7 @@ class ContentMigratorTest extends TestCase
         return ContentMigrator::usingFieldset('speaker')->migrateContent($content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_assets_fields()
     {
         $content = $this
@@ -83,7 +84,7 @@ class ContentMigratorTest extends TestCase
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_assets_fields_without_container_url()
     {
         $this->files->put($this->sitePath('content/assets/main.yaml'), 'title: Main');
@@ -120,7 +121,7 @@ class ContentMigratorTest extends TestCase
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_date_field()
     {
         $content = $this
@@ -162,7 +163,7 @@ class ContentMigratorTest extends TestCase
         $this->files->delete($this->sitePath('settings/system.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_date_field_when_previous_timezone_was_not_utc()
     {
         // -5-hour offset
@@ -210,7 +211,7 @@ EOT
         $this->files->delete($this->sitePath('settings/system.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_term_fields()
     {
         $content = $this
@@ -244,10 +245,9 @@ EOT
     }
 
     /**
-     * @test
-     *
      * @see https://github.com/statamic/cms/issues/3432
-     **/
+     */
+    #[Test]
     public function it_removes_empty_term_fields()
     {
         $this->withoutExceptionHandling();
@@ -323,7 +323,7 @@ EOT
         ];
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_when_fieldset_has_fields_in_sections()
     {
         $content = $this
@@ -364,7 +364,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_when_fieldset_has_fields_at_top_level()
     {
         $content = $this
@@ -389,7 +389,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_fields_within_replicators()
     {
         $content = $this
@@ -467,7 +467,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_fields_within_bards()
     {
         $content = $this
@@ -552,7 +552,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_fields_within_grids()
     {
         $content = $this
@@ -612,7 +612,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_fields_within_partials()
     {
         $content = $this
@@ -692,7 +692,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_bards_with_no_sets()
     {
         $content = $this
@@ -719,7 +719,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_link_it_fields()
     {
         $content = $this
@@ -747,7 +747,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_custom_layout()
     {
         $content = $this->migrateContent([
@@ -763,7 +763,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_default_layout()
     {
         $content = $this->migrateContent([
@@ -778,7 +778,7 @@ EOT
         $this->assertEquals($expected, $content);
     }
 
-    /** @test */
+    #[Test]
     public function it_removes_custom_default_layout()
     {
         $this->files->put(base_path('site/settings/theming.yaml'), 'default_layout: custom_default');

@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use PHPUnit\Framework\Attributes\Test;
 use Statamic\Facades\Path;
 use Statamic\Migrator\YAML;
 
@@ -40,7 +41,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         return YAML::parse($this->files->get($this->collectionsPath('test.yaml')));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_collection()
     {
         $this->assertFileNotExists($this->collectionsPath('blog'));
@@ -53,7 +54,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertCount(3, $this->files->allFiles($this->collectionsPath('blog')));
     }
 
-    /** @test */
+    #[Test]
     public function it_migrates_yaml_config()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -79,7 +80,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertParsedYamlEquals($expected, $this->collectionsPath('blog.yaml'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_draft_entry_that_was_not_localized()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -89,7 +90,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertFileExists($this->collectionsPath('blog/default/2017-03-08.spring-wonderful-spring.md'));
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_entry()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
@@ -106,7 +107,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertNotNull($frenchEntry['id']);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_a_localized_entry_fieldset()
     {
         $this->assertFileNotExists($this->blueprintsPath('blog/content.yaml'));
@@ -124,7 +125,7 @@ class MigrateLocalizedCollectionTest extends TestCase
         $this->assertParsedYamlNotHasKey('fieldset', $frenchPath);
     }
 
-    /** @test */
+    #[Test]
     public function it_can_migrate_localized_entry_content()
     {
         $this->artisan('statamic:migrate:collection', ['handle' => 'blog']);
