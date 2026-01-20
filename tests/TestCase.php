@@ -2,9 +2,11 @@
 
 namespace Tests;
 
+use Facades\Statamic\Console\Processes\Process;
 use Illuminate\Filesystem\Filesystem;
 use Statamic\Facades\Path;
 use Statamic\Migrator\Concerns\PreparesPathFolder;
+use Statamic\Migrator\Configurator;
 use Statamic\Migrator\YAML;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -45,6 +47,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
 
         $this->restoreFilesystemConfig();
         $this->restoreStatamicConfigs();
+
+        // The first run after a fresh Composer install fails for some reason. This fixes it 🤷‍♂️
+        Process::run([getcwd().'/vendor/bin/php-cs-fixer', 'fix', __DIR__.'/Fixtures/throwaway.php']);
     }
 
     protected function tearDown(): void
