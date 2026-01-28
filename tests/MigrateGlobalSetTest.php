@@ -26,6 +26,11 @@ class MigrateGlobalSetTest extends TestCase
         return Path::tidy(base_path('content/globals/main.yaml'));
     }
 
+    protected function variablesPath()
+    {
+        return Path::tidy(base_path('content/globals/default/main.yaml'));
+    }
+
     protected function blueprintPath()
     {
         return Path::tidy(resource_path('blueprints/globals/main.yaml'));
@@ -34,23 +39,26 @@ class MigrateGlobalSetTest extends TestCase
     private function migrateGlobalSet($globalSet)
     {
         $this->assertFileNotExists($this->newPath());
+        $this->assertFileNotExists($this->variablesPath());
 
         $this->files->put($this->originalPath(), YAML::dump($globalSet));
 
         $this->artisan('statamic:migrate:global-set', ['handle' => 'main']);
 
         $this->assertFileExists($this->newPath());
+        $this->assertFileExists($this->variablesPath());
 
-        return YAML::parse($this->files->get($this->newPath()));
+        return [YAML::parse($this->files->get($this->newPath())), YAML::parse($this->files->get($this->variablesPath()))];
     }
 
     #[Test]
     public function it_can_migrate_a_global_set()
     {
         $this->assertFileNotExists($this->newPath());
+        $this->assertFileNotExists($this->variablesPath());
         $this->assertFileNotExists($this->blueprintPath());
 
-        $set = $this->migrateGlobalSet([
+        [$set, $variables] = $this->migrateGlobalSet([
             'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
             'title' => 'Global',
             'fieldset' => 'globals',
@@ -61,14 +69,16 @@ class MigrateGlobalSetTest extends TestCase
 
         $this->assertEquals($set, [
             'title' => 'Global',
-            'data' => [
-                'site_title' => 'Frederick\'s Swap Shop',
-                'author' => 'Frederick Schwap',
-                'fav_colour' => 'red',
-            ],
+        ]);
+
+        $this->assertEquals($variables, [
+            'site_title' => 'Frederick\'s Swap Shop',
+            'author' => 'Frederick Schwap',
+            'fav_colour' => 'red',
         ]);
 
         $this->assertFileExists($this->newPath());
+        $this->assertFileExists($this->variablesPath());
         $this->assertFileExists($this->blueprintPath());
     }
 
@@ -77,7 +87,7 @@ class MigrateGlobalSetTest extends TestCase
     {
         $this->assertFileNotExists($this->blueprintPath());
 
-        $set = $this->migrateGlobalSet([
+        $this->migrateGlobalSet([
             'id' => '547c5873-ce9a-4b92-b6b8-a9c785f92fb4',
             'title' => 'Global',
             'site_title' => 'Frederick\'s Swap Shop',
@@ -94,15 +104,17 @@ class MigrateGlobalSetTest extends TestCase
         $this->files->delete(base_path('site/settings/fieldsets/globals.yaml'));
 
         $this->assertFileNotExists($this->newPath());
+        $this->assertFileNotExists($this->variablesPath());
         $this->assertFileNotExists($this->blueprintPath());
 
-        $set = $this->migrateGlobalSet([
+        $this->migrateGlobalSet([
             'title' => 'Global',
             'site_title' => 'Frederick\'s Swap Shop',
             'author' => 'Frederick Schwap',
         ]);
 
         $this->assertFileExists($this->newPath());
+        $this->assertFileExists($this->variablesPath());
         $this->assertFileNotExists($this->blueprintPath());
     }
 }

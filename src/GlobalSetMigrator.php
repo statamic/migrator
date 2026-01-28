@@ -57,15 +57,8 @@ class GlobalSetMigrator extends Migrator
             ->forget('fieldset')
             ->forget('id');
 
-        $meta = $this->set->only($metaKeys);
-        $data = $this->set->except($metaKeys);
-
-        if ($this->isMultisite()) {
-            $this->set = $meta;
-            $this->localizedSets = $this->migrateLocalizedSets($data);
-        } else {
-            $this->set = $meta->put('data', $this->migrateSetData($data));
-        }
+        $this->localizedSets = $this->migrateLocalizedSets($this->set->except($metaKeys));
+        $this->set = $this->set->only($metaKeys);
 
         return $this;
     }
@@ -126,23 +119,11 @@ class GlobalSetMigrator extends Migrator
      */
     protected function saveMigratedSet()
     {
-        if ($this->isMultisite()) {
-            $this->saveLocalizedSets();
-        }
-
-        return $this->saveMigratedYaml($this->set);
-    }
-
-    /**
-     * Save migrated localized sets.
-     *
-     * @return $this
-     */
-    protected function saveLocalizedSets()
-    {
         collect($this->localizedSets)->each(function ($set, $locale) {
             $this->saveMigratedYaml($set, base_path("content/globals/{$locale}/{$this->handle}.yaml"));
         });
+
+        return $this->saveMigratedYaml($this->set);
     }
 
     /**

@@ -193,13 +193,13 @@ class MigrateSiteTest extends TestCase
     #[Test]
     public function it_migrates_settings()
     {
-        $this->assertCount(1, config('statamic.cp.widgets'));
+        $this->assertCount(0, config('statamic.cp.widgets'));
 
         $this->artisan('statamic:migrate:site');
 
         Configurator::file('statamic/cp.php')->refresh();
 
-        $this->assertCount(4, config('statamic.cp.widgets'));
+        $this->assertCount(3, config('statamic.cp.widgets'));
     }
 
     #[Test]

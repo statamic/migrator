@@ -1,7 +1,5 @@
 # Statamic Migrator
 
-![Statamic 4.0+](https://img.shields.io/badge/Statamic-4.0+-FF269E?style=for-the-badge&link=https://statamic.com)
-
 🤘 Make migrating from v2 all the moar easier!
 
 📺 See the migrator in action [in this screencast](https://youtu.be/OeXbaeuJrws).

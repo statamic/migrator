@@ -122,6 +122,96 @@ class ContentMigratorTest extends TestCase
     }
 
     #[Test]
+    public function it_can_migrate_date_field()
+    {
+        $content = $this
+            ->setFields([
+                'date_field' => [
+                    'type' => 'date',
+                ],
+                'date_field_with_format' => [
+                    'type' => 'date',
+                    'format' => 'Y/m/d',
+                ],
+                'date_field_with_time' => [
+                    'type' => 'date',
+                    'allow_time' => true,
+                ],
+                'date_field_with_time_and_format' => [
+                    'type' => 'date',
+                    'allow_time' => true,
+                    'format' => 'Y/m/d H:i',
+                ],
+            ])
+            ->migrateContent([
+                'date_field' => '2018-01-01',
+                'date_field_with_format' => '2018/01/01',
+                'date_field_with_time' => '2018-01-01 12:00',
+                'date_field_with_time_and_format' => '2018/01/01 12:00',
+            ]);
+
+        $expected = [
+            'date_field' => '2018-01-01',
+            'date_field_with_format' => '2018/01/01',
+            'date_field_with_time' => '2018-01-01 12:00',
+            'date_field_with_time_and_format' => '2018/01/01 12:00',
+            'blueprint' => 'speaker'
+        ];
+
+        $this->assertEquals($expected, $content);
+
+        $this->files->delete($this->sitePath('settings/system.yaml'));
+    }
+
+    #[Test]
+    public function it_can_migrate_date_field_when_previous_timezone_was_not_utc()
+    {
+        // -5-hour offset
+                $this->files->put($this->sitePath('settings/system.yaml'), <<<EOT
+timezone: 'America/New_York'
+EOT
+        );
+
+        $content = $this
+            ->setFields([
+                'date_field' => [
+                    'type' => 'date',
+                ],
+                'date_field_with_format' => [
+                    'type' => 'date',
+                    'format' => 'Y/m/d',
+                ],
+                'date_field_with_time' => [
+                    'type' => 'date',
+                    'allow_time' => true,
+                ],
+                'date_field_with_time_and_format' => [
+                    'type' => 'date',
+                    'allow_time' => true,
+                    'format' => 'Y/m/d H:i',
+                ],
+            ])
+            ->migrateContent([
+                'date_field' => '2018-01-01',
+                'date_field_with_format' => '2018/01/01',
+                'date_field_with_time' => '2018-01-01 12:00',
+                'date_field_with_time_and_format' => '2018/01/01 12:00',
+            ]);
+
+        $expected = [
+            'date_field' => '2018-01-01 05:00',
+            'date_field_with_format' => '2018/01/01',
+            'date_field_with_time' => '2018-01-01 17:00',
+            'date_field_with_time_and_format' => '2018/01/01 17:00',
+            'blueprint' => 'speaker'
+        ];
+
+        $this->assertEquals($expected, $content);
+
+        $this->files->delete($this->sitePath('settings/system.yaml'));
+    }
+
+    #[Test]
     public function it_can_migrate_term_fields()
     {
         $content = $this

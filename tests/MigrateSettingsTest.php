@@ -73,7 +73,7 @@ EOT
     public function it_migrates_cp_settings()
     {
         $this->assertConfigFileContains('cp.php', <<<'EOT'
-        'getting_started',
+        //
 EOT
         );
 
@@ -85,13 +85,8 @@ EOT
         );
 
         $this->assertConfigFileContains('cp.php', <<<'EOT'
-    'date_format' => 'Y-m-d',
-EOT
-        );
-
-        $this->assertConfigFileContains('cp.php', <<<'EOT'
     'widgets' => [
-        'getting_started',
+        //
         [
             'type' => 'collection',
             'collection' => 'blog',
@@ -161,6 +156,11 @@ EOT
     #[Test]
     public function it_migrates_system_settings()
     {
+        $this->files->put($this->sitePath('settings/system.yaml'), <<<'EOT'
+timezone: 'America/New_York'
+EOT
+        );
+
         $this->artisan('statamic:migrate:settings', ['handle' => 'system']);
 
         $this->assertSameWithNormalizedLineEndings(File::get(resource_path('sites.yaml')),
@@ -172,6 +172,11 @@ EOT
 
         $this->assertConfigFileContains('system.php', <<<'EOT'
     'multisite' => false,
+EOT
+        );
+
+        $this->assertConfigFileContains('system.php', <<<'EOT'
+    'display_timezone' => 'America/New_York',
 EOT
         );
     }
@@ -282,11 +287,19 @@ EOT
     {
         $config = config_path("statamic/{$file}");
 
-        $beginning = <<<'EOT'
+        if ($file === 'cp.php') {
+            $beginning = <<<'EOT'
 <?php
 
 return [
 EOT;
+        } else {
+            $beginning = <<<'EOT'
+<?php
+
+return [
+EOT;
+        }
 
         $end = '];';
 
