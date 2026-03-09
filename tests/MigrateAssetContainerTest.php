@@ -380,7 +380,7 @@ EOT
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -450,7 +450,7 @@ EOT
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -526,7 +526,7 @@ EOT
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -633,7 +633,7 @@ EOT
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
@@ -715,10 +715,6 @@ EOT;
         // We can rip this out when we drop Laravel 8 support.
         if (version_compare(app()->version(), '9', '<')) {
             $irrelevantConfig = "'default' => env('FILESYSTEM_DRIVER', 'local'),";
-        }
-
-        if (version_compare(app()->version(), '12.45', '<')) {
-            $config = str_replace("'url' => rtrim((string) env('APP_URL'), '/').'/storage',", "'url' => env('APP_URL').'/storage',", $config);
         }
 
         // Assert valid PHP array.
@@ -817,6 +813,17 @@ EOT;
         ],
 EOT;
 
+        // Laravel 13+
+        $variants[] = <<<'EOT'
+        'local' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+EOT;
+
         // Current version
         $current = <<<'EOT'
         'local' => [
@@ -847,7 +854,7 @@ EOT;
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
         ],
 EOT;
@@ -857,18 +864,30 @@ EOT;
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
         ],
 EOT;
 
-        // Current version
+        // Up until Laravel 12.44
+        $variants[] = <<<'EOT'
+        'public' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+EOT;
+
+        // Current version (Laravel 12.45+)
         $current = <<<'EOT'
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
-            'url' => env('APP_URL').'/storage',
+            'url' => rtrim((string) env('APP_URL'), '/').'/storage',
             'visibility' => 'public',
             'throw' => false,
             'report' => false,
