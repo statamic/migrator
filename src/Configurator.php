@@ -418,7 +418,7 @@ class Configurator
      */
     protected function varExport($value)
     {
-        $value = VarExporter::export($value);
+        $value = $this->exportMultiline($value);
 
         // Remove numeric keys.
         $value = preg_replace("/(\s*)[0-9]+\s=>\s(.*)/", '$1$2', $value);
@@ -433,5 +433,38 @@ class Configurator
         $value = str_replace("\'", "'", $value);
 
         return $value;
+    }
+
+    /**
+     * Export var as a multiline string.
+     *
+     * VarExporter collapses small scalar arrays onto a single line, so we
+     * handle the array nesting ourselves to keep config files multiline,
+     * delegating only scalar leaves to VarExporter.
+     *
+     * @param  mixed  $value
+     * @param  string  $indent
+     * @return string
+     */
+    protected function exportMultiline($value, $indent = '')
+    {
+        if (! is_array($value)) {
+            return VarExporter::export($value);
+        }
+
+        if ($value === []) {
+            return '[]';
+        }
+
+        $subIndent = $indent.'    ';
+        $isList = array_is_list($value);
+
+        $lines = collect($value)->map(function ($value, $key) use ($isList, $subIndent) {
+            $prefix = $isList ? '' : VarExporter::export($key).' => ';
+
+            return $subIndent.$prefix.$this->exportMultiline($value, $subIndent);
+        });
+
+        return "[\n".$lines->implode(",\n").",\n".$indent.']';
     }
 }
