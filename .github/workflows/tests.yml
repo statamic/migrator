@@ -44,12 +44,13 @@ jobs:
           coverage: none
 
       - name: Install dependencies
+        shell: bash
         env:
-          LARAVEL_VERSION: ${{ matrix.laravel }}
+          LARAVEL: ${{ matrix.laravel }}
           STABILITY: ${{ matrix.stability }}
         run: |
-          composer require "illuminate/contracts:${LARAVEL_VERSION}" --no-interaction --no-update
-          composer update "--${STABILITY}" --prefer-dist --no-interaction --no-suggest
+          composer require "illuminate/contracts:$LARAVEL" --no-interaction --no-update
+          composer update --$STABILITY --prefer-dist --no-interaction --no-suggest
 
       - name: Execute tests
         run: vendor/bin/phpunit
