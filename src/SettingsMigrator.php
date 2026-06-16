@@ -165,7 +165,7 @@ class SettingsMigrator extends Migrator
         if ($defaultSiteUrl != '/') {
             $this->addWarning(
                 "Your default site url is currently set to [{$defaultSiteUrl}] instead of [/].",
-                'Please double check your sites configuration in [config/statamic/sites.php], as this may cause your pages to 404.'
+                'Please double check your sites configuration in [resources/sites.yaml], as this may cause your pages to 404.'
             );
         }
 
