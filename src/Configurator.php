@@ -61,7 +61,14 @@ class Configurator
 
         $this->preparePhpCsFixer();
 
-        Process::run([getcwd().'/vendor/bin/php-cs-fixer', 'fix', $path, '--rules', $rules]);
+        Process::run([
+            getcwd().'/vendor/bin/php-cs-fixer',
+            'fix',
+            $path,
+            '--rules',
+            $rules,
+            '--allow-unsupported-php-version=yes',
+        ]);
 
         return $this;
     }
